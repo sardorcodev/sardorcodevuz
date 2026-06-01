@@ -1,65 +1,18 @@
-import Image from "next/image";
+import { EvidenceImage } from "@/components/evidence-image";
+import { Icon } from "@/components/icons";
+import { ButtonLink, Eyebrow, MentionsGrid, ProfilesGrid, TelegramCallout } from "@/components/ui";
+import { focusAreas, projects, telegramUrl } from "@/lib/site";
 
 export default function Home() {
-  return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
-  );
+  return <>
+    <section className="relative overflow-hidden bg-white"><div aria-hidden="true" className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-blue-500 to-transparent" /><div aria-hidden="true" className="absolute right-0 top-0 size-96 rounded-full bg-blue-100/70 blur-3xl" /><div className="relative mx-auto grid max-w-7xl gap-12 px-5 py-20 sm:px-8 sm:py-28 lg:grid-cols-[1.2fr_.8fr] lg:items-center">
+      <div><div className="inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3 py-2 text-xs font-bold uppercase tracking-[0.15em] text-blue-700"><span aria-hidden="true" className="size-2 rounded-full bg-blue-500" /> Official website of sardorcodev</div><h1 className="mt-7 max-w-4xl text-5xl font-bold leading-[1.04] tracking-[-0.07em] text-slate-950 sm:text-7xl">AI, Software Development <span className="text-blue-600">&amp; Automation</span></h1><p className="mt-7 max-w-2xl text-lg leading-8 text-slate-600">sardorcodev is a technology brand founded by Sardorbek Musurmonov, focused on practical AI systems, software products, Telegram bots, and developer productivity.</p><div className="mt-8 flex flex-col items-start gap-3 sm:flex-row sm:flex-wrap"><ButtonLink external href={telegramUrl}><Icon className="size-4" name="telegram" /> Join official Telegram</ButtonLink><ButtonLink href="/official" secondary>Verify official profiles <Icon className="size-4" name="arrow" /></ButtonLink></div></div>
+      <aside className="overflow-hidden rounded-3xl border border-slate-200 bg-slate-950 p-3 text-white shadow-2xl shadow-slate-300"><EvidenceImage alt="Sardorbek Musurmonov, founder of sardorcodev" caption="Sardorbek Musurmonov, founder of sardorcodev." className="border-white/10 bg-slate-900 [&_figcaption]:border-white/10 [&_figcaption]:text-slate-400" height={1536} imageClassName="aspect-[4/3] object-cover object-top" sizes="(max-width: 1023px) calc(100vw - 64px), 32vw" src="/images/founder-sardorbek-musurmonov.png" width={1024} /><div className="p-4"><p className="text-xs font-bold uppercase tracking-[0.18em] text-blue-400">Founder-led direction</p><h2 className="mt-4 text-xl font-bold leading-8 tracking-[-0.03em]">Practical technology content and software work with a clear focus on useful implementation.</h2><div className="mt-6 border-t border-white/10 pt-5"><p className="font-bold">Sardorbek Musurmonov</p><p className="mt-1 text-sm text-slate-400">Founder, sardorcodev</p></div></div></aside>
+    </div></section>
+    <section className="mx-auto max-w-7xl px-5 py-18 sm:px-8"><Eyebrow>Focus areas</Eyebrow><h2 className="mt-4 text-3xl font-bold tracking-[-0.05em] text-slate-950 sm:text-4xl">Building at the intersection of ideas and implementation.</h2><div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">{focusAreas.map((area) => <article className="rounded-2xl border border-slate-200 bg-white p-6" key={area.title}><div className="grid size-11 place-items-center rounded-xl bg-blue-50 text-blue-600"><Icon name={area.icon} /></div><h3 className="mt-6 font-bold text-slate-950">{area.title}</h3><p className="mt-3 text-sm leading-6 text-slate-600">{area.text}</p></article>)}</div></section>
+    <TelegramCallout />
+    <section className="mx-auto max-w-7xl px-5 py-18 sm:px-8"><div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between"><div><Eyebrow>Current work</Eyebrow><h2 className="mt-4 text-3xl font-bold tracking-[-0.05em] text-slate-950 sm:text-4xl">Projects and research areas.</h2></div><ButtonLink href="/projects" secondary>Explore projects <Icon className="size-4" name="arrow" /></ButtonLink></div><div className="mt-10 grid gap-4 lg:grid-cols-2">{projects.slice(0, 2).map((project) => <article className="rounded-2xl border border-slate-200 bg-white p-6" key={project.title}><p className="text-xs font-bold uppercase tracking-[0.15em] text-blue-600">{project.category}</p><h3 className="mt-3 text-xl font-bold text-slate-950">{project.title}</h3><p className="mt-3 text-sm leading-6 text-slate-600">{project.description}</p><p className="mt-5 inline-flex rounded-full bg-slate-100 px-3 py-1.5 text-xs font-bold text-slate-600">{project.status}</p></article>)}</div></section>
+    <section className="border-y border-slate-200 bg-slate-50"><div className="mx-auto max-w-7xl px-5 py-18 sm:px-8"><div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between"><div><Eyebrow>Public references</Eyebrow><h2 className="mt-4 text-3xl font-bold tracking-[-0.05em] text-slate-950 sm:text-4xl">Public Mentions</h2><p className="mt-4 max-w-2xl leading-7 text-slate-600">Factual public references connected to Sardorbek Musurmonov, GREEN OPS, and National AI Hackathon results.</p></div><ButtonLink href="/press" secondary>View public mentions <Icon className="size-4" name="arrow" /></ButtonLink></div><div className="mt-9"><MentionsGrid limit={2} /></div></div></section>
+    <section className="border-t border-slate-200 bg-white"><div className="mx-auto max-w-7xl px-5 py-18 sm:px-8"><Eyebrow>Official profiles</Eyebrow><h2 className="mt-4 mb-9 text-3xl font-bold tracking-[-0.05em] text-slate-950">Connect through official channels.</h2><ProfilesGrid /></div></section>
+  </>;
 }
