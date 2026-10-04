@@ -15,14 +15,14 @@ Vercel Production uchun quyidagi barcha 6 sozlama mavjudligi tekshirildi. Previe
 4. Kompyuteringizda **.env.example** nusxasidan **.env.local** yarating. Bu fayl git tomonidan e’tiborga olinmaydi.
 5. Quyidagi server sozlamalarini to‘ldiring va Vercel loyihasining **Settings → Environment Variables → Production** bo‘limiga kiriting.
 
-| Nomi                      | Qiymat manbai                                                                                                              |
-| ------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| SUPABASE_URL              | https://psxkpfymzezlcsaasomg.supabase.co                                                                                   |
-| SUPABASE_SERVICE_ROLE_KEY | Supabase Settings → API Keys → legacy service_role server kaliti. Anon yoki publishable kalit bu boshqaruv uchun mos emas. |
-| TELEGRAM_BOT_TOKEN        | BotFather bergan @sardorcodevbot tokeni                                                                                    |
-| TELEGRAM_ADMIN_USER_ID    | O‘zingizning raqamli Telegram user ID’ingiz; username emas                                                                 |
-| TELEGRAM_WEBHOOK_SECRET   | npm run bot:secrets yaratgan birinchi maxfiy qiymat                                                                        |
-| CMS_PREVIEW_SECRET        | npm run bot:secrets yaratgan ikkinchi, alohida qiymat                                                                      |
+| Nomi                      | Qiymat manbai                                                                                                                                             |
+| ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| SUPABASE_URL              | https://psxkpfymzezlcsaasomg.supabase.co                                                                                                                  |
+| SUPABASE_SERVICE_ROLE_KEY | Supabase Settings → API Keys → server Secret kaliti (sb_secret_..., tavsiya). Legacy service_role JWT ham ishlaydi. Anon yoki publishable kalit mos emas. |
+| TELEGRAM_BOT_TOKEN        | BotFather bergan @sardorcodevbot tokeni                                                                                                                   |
+| TELEGRAM_ADMIN_USER_ID    | O‘zingizning raqamli Telegram user ID’ingiz; username emas                                                                                                |
+| TELEGRAM_WEBHOOK_SECRET   | npm run bot:secrets yaratgan birinchi maxfiy qiymat                                                                                                       |
+| CMS_PREVIEW_SECRET        | npm run bot:secrets yaratgan ikkinchi, alohida qiymat                                                                                                     |
 
 Maxfiy qiymatlarni chatga yoki GitHub fayliga yubormang. Ularni o‘zingizning .env.local faylingiz va Vercel’ning maxfiy sozlamalariga kiriting. Qiymatlarni birgalikda to‘ldiring: qisman kiritilgan baza konfiguratsiyasi ishga tushmaydi.
 

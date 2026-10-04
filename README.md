@@ -31,6 +31,8 @@ Unit tests execute the actual migration in PostgreSQL through PGlite. They cover
 
 The CMS flow check rebuilds the real app against an isolated PGlite-backed provider and runs on port 3103. Stop local Next.js servers before running it. It verifies the webhook, preview, publication, browser article/search, translation metadata, RSS, sitemap, revision isolation and unpublication; it contacts no real Telegram or Supabase service and restores the previous build.
 
+If a restricted local environment prevents Turbopack from opening its internal worker socket, use npm run build -- --webpack and npm run test:cms:flow -- --webpack for local verification. The default build and CI continue to use Turbopack.
+
 ## Content and routes
 
 - src/content/en.ts, uz.ts and ru.ts contain the core translated copy. TypeScript checks translation parity.
