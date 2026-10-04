@@ -2,9 +2,11 @@ import type { Metadata, Viewport } from "next";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { getDictionary, requireLocale } from "@/content";
+import { getProfiles } from "@/lib/cms/content";
 import { locales } from "@/lib/locales";
-import { pageMetadata, safeJson, site, socialProfiles } from "@/lib/site";
+import { pageMetadata, safeJson, site } from "@/lib/site";
 import "../globals.css";
+import "../workshop.css";
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
@@ -14,7 +16,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   colorScheme: "light dark",
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#fcfbf8" },
+    { media: "(prefers-color-scheme: light)", color: "#faf7f0" },
     { media: "(prefers-color-scheme: dark)", color: "#121923" },
   ],
 };
@@ -57,7 +59,7 @@ export default async function LocaleLayout({
         url: site.url,
         email: site.email,
         image: site.url + "/images/portrait.webp",
-        sameAs: socialProfiles.map((profile) => profile.href),
+        sameAs: (await getProfiles(locale)).map((profile) => profile.published.url),
         description: d.meta.description,
       },
       {

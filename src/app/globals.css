@@ -2,7 +2,7 @@
 @import "tailwindcss";
 
 :root {
-  --bg: #fcfbf8;
+  --bg: #faf7f0;
   --surface: #ffffff;
   --soft: #f1f3f6;
   --ink: #222b3a;
@@ -13,7 +13,7 @@
   --blue-soft: #edf2ff;
   --warm: #fff4d9;
   --green: #236448;
-  --header: #fcfbf8ed;
+  --header: #faf7f0ed;
   --shadow: 0 20px 45px -28px #20325655;
   color-scheme: light;
 }

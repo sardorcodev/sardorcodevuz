@@ -1,3 +1,4 @@
+import { workshop } from "@/content/workshop";
 import Link from "next/link";
 import { Icon } from "@/components/icon";
 import { ExternalLink } from "@/components/ui";
@@ -33,6 +34,7 @@ export function Footer({ locale, dictionary: d }: { locale: Locale; dictionary: 
             © {new Date().getFullYear()} sardorcodev. {d.common.builtBy}
           </p>
           <nav aria-label={d.common.official}>
+            <Link href={localePath(locale, "/blog")}>{workshop[locale].blog}</Link>
             <Link href={localePath(locale, "/press")}>{d.common.press}</Link>
             <Link href={localePath(locale, "/official")}>{d.common.official}</Link>
             <Link href={localePath(locale, "/contact")}>{d.common.contact}</Link>

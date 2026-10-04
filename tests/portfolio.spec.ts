@@ -8,6 +8,8 @@ const paths = [
   "/contact",
   "/press",
   "/official",
+  "/blog",
+  "/lab",
   "/projects/promptpilot",
   "/projects/smart-agro-ai",
   "/projects/propaint",
@@ -159,7 +161,7 @@ test("sitemap includes every locale and all case studies", async ({ request }) =
   const response = await request.get("/sitemap.xml");
   expect(response.status()).toBe(200);
   const xml = await response.text();
-  expect(xml.match(/<loc>/g)?.length).toBe(27);
+  expect(xml.match(/<loc>/g)?.length).toBe(33);
   for (const locale of locales)
     for (const path of paths) expect(xml).toContain("https://sardorcodev.uz/" + locale + path);
 });
@@ -182,7 +184,7 @@ test("portfolio content and language links work without JavaScript", async ({ br
   const context = await browser.newContext({ javaScriptEnabled: false });
   const page = await context.newPage();
   for (const locale of locales) {
-    await page.goto("http://127.0.0.1:3101/" + locale + "/projects");
+    await page.goto("http://127.0.0.1:3102/" + locale + "/projects");
     await expect(page.locator("h1")).toBeVisible();
     await expect(page.locator(".project-copy h3 a")).toHaveCount(3);
     await page.locator(".language-picker summary").click();

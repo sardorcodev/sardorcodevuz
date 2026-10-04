@@ -2,6 +2,15 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   experimental: { globalNotFound: true },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "psxkpfymzezlcsaasomg.supabase.co",
+        pathname: "/storage/v1/object/public/portfolio-media/**",
+      },
+    ],
+  },
   async redirects() {
     return [
       {
@@ -17,7 +26,7 @@ const nextConfig: NextConfig = {
         permanent: false,
       },
       { source: "/", destination: "/en", permanent: false },
-      ...["about", "projects", "contact", "press", "official"].map((path) => ({
+      ...["about", "projects", "contact", "press", "official", "blog", "lab"].map((path) => ({
         source: "/" + path,
         destination: "/en/" + path,
         permanent: true,
@@ -30,16 +39,23 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       {
+        source: "/:locale/preview/:path*",
+        headers: [
+          { key: "X-Robots-Tag", value: "noindex, nofollow, noarchive" },
+          { key: "Cache-Control", value: "private, no-store" },
+        ],
+      },
+      {
         source: "/(.*)",
         headers: [
           { key: "X-Content-Type-Options", value: "nosniff" },
           { key: "X-Frame-Options", value: "DENY" },
-          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          { key: "Referrer-Policy", value: "no-referrer" },
           { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
           {
             key: "Content-Security-Policy",
             value:
-              "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'",
+              "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://psxkpfymzezlcsaasomg.supabase.co; font-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'",
           },
         ],
       },
