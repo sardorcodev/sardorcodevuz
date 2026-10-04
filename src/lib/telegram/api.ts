@@ -108,7 +108,7 @@ export async function attachmentText(update: Update, field: string): Promise<str
     randomUUID() + (type === "image/jpeg" ? ".jpg" : type === "image/png" ? ".png" : ".webp");
   const uploaded = await fetch(db.url + "/storage/v1/object/portfolio-media/" + name, {
     method: "POST",
-    headers: { Authorization: "Bearer " + db.key, apikey: db.key, "Content-Type": type },
+    headers: { ...db.headers, "Content-Type": type },
     body: new Uint8Array(bytes),
     signal: AbortSignal.timeout(15000),
   });

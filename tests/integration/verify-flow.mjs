@@ -89,7 +89,7 @@ try {
     backedUp = true;
   }
   console.log("Building the real application against an isolated PostgreSQL provider.");
-  await completed(child(["build"]));
+  await completed(child(["build", ...(process.argv.includes("--webpack") ? ["--webpack"] : [])]));
   server = child(["start", "--hostname", "127.0.0.1", "--port", "3103"]);
   let serverError = "";
   server.stderr.on("data", (b) => (serverError += b.toString()));

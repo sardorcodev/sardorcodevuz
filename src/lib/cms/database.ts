@@ -1,8 +1,8 @@
 import { z } from "zod";
 
 export function databaseConfig() {
-  const url = process.env.SUPABASE_URL;
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const url = process.env.SUPABASE_URL?.trim();
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY?.trim();
   if (!url && !key) return null;
   if (!url || !key) throw new Error("Incomplete CMS database configuration");
   const parsed = new URL(url);
@@ -14,7 +14,10 @@ export function databaseConfig() {
     parsed.pathname !== "/"
   )
     throw new Error("Invalid Supabase URL");
-  return { url: parsed.origin, key };
+  const headers: Record<string, string> = { apikey: key };
+  // Modern server secrets are API keys, not JWTs. Only legacy keys use Bearer auth.
+  if (!key.startsWith("sb_secret_")) headers.Authorization = "Bearer " + key;
+  return { url: parsed.origin, key, headers };
 }
 export async function database<T>(
   path: string,
@@ -26,8 +29,7 @@ export async function database<T>(
   const response = await fetch(config.url + "/rest/v1/" + path, {
     ...options,
     headers: {
-      apikey: config.key,
-      Authorization: "Bearer " + config.key,
+      ...config.headers,
       "Content-Type": "application/json",
       ...options.headers,
     },
