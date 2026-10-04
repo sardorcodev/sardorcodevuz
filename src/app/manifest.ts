@@ -1,15 +1,18 @@
 import type { MetadataRoute } from "next";
-import { siteDescription } from "@/lib/site";
+import { site } from "@/lib/site";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "sardorcodev",
     short_name: "sardorcodev",
-    description: siteDescription,
+    description: site.name,
     start_url: "/",
-    display: "standalone",
-    background_color: "#f7f9fc",
-    theme_color: "#2563eb",
-    icons: [{ src: "/favicon.ico", sizes: "any", type: "image/x-icon" }],
+    display: "browser",
+    background_color: "#fcfbf8",
+    theme_color: "#2553c7",
+    icons: [
+      { src: "/icon.svg", sizes: "any", type: "image/svg+xml" },
+      { src: "/apple-icon.png", sizes: "180x180", type: "image/png" },
+    ],
   };
 }

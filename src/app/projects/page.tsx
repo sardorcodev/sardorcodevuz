@@ -1,8 +1,0 @@
-import { Eyebrow, PageHero, TelegramCallout } from "@/components/ui";
-import { createPageMetadata, projects } from "@/lib/site";
-
-export const metadata = createPageMetadata({ title: "Projects", description: "Explore sardorcodev areas of work, experiments, and research topics.", path: "/projects" });
-
-export default function ProjectsPage() {
-  return <><PageHero eyebrow="Projects & Research" title="Active areas of work and exploration." text="sardorcodev develops and studies practical systems across AI, automation, and software development. The entries below describe ongoing work, not claims of completed public products." /><section className="mx-auto max-w-7xl px-5 py-18 sm:px-8"><div className="grid gap-5 md:grid-cols-2">{projects.map((project, index) => <article className="rounded-3xl border border-slate-200 bg-white p-7" key={project.title}><div className="flex items-center justify-between gap-4"><p className="text-xs font-bold uppercase tracking-[0.15em] text-blue-600">{project.category}</p><span className="text-sm font-bold text-slate-300">0{index + 1}</span></div><h2 className="mt-8 text-2xl font-bold tracking-[-0.04em] text-slate-950">{project.title}</h2><p className="mt-4 leading-7 text-slate-600">{project.description}</p><p className="mt-6 inline-flex rounded-full bg-blue-50 px-3 py-1.5 text-xs font-bold text-blue-700">{project.status}</p></article>)}</div><div className="mt-10 border-l-4 border-blue-500 pl-5"><Eyebrow>Project transparency</Eyebrow><p className="mt-3 max-w-3xl leading-7 text-slate-600">Public availability, release details, and documentation will be shared when appropriate. This page intentionally distinguishes active work and research from released products.</p></div></section><TelegramCallout /></>;
-}

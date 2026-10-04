@@ -1,5 +1,0 @@
-import { ImageResponse } from "next/og";
-export const alt = "sardorcodev - AI, Software Development & Automation";
-export const size = { width: 1200, height: 630 };
-export const contentType = "image/png";
-export default function Image() { return new ImageResponse(<div style={{ alignItems: "center", background: "#07152f", color: "white", display: "flex", height: "100%", padding: "72px", width: "100%" }}><div style={{ display: "flex", flexDirection: "column" }}><div style={{ color: "#60a5fa", fontSize: 24, fontWeight: 700, letterSpacing: 4, textTransform: "uppercase" }}>Official website</div><div style={{ display: "flex", fontSize: 88, fontWeight: 800, letterSpacing: -5, marginTop: 22 }}>sardorcodev<span style={{ color: "#3b82f6" }}>.</span></div><div style={{ color: "#cbd5e1", fontSize: 38, marginTop: 30 }}>AI, Software Development &amp; Automation</div><div style={{ display: "flex", gap: 32, marginTop: 70 }}><div style={{ color: "#60a5fa", fontSize: 24 }}>sardorcodev.uz</div><div style={{ color: "#94a3b8", fontSize: 24 }}>Official Telegram: t.me/sardorcodev</div></div></div></div>); }
