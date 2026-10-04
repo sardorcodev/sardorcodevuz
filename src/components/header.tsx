@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { workshop } from "@/content/workshop";
 import { Icon } from "@/components/icon";
 import {
   locales,
@@ -19,6 +20,8 @@ export function Header({ locale, labels }: { locale: Locale; labels: Dictionary[
   const header = useRef<HTMLElement>(null);
   const links = [
     { path: "/projects", label: labels.projects },
+    { path: "/blog", label: workshop[locale].blog },
+    { path: "/lab", label: workshop[locale].lab },
     { path: "/about", label: labels.about },
     { path: "/contact", label: labels.contact },
   ];
