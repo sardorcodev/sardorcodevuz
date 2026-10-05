@@ -180,11 +180,14 @@ test("reduced motion disables interface transitions", async ({ page }) => {
   );
 });
 
-test("portfolio content and language links work without JavaScript", async ({ browser }) => {
-  const context = await browser.newContext({ javaScriptEnabled: false });
+test("portfolio content and language links work without JavaScript", async ({
+  browser,
+  baseURL,
+}) => {
+  const context = await browser.newContext({ javaScriptEnabled: false, baseURL });
   const page = await context.newPage();
   for (const locale of locales) {
-    await page.goto("http://127.0.0.1:3102/" + locale + "/projects");
+    await page.goto("/" + locale + "/projects");
     await expect(page.locator("h1")).toBeVisible();
     await expect(page.locator(".project-copy h3 a")).toHaveCount(3);
     await page.locator(".language-picker summary").click();

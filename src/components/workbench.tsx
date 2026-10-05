@@ -4,6 +4,7 @@ import Link from "next/link";
 import type { Locale } from "@/lib/locales";
 import { localePath } from "@/lib/locales";
 import { workshop } from "@/content/workshop";
+import { studio } from "@/content/studio";
 import { Icon } from "./icon";
 
 export function Workbench({
@@ -112,6 +113,7 @@ export function Workbench({
             </>
           )}
         </div>
+        <div className="workbench-skillline">{studio[locale].deskSkills[active]}</div>
         <p>{d.deskNotes[active]}</p>
         <Link href={links[active]} className="text-link">
           {labels[active]}

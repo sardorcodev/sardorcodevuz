@@ -1,12 +1,16 @@
 .workshop-hero {
+  position: relative;
+  isolation: isolate;
   display: grid;
-  grid-template-columns: 1.1fr 1fr;
-  gap: 64px;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  gap: 56px;
   align-items: center;
-  padding: 74px 0 66px;
+  padding: 64px 0 58px;
 }
 .workshop-hero-copy {
   min-width: 0;
+  position: relative;
+  z-index: 1;
 }
 .portrait-signature {
   display: flex;
@@ -44,15 +48,22 @@
   transform: rotate(-45deg);
 }
 .workshop-hero h1 {
-  font-size: clamp(2.4rem, 4.1vw, 3.7rem);
+  font-size: clamp(2.2rem, 4.1vw, 3.4rem);
+  line-height: 1.17;
+  letter-spacing: -0.06em;
 }
 .workshop-hero .intro-text {
   font-size: 1rem;
   max-width: 500px;
+  margin-top: 22px;
+}
+.workshop-hero .button-row {
+  margin-top: 26px;
 }
 .workshop-desk {
   min-width: 0;
   position: relative;
+  z-index: 1;
   padding: 22px 6px 0;
 }
 .desk-sticker {
@@ -60,20 +71,22 @@
   top: -17px;
   right: 24px;
   color: #6c893b;
-  font-size: 5rem;
+  font-size: 4rem;
   line-height: 1;
   z-index: 2;
   transform: rotate(13deg);
   pointer-events: none;
 }
 .workbench {
-  background: var(--surface);
+  background: color-mix(in srgb, var(--surface) 93%, transparent);
+  backdrop-filter: blur(6px);
   border: 1px solid var(--line);
-  border-radius: 16px;
+  border-radius: 18px;
   box-shadow:
-    8px 10px 0 var(--warm),
-    9px 11px 0 var(--line);
-  transform: rotate(-1deg);
+    6px 8px 0 var(--warm),
+    7px 9px 0 var(--line),
+    0 24px 70px -35px #233b6833;
+  transform: rotate(-0.5deg);
   overflow: hidden;
 }
 .workbench-chrome {
@@ -114,7 +127,8 @@
   padding: 16px 16px 0;
 }
 .workbench-tabs button {
-  padding: 7px 11px;
+  padding: 10px 11px;
+  min-height: 44px;
   border: 1px solid transparent;
   background: transparent;
   border-radius: 6px;
@@ -129,10 +143,15 @@
   font-weight: 750;
 }
 .workbench-panel {
-  padding: 15px 26px 28px;
+  padding: 18px 24px 20px;
+}
+.workbench-skillline {
+  color: var(--muted);
+  font: 0.63rem var(--font-mono);
+  margin-top: 20px;
 }
 .workbench-panel > p {
-  margin-block: 18px 8px;
+  margin-block: 8px 8px;
   font-size: 0.85rem;
   font-weight: 650;
 }
@@ -285,7 +304,7 @@
   align-items: center;
   flex-wrap: wrap;
   gap: 14px;
-  padding: 18px 0;
+  padding: 16px 0;
   border-block: 1px solid var(--line);
   color: var(--muted);
   font:
@@ -306,10 +325,12 @@
 }
 .notebook-empty {
   border-block: 1px solid var(--line);
-  padding: 36px 22px;
+  padding: 30px 24px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--surface) 45%, var(--bg));
   display: flex;
   align-items: center;
-  gap: 40px;
+  gap: 28px;
 }
 .notebook-glyph {
   font:
@@ -359,9 +380,9 @@
   gap: 26px;
 }
 .workshop-notes article {
-  padding: 34px;
+  padding: 32px;
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: var(--radius);
   position: relative;
   overflow: hidden;
 }
@@ -420,6 +441,12 @@
 .journal-topline .text-link {
   font-size: 0.75rem;
 }
+.journal-entry-count {
+  display: block;
+  margin-top: 7px;
+  font-family: "Manrope Variable", Arial, sans-serif;
+  font-size: 0.7rem;
+}
 .journal-filters {
   display: flex;
   gap: 20px;
@@ -445,7 +472,9 @@
   padding: 12px 14px;
   color: var(--ink);
   border-radius: 7px;
-  font: 0.9rem inherit;
+  font: inherit;
+  font-size: 1rem;
+  min-height: 48px;
 }
 .journal-filters input {
   font-family: inherit;
@@ -610,9 +639,58 @@
   margin-top: 50px;
 }
 .prose {
-  font-size: 1.025rem;
-  line-height: 1.95;
+  font-size: 1.0625rem;
+  line-height: 1.9;
   overflow-wrap: anywhere;
+}
+.article-contents {
+  margin-block: 28px 36px;
+  padding: 20px 24px;
+  background: var(--soft);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+.article-contents summary {
+  font-size: 0.85rem;
+  font-weight: 750;
+  cursor: pointer;
+  color: var(--ink);
+  min-height: 32px;
+}
+.article-contents ol {
+  padding-left: 22px;
+  margin-top: 14px;
+  max-height: 280px;
+  overflow-y: auto;
+}
+.article-contents li {
+  font-size: 0.85rem;
+  margin-top: 8px;
+  color: var(--muted);
+}
+.article-contents li[data-level="3"] {
+  margin-left: 16px;
+  font-size: 0.8rem;
+}
+.article-contents a {
+  color: var(--blue);
+  text-underline-offset: 4px;
+}
+.article-contents a:hover {
+  text-decoration: underline;
+}
+.prose .heading-permalink {
+  display: inline-block;
+  padding-inline: 10px;
+  color: var(--muted);
+  font-size: 0.65em;
+  text-decoration: none;
+  opacity: 0;
+}
+.prose h2:hover .heading-permalink,
+.prose h3:hover .heading-permalink,
+.prose .heading-permalink:focus-visible {
+  opacity: 1;
 }
 .prose > * + * {
   margin-top: 24px;
@@ -899,11 +977,11 @@
   .workshop-hero {
     grid-template-columns: 1fr;
     padding-top: 38px;
-    gap: 40px;
+    gap: 36px;
     padding-bottom: 34px;
   }
   .workshop-hero h1 {
-    font-size: clamp(2.3rem, 8vw, 3.3rem);
+    font-size: clamp(2.15rem, 8vw, 3.2rem);
   }
   .portrait-signature {
     margin-bottom: 23px;
@@ -940,7 +1018,7 @@
   }
   .notebook-empty {
     gap: 20px;
-    padding-inline: 0;
+    padding-inline: 18px;
     align-items: start;
   }
   .notebook-glyph {
@@ -992,7 +1070,7 @@
     font-size: 0.95rem;
   }
   .prose {
-    font-size: 0.95rem;
+    font-size: 1rem;
   }
   .prose h2 {
     font-size: 1.5rem;

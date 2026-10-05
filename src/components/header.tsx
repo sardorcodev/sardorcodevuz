@@ -1,8 +1,11 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
 import { workshop } from "@/content/workshop";
+import { studio } from "@/content/studio";
+import type { NavigationItem } from "@/lib/navigation";
 import { Icon } from "@/components/icon";
 import {
   locales,
@@ -13,9 +16,19 @@ import {
   type Locale,
 } from "@/lib/locales";
 import type { Dictionary } from "@/content/types";
-export function Header({ locale, labels }: { locale: Locale; labels: Dictionary["common"] }) {
+const CommandMenu = dynamic(() => import("./command-menu"));
+export function Header({
+  locale,
+  labels,
+  searchItems,
+}: {
+  locale: Locale;
+  labels: Dictionary["common"];
+  searchItems: NavigationItem[];
+}) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const menuButton = useRef<HTMLButtonElement>(null);
   const header = useRef<HTMLElement>(null);
   const links = [
@@ -25,6 +38,24 @@ export function Header({ locale, labels }: { locale: Locale; labels: Dictionary[
     { path: "/about", label: labels.about },
     { path: "/contact", label: labels.contact },
   ];
+  useEffect(() => {
+    const shortcut = (event: KeyboardEvent) => {
+      if (
+        (event.metaKey || event.ctrlKey) &&
+        !event.altKey &&
+        !event.shiftKey &&
+        !event.repeat &&
+        !event.isComposing &&
+        (event.code === "KeyK" || event.key.toLowerCase() === "k")
+      ) {
+        event.preventDefault();
+        setOpen(false);
+        setSearchOpen((value) => !value);
+      }
+    };
+    document.addEventListener("keydown", shortcut);
+    return () => document.removeEventListener("keydown", shortcut);
+  }, []);
   useEffect(() => {
     if (!open) return;
     const close = (event: KeyboardEvent) => {
@@ -78,6 +109,20 @@ export function Header({ locale, labels }: { locale: Locale; labels: Dictionary[
           ))}
         </nav>
         <div className="header-tools">
+          <button
+            type="button"
+            className="search-trigger"
+            aria-label={studio[locale].search}
+            aria-keyshortcuts="Control+k Meta+k"
+            title={studio[locale].search + " (Ctrl / ⌘ K)"}
+            onClick={() => {
+              setOpen(false);
+              setSearchOpen(true);
+            }}
+          >
+            <Icon name="search" />
+            <kbd aria-hidden="true">⌘ K</kbd>
+          </button>
           <details
             className="language-picker"
             onBlur={(event) => {
@@ -160,6 +205,9 @@ export function Header({ locale, labels }: { locale: Locale; labels: Dictionary[
           </Link>
         ))}
       </nav>
+      {searchOpen && (
+        <CommandMenu locale={locale} items={searchItems} onClose={() => setSearchOpen(false)} />
+      )}
     </header>
   );
 }

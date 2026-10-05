@@ -1,4 +1,12 @@
 const paths = {
+  pause: <path d="M9 5v14M15 5v14" />,
+  play: <path d="m8 4 12 8-12 8Z" />,
+  search: (
+    <>
+      <circle cx="10.5" cy="10.5" r="6.5" />
+      <path d="m16 16 5 5" />
+    </>
+  ),
   arrow: (
     <>
       <path d="M5 12h14" />

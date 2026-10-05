@@ -57,6 +57,8 @@ Preview deploylarda haqiqiy kontentni sinash uchun alohida Supabase loyiha/bot s
 
 **/start** yoki **/menu** asosiy menyuni ochadi. **/cancel** joriy maydonni kiritishni bekor qiladi.
 
+**/help** yoki **Foydalanish qo‘llanmasi** tugmasi bot ichidagi yo‘riqnomani ochadi. **/blog**, **/projects**, **/profiles** tegishli ro‘yxatga tez o‘tadi; joriy tanlangan kontent tili saqlanadi.
+
 1. Kontent tilini tanlang: Uz / En / Ru.
 2. **Blog**, **Loyihalar** yoki **Profillar** bo‘limiga kiring.
 3. Mavjud yozuvni oching yoki **+ Yangi** ni tanlang.

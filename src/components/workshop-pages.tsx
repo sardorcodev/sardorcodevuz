@@ -4,6 +4,7 @@ import type { Locale } from "@/lib/locales";
 import { localePath } from "@/lib/locales";
 import { getDictionary } from "@/content";
 import { workshop } from "@/content/workshop";
+import { studio } from "@/content/studio";
 import { site, safeJson } from "@/lib/site";
 import { getPosts, getProjects, getProfiles } from "@/lib/cms/content";
 import { readingMinutes, type PublicEntry, type ProjectData, type PostData } from "@/lib/cms/model";
@@ -11,15 +12,18 @@ import { Icon } from "./icon";
 import { ContactCallout, ExternalLink, Eyebrow, PageIntro, Tags } from "./ui";
 import { Workbench } from "./workbench";
 import { JournalList } from "./journal-list";
-import { MarkdownContent } from "./markdown";
+import { ArticleContents, MarkdownContent } from "./markdown";
 import { DrawingBoard } from "./drawing-board";
+import { ParticleField } from "./particle-field";
 
 export function ManagedProjectCard({
   entry,
   featured = false,
+  number,
 }: {
   entry: PublicEntry<ProjectData>;
   featured?: boolean;
+  number?: number;
 }) {
   const p = entry.published,
     d = getDictionary(entry.locale);
@@ -47,6 +51,11 @@ export function ManagedProjectCard({
         </span>
       </Link>
       <div className="project-copy">
+        {number && (
+          <span className="project-number" aria-hidden="true">
+            {String(number).padStart(2, "0")} /
+          </span>
+        )}
         <div className="project-category">{p.category}</div>
         <h3>
           <Link href={localePath(entry.locale, "/projects/" + entry.slug)}>
@@ -55,6 +64,10 @@ export function ManagedProjectCard({
           </Link>
         </h3>
         <p>{p.summary}</p>
+        <dl className="project-contribution">
+          <dt>{studio[entry.locale].role}</dt>
+          <dd>{p.role}</dd>
+        </dl>
         <Tags items={p.stack} />
         <p className="project-status">
           <span aria-hidden="true" />
@@ -75,6 +88,7 @@ export async function WorkshopHome({ locale }: { locale: Locale }) {
   return (
     <div className="container workshop-home">
       <section className="workshop-hero">
+        <ParticleField locale={locale} />
         <div className="workshop-hero-copy">
           <div className="portrait-signature">
             <Image
@@ -141,7 +155,12 @@ export async function WorkshopHome({ locale }: { locale: Locale }) {
       <section className="section selected-work" id="selected-work">
         <div className="section-heading section-heading-row">
           <div>
-            <Eyebrow>{d.home.selectedLabel}</Eyebrow>
+            <Eyebrow>
+              <span className="section-number" aria-hidden="true">
+                01
+              </span>
+              {d.home.selectedLabel}
+            </Eyebrow>
             <h2>{d.home.selectedTitle}</h2>
             <p>{d.home.selectedIntro}</p>
           </div>
@@ -152,14 +171,19 @@ export async function WorkshopHome({ locale }: { locale: Locale }) {
         </div>
         <div className="projects-grid">
           {projects.slice(0, 3).map((entry, i) => (
-            <ManagedProjectCard key={entry.id} entry={entry} featured={i === 0} />
+            <ManagedProjectCard key={entry.id} entry={entry} featured={i === 0} number={i + 1} />
           ))}
         </div>
       </section>
       <section className="section home-journal">
         <div className="section-heading section-heading-row">
           <div>
-            <Eyebrow>{w.journalLabel}</Eyebrow>
+            <Eyebrow>
+              <span className="section-number" aria-hidden="true">
+                02
+              </span>
+              {w.journalLabel}
+            </Eyebrow>
             <h2>{w.journalTitle}</h2>
             <p>{w.journalIntro}</p>
           </div>
@@ -196,7 +220,12 @@ export async function WorkshopHome({ locale }: { locale: Locale }) {
       </section>
       <section className="section workshop-notes">
         <article className="now-note">
-          <Eyebrow>{w.nowLabel}</Eyebrow>
+          <Eyebrow>
+            <span className="section-number" aria-hidden="true">
+              03
+            </span>
+            {w.nowLabel}
+          </Eyebrow>
           <h2>{w.nowTitle}</h2>
           <p>{w.nowText}</p>
           <Link href={localePath(locale, "/about")} className="text-link">
@@ -208,7 +237,12 @@ export async function WorkshopHome({ locale }: { locale: Locale }) {
           </span>
         </article>
         <article className="lab-note">
-          <Eyebrow>{w.labLabel}</Eyebrow>
+          <Eyebrow>
+            <span className="section-number" aria-hidden="true">
+              04
+            </span>
+            {w.labLabel}
+          </Eyebrow>
           <h2>{w.labTeaser}</h2>
           <svg viewBox="0 0 300 80" aria-hidden="true">
             <path d="M5 55 C50 -30 75 115 125 45 S220 15 290 50" />
@@ -232,7 +266,7 @@ export async function ManagedWorkPage({ locale }: { locale: Locale }) {
       <section className="projects-grid">
         <h2 className="sr-only">{d.common.projects}</h2>
         {entries.map((entry, i) => (
-          <ManagedProjectCard entry={entry} featured={i === 0} key={entry.id} />
+          <ManagedProjectCard entry={entry} featured={i === 0} number={i + 1} key={entry.id} />
         ))}
       </section>
       <div className="section learning-note">
@@ -296,7 +330,7 @@ export function ManagedProjectPage({ entry }: { entry: PublicEntry<ProjectData> 
         <figcaption>{p.imageAlt}</figcaption>
       </figure>
       <div className="case-body">
-        <MarkdownContent body={p.body} />
+        <MarkdownContent body={p.body} locale={entry.locale} />
       </div>
       <ContactCallout locale={entry.locale} dictionary={d} />
     </div>
@@ -347,7 +381,12 @@ export async function JournalPage({ locale }: { locale: Locale }) {
     <div className="container journal-container">
       <PageIntro label={w.journalLabel} title={w.journalTitle} intro={w.journalIntro} />
       <div className="journal-topline">
-        <span>sardorcodev / {w.blog.toLocaleLowerCase(locale)}</span>
+        <span>
+          sardorcodev / {w.blog.toLocaleLowerCase(locale)}
+          <span className="journal-entry-count">
+            {entries.length} {studio[locale].journalCount}
+          </span>
+        </span>
         <a className="text-link" href={localePath(locale, "/blog/feed.xml")}>
           {w.rss}
           <Icon name="arrow" />
@@ -464,7 +503,8 @@ export function JournalArticle({
           sizes="(max-width: 760px) 90vw, 760px"
         />
       )}
-      <MarkdownContent body={p.body} />
+      <ArticleContents body={p.body} locale={entry.locale} />
+      <MarkdownContent body={p.body} locale={entry.locale} />
       <footer className="article-footer">
         <Link href={localePath(entry.locale, "/blog")} className="text-link">
           ← {w.back}
