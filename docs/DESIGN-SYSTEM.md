@@ -19,7 +19,7 @@ Bu manbalarning uzoq muddatli uptime yoki boshqa saytlardan ustunligi o‘lchang
 - Yorug‘ rejim: iliq qog‘oz foni, to‘q siyoh, moviy aksent va sokin oltin/yashil detallar.
 - Qorong‘i rejim: to‘q fon, yorug‘ matn va moviy/yashil zarrachalar.
 - Manrope shriftlari mahalliy yuklanadi. Lotin va kirill matni bir tizimda.
-- Global ranglar, radius va monospace font tokenlari globals.css da. Yangi interaktiv komponentlar alohida CSS Modules bilan cheklangan.
+- Global ranglar, radius va monospace font tokenlari src/app/styles/base.css da, ustaxona stillari esa shu papkadagi workshop.css da. Yangi interaktiv komponentlar alohida CSS Modules bilan cheklangan.
 - Haqiqiy loyiha rasmlari, prototip/MVP holati va egasining hissasi ko‘rsatiladi. Yangi tajriba, natija yoki nashr qilingan blog yozuvi to‘qib chiqarilmaydi.
 
 ## Navigatsiya va qidiruv
