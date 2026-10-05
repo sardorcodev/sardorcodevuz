@@ -10,6 +10,10 @@ for (const locale of ["uz", "en", "ru"] as const) {
       page.on("pageerror", (error) => errors.push(error.message));
       await page.goto("/" + locale);
       const trigger = page.getByRole("button", { name: studio[locale].search, exact: true });
+      const target = await trigger.boundingBox();
+      expect(target?.width).toBeGreaterThanOrEqual(44);
+      expect(target?.height).toBeGreaterThanOrEqual(44);
+      await expect(trigger.locator("kbd")).not.toBeVisible();
       await trigger.focus();
       await page.keyboard.press("Control+k");
       const dialog = page.getByRole("dialog", { name: studio[locale].search });

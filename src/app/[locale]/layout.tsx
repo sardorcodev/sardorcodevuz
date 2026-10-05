@@ -7,8 +7,8 @@ import { workshop } from "@/content/workshop";
 import type { NavigationItem } from "@/lib/navigation";
 import { locales, localePath } from "@/lib/locales";
 import { pageMetadata, safeJson, site } from "@/lib/site";
-import "../globals.css";
-import "../workshop.css";
+import "../styles/base.css";
+import "../styles/workshop.css";
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
