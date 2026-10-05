@@ -2,8 +2,10 @@ import type { Metadata, Viewport } from "next";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { getDictionary, requireLocale } from "@/content";
-import { getProfiles } from "@/lib/cms/content";
-import { locales } from "@/lib/locales";
+import { getPosts, getProfiles, getProjects } from "@/lib/cms/content";
+import { workshop } from "@/content/workshop";
+import type { NavigationItem } from "@/lib/navigation";
+import { locales, localePath } from "@/lib/locales";
 import { pageMetadata, safeJson, site } from "@/lib/site";
 import "../globals.css";
 import "../workshop.css";
@@ -16,8 +18,8 @@ export const viewport: Viewport = {
   initialScale: 1,
   colorScheme: "light dark",
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#faf7f0" },
-    { media: "(prefers-color-scheme: dark)", color: "#121923" },
+    { media: "(prefers-color-scheme: light)", color: "#faf8f3" },
+    { media: "(prefers-color-scheme: dark)", color: "#101820" },
   ],
 };
 export async function generateMetadata({
@@ -48,6 +50,69 @@ export default async function LocaleLayout({
 }) {
   const locale = requireLocale((await params).locale),
     d = getDictionary(locale);
+  const [profiles, projects, posts] = await Promise.all([
+    getProfiles(locale),
+    getProjects(locale),
+    getPosts(locale),
+  ]);
+  const w = workshop[locale];
+  const searchItems: NavigationItem[] = [
+    {
+      href: localePath(locale),
+      title: d.common.home,
+      description: d.meta.description,
+      group: "pages",
+    },
+    {
+      href: localePath(locale, "/projects"),
+      title: d.common.projects,
+      description: d.work.intro,
+      group: "pages",
+    },
+    {
+      href: localePath(locale, "/blog"),
+      title: w.blog,
+      description: w.journalIntro,
+      group: "pages",
+    },
+    { href: localePath(locale, "/lab"), title: w.lab, description: w.labIntro, group: "pages" },
+    {
+      href: localePath(locale, "/about"),
+      title: d.common.about,
+      description: w.nowText,
+      group: "pages",
+    },
+    {
+      href: localePath(locale, "/official"),
+      title: d.common.official,
+      description: w.profileIntro,
+      group: "pages",
+    },
+    {
+      href: localePath(locale, "/contact"),
+      title: d.common.contact,
+      description: site.email,
+      group: "pages",
+    },
+    {
+      href: localePath(locale, "/press"),
+      title: d.common.press,
+      description: d.press.intro,
+      group: "pages",
+    },
+    ...projects.map((entry): NavigationItem => ({
+      href: localePath(locale, "/projects/" + entry.slug),
+      title: entry.published.title,
+      description: entry.published.category + " · " + entry.published.stack.join(" · "),
+      group: "projects",
+    })),
+    ...posts.slice(0, 25).map((entry): NavigationItem => ({
+      href: localePath(locale, "/blog/" + entry.slug),
+      title: entry.published.title,
+      description: w.topics[entry.published.category],
+      group: "posts",
+    })),
+  ];
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
@@ -59,7 +124,7 @@ export default async function LocaleLayout({
         url: site.url,
         email: site.email,
         image: site.url + "/images/portrait.webp",
-        sameAs: (await getProfiles(locale)).map((profile) => profile.published.url),
+        sameAs: profiles.map((profile) => profile.published.url),
         description: d.meta.description,
       },
       {
@@ -82,7 +147,7 @@ export default async function LocaleLayout({
           {d.common.skip}
         </a>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJson(jsonLd) }} />
-        <Header locale={locale} labels={d.common} />
+        <Header locale={locale} labels={d.common} searchItems={searchItems} />
         <main id="main-content" tabIndex={-1}>
           {children}
         </main>

@@ -26,6 +26,7 @@ function menu(session: Session): Reply {
     [
       ...kinds.map((kind) => [button(names[kind], "list:" + kind + ":0")]),
       [button("O‘zbekcha", "lang:uz"), button("English", "lang:en"), button("Русский", "lang:ru")],
+      [button("Foydalanish qo‘llanmasi", "help")],
     ],
   );
 }
@@ -84,12 +85,44 @@ export async function planUpdate(
     mutation,
     reply: message,
   });
-  const callback = update.callback_query?.data;
   const text = attachment ?? update.message?.text;
+  const shortcuts: Record<string, string> = {
+    "/blog": "list:post:0",
+    "/projects": "list:project:0",
+    "/profiles": "list:profile:0",
+    "/help": "help",
+  };
+  const callback =
+    update.callback_query?.data ??
+    shortcuts[
+      text
+        ?.trim()
+        .replace(/@sardorcodevbot$/i, "")
+        .toLowerCase() || ""
+    ];
   const reset = () => {
     session = { locale: session.locale };
   };
   try {
+    if (callback === "help") {
+      reset();
+      return plan(
+        reply(
+          "sardorcodev · Qisqa qo‘llanma\n\n" +
+            "/menu — bosh menyu va kontent tili\n/blog — blog yozuvlari\n/projects — loyihalar\n/profiles — profillar\n/cancel — joriy kiritishni bekor qilish\n\n" +
+            "1. Til va bo‘limni tanlang. Yozuvni oching yoki + Yangi ni bosing.\n" +
+            "2. Maydon tugmasini bosib, qiymatni yuboring. Tahrir qoralamada saqlanadi.\n" +
+            "3. Saytda oldindan ko‘rish orqali tekshiring.\n" +
+            "4. Nashr qilish → Tasdiqlash orqali ommaga chiqaring.\n\n" +
+            "Matn: Markdown yoki UTF-8 .md fayl (60 000 belgigacha). Rasm: JPEG, PNG, WebP (8 MB gacha).\n" +
+            "Tarjima har tilda alohida tekshiriladi va nashr qilinadi. Qoralama havolasi tahrirdan keyin yangilanadi.",
+          [
+            [button("Blog", "list:post:0"), button("Loyihalar", "list:project:0")],
+            [button("Bosh menyu", "menu")],
+          ],
+        ),
+      );
+    }
     if (text === "/start" || text === "/menu" || text === "/cancel" || callback === "menu") {
       reset();
       return plan(menu(session));

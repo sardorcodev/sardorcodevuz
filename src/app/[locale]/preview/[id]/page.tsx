@@ -60,7 +60,7 @@ export default async function Page({
             </div>
           ))}
       </dl>
-      <MarkdownContent body={text("body") || text("url") || w.emptyDraft} />
+      <MarkdownContent body={text("body") || text("url") || w.emptyDraft} locale={locale} />
     </div>
   );
 }

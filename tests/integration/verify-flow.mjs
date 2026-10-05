@@ -151,7 +151,7 @@ try {
   for (const [field, value] of Object.entries({
     title,
     summary: "Boshqaruv va maqola ko‘rinishini tekshiruvchi lokal yozuv.",
-    body: "## Tekshirish\n\nHaqiqiy Markdown va [GitHub](https://github.com/sardorcodev).\n\n<script>window.cmsUnsafeExecuted=true</script>\n\n[Unsafe](javascript:alert(1))\n\n![blocked](https://attacker.invalid/unsafe.svg)\n\n```js\nconst test = 1;\n```",
+    body: "## Tekshirish\n\nHaqiqiy Markdown va [GitHub](https://github.com/sardorcodev).\n\n<script>window.cmsUnsafeExecuted=true</script>\n\n[Unsafe](javascript:alert(1))\n\n![blocked](https://attacker.invalid/unsafe.svg)\n\n```js\nconst test = 1;\n```\n\n## Takroriy sarlavha\n\nYana bir bo‘lim.\n\n## Takroriy sarlavha\n\nBoshqa bo‘lim.",
     category: "learning",
   })) {
     await send(undefined, "field:" + id + ":" + field);
@@ -209,7 +209,18 @@ try {
   await page.getByRole("heading", { level: 1, name: title }).waitFor();
   assert.equal(await page.evaluate(() => window.cmsUnsafeExecuted), undefined);
   assert.equal(await page.locator(".prose img").count(), 0);
-  assert.equal(await page.locator(".prose h2").count(), 1);
+  assert.equal(await page.locator(".prose h2").count(), 3);
+  const toc = page.locator(".article-contents a");
+  assert.equal(await toc.count(), 3);
+  assert.notEqual(await toc.nth(1).getAttribute("href"), await toc.nth(2).getAttribute("href"));
+  await toc.nth(2).click();
+  const anchor = decodeURIComponent((await toc.nth(2).getAttribute("href")).slice(1));
+  assert.equal(await page.locator("[id='" + anchor + "']").count(), 1);
+  await page.getByRole("button", { name: "Saytdan qidirish", exact: true }).click();
+  const search = page.getByRole("dialog");
+  await search.getByRole("searchbox").fill("CMS orqali nashr sinovi");
+  assert.equal(await search.locator("[data-command-result]").count(), 1);
+  await page.keyboard.press("Escape");
   assert.equal(await page.locator(".prose pre code").textContent(), "const test = 1;\n");
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
   assert.deepEqual(errors, []);

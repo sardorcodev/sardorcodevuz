@@ -6,7 +6,7 @@ English, Uzbek and Russian versions share an interactive workshop design: warm c
 
 ## Development
 
-Use Node 24 (see .node-version). Node 22 or newer is supported.
+Use Node 24 (see .node-version). The Node 24 major version is pinned to match CI and Vercel; a new major version requires an intentional upgrade.
 
     npm ci
     npm run dev -- --hostname 127.0.0.1
@@ -80,6 +80,8 @@ ProPaint and PromptPilot were built independently from start to finish. Smart Ag
 The GREEN OPS hackathon reference links to Termez State University’s public Telegram announcement and records a team result. Actual project screenshots were captured from their default-branch applications on 2026-10-04: PromptPilot’s development optimizer, Smart Agro AI’s landing page and ProPaint’s Canvas editor. These are static illustrations; they do not imply a public production demo. Portrait and event photographs come from the original portfolio.
 
 ## Deployment
+
+Design references, visual tokens, keyboard search and the original particle background are documented in [docs/DESIGN-SYSTEM.md](docs/DESIGN-SYSTEM.md). Search includes public pages/projects and the latest 25 published entries; drafts remain private. The hero animation can be paused, honors reduced motion and stops offscreen or in a hidden tab. WebGL-free devices retain a static background.
 
 Next.js 16, React 19, TypeScript and self-hosted Manrope fonts with Latin/Cyrillic support. Install from package-lock.json and run npm run build. GitHub Actions runs formatting, lint, types, unit tests, build and browser checks. Dependabot proposes dependency updates.
 
