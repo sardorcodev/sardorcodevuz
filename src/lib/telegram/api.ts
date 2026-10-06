@@ -17,6 +17,15 @@ export function botConfig() {
     throw new Error("Invalid bot configuration");
   return { token, adminId, secret };
 }
+export class TelegramFailure extends Error {
+  constructor(
+    readonly definite: boolean,
+    readonly reason:
+      "rejected" | "not_modified" | "permission" | "rate_limit" | "connection" = "rejected",
+  ) {
+    super("Telegram request failed");
+  }
+}
 export async function telegram<T>(method: string, body: unknown): Promise<T> {
   const config = botConfig();
   if (!config) throw new Error("Bot is not configured");
@@ -30,10 +39,27 @@ export async function telegram<T>(method: string, body: unknown): Promise<T> {
       cache: "no-store",
     });
   } catch {
-    throw new Error("Telegram connection failed");
+    throw new TelegramFailure(false, "connection");
   }
-  const data = await response.json();
-  if (!response.ok || !data.ok) throw new Error("Telegram request failed");
+  let data;
+  try {
+    data = await response.json();
+  } catch {
+    throw new TelegramFailure(false, "connection");
+  }
+  if (!response.ok || !data.ok) {
+    const definite = response.status >= 400 && response.status < 500 && data.ok === false;
+    const description = typeof data.description === "string" ? data.description : "";
+    const reason = /message is not modified/i.test(description)
+      ? "not_modified"
+      : response.status === 429
+        ? "rate_limit"
+        : response.status === 403 ||
+            /not enough rights|chat not found|administrator rights/i.test(description)
+          ? "permission"
+          : "rejected";
+    throw new TelegramFailure(definite, reason);
+  }
   return data.result as T;
 }
 export async function readLimitedBody(request: Request | Response, limit: number) {

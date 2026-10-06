@@ -5,6 +5,10 @@ import { botConfig, telegram, readLimitedBody, attachmentText } from "@/lib/tele
 import { updateSchema, isAuthorized, type Reply } from "@/lib/telegram/types";
 import { planUpdate } from "@/lib/telegram/editor";
 import { editorStore, getSession, getRecordedUpdate } from "@/lib/telegram/store";
+import { planChannelUpdate } from "@/lib/telegram/channel-editor";
+import { channelStore } from "@/lib/telegram/channel-store";
+import { processChannelAction } from "@/lib/telegram/channel-actions";
+import { draftRequest, type ChannelPlan } from "@/lib/telegram/channel-model";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -35,7 +39,12 @@ export async function POST(request: Request) {
       const session = await getSession(config.adminId);
       let fileText: string | null = null;
       let fileError: string | null = null;
-      if (session.data.field && session.data.expires && session.data.expires > Date.now()) {
+      if (
+        !session.data.channel &&
+        session.data.field &&
+        session.data.expires &&
+        session.data.expires > Date.now()
+      ) {
         try {
           fileText = await attachmentText(update, session.data.field);
         } catch {
@@ -43,30 +52,47 @@ export async function POST(request: Request) {
             "Fayl qabul qilinmadi. Rasm 8 MB dan kichik JPEG/PNG/WebP, maqola esa UTF-8 .md bo‘lishi kerak. Qayta yuboring yoki /cancel.";
         }
       }
-      const plan = fileError
-        ? { session: session.data, mutation: null, reply: { text: fileError } }
-        : await planUpdate(update, session.data, editorStore, fileText);
-      committed = await rpc<{ reply: Reply; delivered: boolean }>("cms_commit_update", {
-        p_update_id: update.update_id,
-        p_user_id: config.adminId,
-        p_session_revision: session.revision,
-        p_session: plan.session,
-        p_mutation: plan.mutation,
-        p_reply: plan.reply,
-      });
+      const channelPlan = await planChannelUpdate(update, session.data, channelStore, editorStore);
+      const plan: ChannelPlan =
+        channelPlan ||
+        (fileError
+          ? { session: session.data, mutation: null, reply: { text: fileError } }
+          : await planUpdate(update, session.data, editorStore, fileText));
+      committed = await rpc<{ reply: Reply; delivered: boolean }>(
+        plan.channelMutation ? "channel_commit_update" : "cms_commit_update",
+        {
+          p_update_id: update.update_id,
+          p_user_id: config.adminId,
+          p_session_revision: session.revision,
+          p_session: plan.session,
+          p_mutation: plan.channelMutation || plan.mutation,
+          p_reply: plan.reply,
+        },
+      );
     }
+    const channelOutcome = await processChannelAction(update.update_id);
+    if (channelOutcome) committed.reply = channelOutcome;
     // Also invalidate on retry: the transaction may have committed before a previous request failed.
     revalidateTag("portfolio-content", { expire: 0 });
     revalidatePath("/sitemap.xml");
     if (!committed.delivered) {
+      const { channelPreview, ...reply } = committed.reply;
+      if (channelPreview) {
+        const preview = draftRequest(channelPreview);
+        await telegram(preview.method, {
+          chat_id: config.adminId,
+          ...preview.body,
+          disable_notification: true,
+        });
+      }
       await telegram("sendMessage", {
         chat_id: config.adminId,
-        ...committed.reply,
+        ...reply,
         link_preview_options: { is_disabled: true },
       });
       await database("cms_updates?update_id=eq." + update.update_id, {
         method: "PATCH",
-        body: JSON.stringify({ delivered: true }),
+        body: JSON.stringify({ delivered: true, reply: committed.reply }),
       });
     }
     return Response.json({ ok: true });

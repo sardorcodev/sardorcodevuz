@@ -23,6 +23,7 @@ Quality checks:
     npm run build
     npx playwright install chromium
     npm run test:cms:flow
+    npm run test:channel:flow
     npm test
 
 Browser tests use a production server on port 3102. They cover all locale routes, metadata, both themes, WCAG-tagged axe checks, responsive layouts, keyboard controls, Canvas drawing/export, draft exclusion, RSS, redirects, 404s and rendering without JavaScript. In environments with system Chromium, set PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH to its executable.
@@ -55,7 +56,9 @@ Bot: @sardorcodevbot. Database: https://psxkpfymzezlcsaasomg.supabase.co.
 
 [Setup and daily use guide (Uzbek)](docs/CONTENT-MANAGEMENT.md)
 
-The bot manages blog articles, projects and profile links. It accepts only the configured numeric administrator in a private Telegram chat. Saving updates the draft; publishing or unpublishing requires confirmation. English and Russian translations start as independent drafts and require separate review.
+The bot manages blog articles, projects, profile links and the owner’s Telegram channel. It accepts only the configured numeric administrator in a private Telegram chat. Saving updates the draft; publishing or unpublishing requires confirmation. English and Russian translations start as independent drafts and require separate review.
+
+/channel opens the @sardorcodev channel editor: text, photo, video and document posts, Telegram formatting, URL buttons, private previews, confirmed publication/edits/deletion, pin/unpin and title/description settings. A published blog can become a channel draft. The channel is bound to a verified numeric chat ID. Each public action is queued transactionally and claimed once; an ambiguous Telegram response requires explicit owner reconciliation, preventing automatic duplicate publication. Standard Bot API history and delayed scheduling are not provided. The isolated channel flow runs on port 3114 and never contacts a real Telegram or Supabase service.
 
 The webhook verifies Telegram’s secret header. Content changes, editor state and reply records commit together; retried updates do not apply a content change twice. Private previews expire after 30 minutes and are bound to one revision. Markdown disables raw HTML, validates links and restricts images to local media or the portfolio’s Supabase bucket.
 

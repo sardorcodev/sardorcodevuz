@@ -3,11 +3,12 @@ import { database } from "@/lib/cms/database";
 import { secretMatches } from "@/lib/cms/preview-token";
 import { botConfig, readLimitedBody, telegram } from "@/lib/telegram/api";
 import { site } from "@/lib/site";
+import { channelStatus } from "@/lib/telegram/channel-store";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
 const command = z.object({
-  action: z.enum(["check", "register"]),
+  action: z.enum(["check", "register", "channel"]),
   replaceExisting: z.boolean().default(false),
 });
 const response = (value: unknown, status = 200) =>
@@ -31,6 +32,8 @@ export async function POST(request: Request) {
     }
     const parsed = command.safeParse(input);
     if (!parsed.success) return response({ error: "Invalid request" }, 400);
+    if (parsed.data.action === "channel")
+      return response({ ready: true, channel: await channelStatus() });
     const [me, previous] = await Promise.all([
       telegram<{ username?: string }>("getMe", {}),
       telegram<{ url: string; pending_update_count?: number }>("getWebhookInfo", {}),
