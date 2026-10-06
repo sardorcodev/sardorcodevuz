@@ -460,11 +460,32 @@ try {
     button.callback_data?.startsWith("ch:reconcile:no:"),
   );
   assert.ok(notExecuted);
-  const recoveryConfirmation = (await send(undefined, notExecuted.callback_data)).reply;
+  const executed = buttons(recovery).find((button) =>
+    button.callback_data?.startsWith("ch:reconcile:yes:"),
+  );
+  const oldDecision = (await send(undefined, executed.callback_data)).reply;
+  const oldDecisionCommit = buttons(oldDecision).find((button) =>
+    button.callback_data?.startsWith("ch:reconcile:commit:"),
+  );
+  await send(undefined, notExecuted.callback_data);
+  assert.equal(
+    actionRow(await inspect(), uncertainSettingResult.input.update_id).status,
+    "uncertain",
+  );
+  const reopenedRecovery = (await send(undefined, resolveSetting.callback_data)).reply;
+  const currentNotExecuted = buttons(reopenedRecovery).find((button) =>
+    button.callback_data?.startsWith("ch:reconcile:no:"),
+  );
+  const recoveryConfirmation = (await send(undefined, currentNotExecuted.callback_data)).reply;
   const recoveryCommit = buttons(recoveryConfirmation).find((button) =>
     button.callback_data?.startsWith("ch:reconcile:commit:"),
   );
   assert.ok(recoveryCommit);
+  await send(undefined, oldDecisionCommit.callback_data);
+  assert.equal(
+    actionRow(await inspect(), uncertainSettingResult.input.update_id).status,
+    "uncertain",
+  );
   await send(undefined, recoveryCommit.callback_data);
   assert.equal(actionRow(await inspect(), uncertainSettingResult.input.update_id).status, "failed");
   assert.equal(
@@ -512,6 +533,208 @@ try {
   );
   console.log(
     "Successful Telegram send followed by database failure remains safe across active and expired claim retries.",
+  );
+  await send(undefined, "ch:resolve:" + persistenceId);
+  const originalDate = Math.floor(Date.now() / 1000) - 49 * 3600;
+  await control({
+    action: "ageAction",
+    updateId: persistenceInput.update_id,
+    seconds: 49 * 3600 + 5,
+  });
+  const originalSend = publicCalls(await inspect(), "sendMessage").at(-1);
+  const recovered = (
+    await send("Accepted Telegram post with failed result persistence", undefined, undefined, {
+      forward_origin: {
+        type: "channel",
+        chat: { id: -1001234567890, type: "channel" },
+        message_id: originalSend.message_id,
+        date: originalDate,
+      },
+    })
+  ).reply;
+  const recoveryButton = buttons(recovered).find((button) =>
+    button.callback_data?.startsWith("ch:reconcile:commit:"),
+  );
+  assert.ok(recoveryButton);
+  await send(undefined, recoveryButton.callback_data);
+  state = await inspect();
+  assert.equal(
+    postRow(state, persistenceId).published_at,
+    new Date(originalDate * 1000).toISOString(),
+  );
+  assert.equal(actionRow(state, persistenceInput.update_id).result.date, originalDate);
+  const beforeOldDelete = publicCalls(state, "deleteMessage").length;
+  assert.match((await send(undefined, "ch:confirm:d:" + persistenceId)).reply.text, /48/);
+  assert.equal(publicCalls(await inspect(), "deleteMessage").length, beforeOldDelete);
+  assert.equal(publicCalls(await inspect(), "sendMessage").length, beforePersistence + 1);
+
+  const dateEntity = {
+    type: "date_time",
+    offset: 0,
+    length: 6,
+    unix_time: Math.floor(Date.now() / 1000) + 86400,
+    date_time_format: "dT",
+  };
+  const dateId = await draft("ertaga uchrashuv", { entities: [dateEntity] });
+  await send(undefined, "ch:preview:" + dateId);
+  const datePublication = await action(dateId, "p");
+  state = await inspect();
+  assert.deepEqual(publicCalls(state, "sendMessage").at(-1).body.entities, [dateEntity]);
+  assert.equal(
+    postRow(state, dateId).published_at,
+    new Date(actionRow(state, datePublication.input.update_id).result.date * 1000).toISOString(),
+  );
+
+  await send(undefined, "ch:text:" + dateId);
+  await send("Tahrirlangan uchrashuv");
+  await control({ action: "configure", failure: { kind: "malformed", method: "editMessageText" } });
+  const malformedEdit = await action(dateId, "e");
+  state = await inspect();
+  assert.equal(actionRow(state, malformedEdit.input.update_id).status, "uncertain");
+  assert.equal(postRow(state, dateId).published.text, "ertaga uchrashuv");
+  const editRecovery = (await send(undefined, "ch:resolve:" + dateId)).reply;
+  const editNotApplied = buttons(editRecovery).find((button) =>
+    button.callback_data?.startsWith("ch:reconcile:no:"),
+  );
+  const editResolution = (await send(undefined, editNotApplied.callback_data)).reply;
+  await send(
+    undefined,
+    buttons(editResolution).find((button) =>
+      button.callback_data?.startsWith("ch:reconcile:commit:"),
+    ).callback_data,
+  );
+  await control({ action: "configure", failure: { kind: "malformed", method: "deleteMessage" } });
+  const malformedDelete = await action(dateId, "d");
+  state = await inspect();
+  assert.equal(actionRow(state, malformedDelete.input.update_id).status, "uncertain");
+  assert.equal(postRow(state, dateId).status, "published");
+  const deleteAttempts = publicCalls(state, "deleteMessage").length;
+  await webhook(malformedDelete.input);
+  assert.equal(publicCalls(await inspect(), "deleteMessage").length, deleteAttempts);
+  console.log(
+    "Telegram date formatting, original publication time, delayed recovery and malformed response safety verified.",
+  );
+  const mediaRecoveryId = await draft(undefined, {
+    photo: [
+      { file_id: "recovery-photo", file_unique_id: "recovery-photo-identity", file_size: 500 },
+    ],
+  });
+  const mediaPublishData = await confirmation(mediaRecoveryId, "p");
+  await control({ action: "configure", failure: { kind: "timeout", method: "sendPhoto" } });
+  const mediaAttempt = await send(undefined, mediaPublishData);
+  await send(undefined, "ch:resolve:" + mediaRecoveryId);
+  function forwardPhoto(fileId, uniqueId, messageId, date = Math.floor(Date.now() / 1000)) {
+    return send(undefined, undefined, undefined, {
+      photo: [{ file_id: fileId, file_unique_id: uniqueId }],
+      forward_origin: {
+        type: "channel",
+        chat: { id: -1001234567890, type: "channel" },
+        message_id: messageId,
+        date,
+      },
+    });
+  }
+  for (const rejected of [
+    await forwardPhoto("wrong-photo", "wrong-identity", 5001),
+    await forwardPhoto(
+      "changed-photo",
+      "recovery-photo-identity",
+      5001,
+      Math.floor(Date.now() / 1000) - 120,
+    ),
+  ])
+    assert.equal(
+      buttons(rejected.reply).some((button) =>
+        button.callback_data?.startsWith("ch:reconcile:commit:"),
+      ),
+      false,
+    );
+  const firstForward = (await forwardPhoto("changed-photo", "recovery-photo-identity", 5001)).reply;
+  const firstForwardCommit = buttons(firstForward).find((button) =>
+    button.callback_data?.startsWith("ch:reconcile:commit:"),
+  );
+  const latestForward = (await forwardPhoto("changed-again", "recovery-photo-identity", 5002))
+    .reply;
+  const latestForwardCommit = buttons(latestForward).find((button) =>
+    button.callback_data?.startsWith("ch:reconcile:commit:"),
+  );
+  assert.notEqual(firstForwardCommit.callback_data, latestForwardCommit.callback_data);
+  await send(undefined, firstForwardCommit.callback_data);
+  assert.equal(actionRow(await inspect(), mediaAttempt.input.update_id).status, "uncertain");
+  await send(undefined, latestForwardCommit.callback_data);
+  assert.equal(postRow(await inspect(), mediaRecoveryId).message_id, 5002);
+
+  const pendingId = await draft("Never-attempted pending action");
+  const pendingData = await confirmation(pendingId, "p");
+  const pendingInput = {
+    update_id: updateId++,
+    callback_query: { id: "pending", from: user, data: pendingData, message: { chat } },
+  };
+  const beforePending = publicCalls(await inspect(), "sendMessage").length;
+  await control({ action: "configure", databaseFailure: "rpc/channel_claim_action" });
+  await webhook(pendingInput, [503]);
+  assert.equal(actionRow(await inspect(), pendingInput.update_id).status, "pending");
+  const freshPending = (await send(undefined, "ch:resolve:" + pendingId)).reply;
+  assert.equal(
+    buttons(freshPending).some((button) => button.callback_data?.startsWith("ch:pending-cancel:")),
+    false,
+  );
+  await control({ action: "ageAction", updateId: pendingInput.update_id, seconds: 120 });
+  const pendingRecovery = (await send(undefined, "ch:resolve:" + pendingId)).reply;
+  const pendingCancel = buttons(pendingRecovery).find((button) =>
+    button.callback_data?.startsWith("ch:pending-cancel:"),
+  );
+  assert.ok(pendingCancel);
+  await send(undefined, pendingCancel.callback_data);
+  assert.equal(actionRow(await inspect(), pendingInput.update_id).status, "failed");
+  assert.equal(postRow(await inspect(), pendingId).status, "draft");
+  await webhook(pendingInput);
+  assert.equal(publicCalls(await inspect(), "sendMessage").length, beforePending);
+  await action(pendingId, "p");
+  assert.equal(publicCalls(await inspect(), "sendMessage").length, beforePending + 1);
+
+  await send(undefined, "ch:description");
+  const pendingSetting = (await send("Pending description update")).reply;
+  const pendingSettingData = buttons(pendingSetting).find((button) =>
+    button.callback_data?.startsWith("ch:setting:confirm:"),
+  ).callback_data;
+  const pendingSettingInput = {
+    update_id: updateId++,
+    callback_query: {
+      id: "pending-setting",
+      from: user,
+      data: pendingSettingData,
+      message: { chat },
+    },
+  };
+  await control({ action: "configure", databaseFailure: "rpc/channel_claim_action" });
+  await webhook(pendingSettingInput, [503]);
+  await control({ action: "ageAction", updateId: pendingSettingInput.update_id, seconds: 120 });
+  const pendingSettingRecovery = (
+    await send(undefined, "ch:resolve-settings:" + pendingSettingInput.update_id)
+  ).reply;
+  await send(
+    undefined,
+    buttons(pendingSettingRecovery).find((button) =>
+      button.callback_data?.startsWith("ch:pending-cancel:"),
+    ).callback_data,
+  );
+  assert.equal(actionRow(await inspect(), pendingSettingInput.update_id).status, "failed");
+  await send(undefined, "ch:description");
+  const unchangedSetting = (await send("Current channel description")).reply;
+  await control({
+    action: "configure",
+    failure: { kind: "not_modified", method: "setChatDescription" },
+  });
+  const unchanged = await send(
+    undefined,
+    buttons(unchangedSetting).find((button) =>
+      button.callback_data?.startsWith("ch:setting:confirm:"),
+    ).callback_data,
+  );
+  assert.equal(actionRow(await inspect(), unchanged.input.update_id).status, "succeeded");
+  console.log(
+    "Exact Forward media/time/confirmation, abandoned pending cancellation and unchanged description results verified.",
   );
   console.log(
     "Channel integration passed using only fake Telegram/Supabase credentials and isolated local PostgreSQL.",

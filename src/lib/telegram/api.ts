@@ -50,7 +50,7 @@ export async function telegram<T>(method: string, body: unknown): Promise<T> {
   if (!response.ok || !data.ok) {
     const definite = response.status >= 400 && response.status < 500 && data.ok === false;
     const description = typeof data.description === "string" ? data.description : "";
-    const reason = /message is not modified/i.test(description)
+    const reason = /(?:message|chat (?:description|title)) is not modified/i.test(description)
       ? "not_modified"
       : response.status === 429
         ? "rate_limit"

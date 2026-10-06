@@ -1,14 +1,14 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { readFileSync, readdirSync } from "node:fs";
 import { PGlite } from "@electric-sql/pglite";
 
-const migrations = [
-  "20261004181759_portfolio_content_cms.sql",
-  "20261006065225_telegram_channel_manager.sql",
-].map((filename) =>
-  readFileSync(new URL("../../supabase/migrations/" + filename, import.meta.url), "utf8"),
-);
+const migrations = readdirSync(new URL("../../supabase/migrations/", import.meta.url))
+  .filter((filename) => filename.endsWith(".sql"))
+  .sort()
+  .map((filename) =>
+    readFileSync(new URL("../../supabase/migrations/" + filename, import.meta.url), "utf8"),
+  );
 const owner = 5452614265;
 const chatId = -1001234567890;
 const postId = "11111111-1111-4111-8111-111111111111";
@@ -108,6 +108,23 @@ async function published(db: PGlite) {
 }
 const conflict = (error: unknown) =>
   typeof error === "object" && error !== null && "code" in error && error.code === "40001";
+async function agePendingFixture(db: PGlite, updateId: number) {
+  // Simulate elapsed time only in this isolated database; production action
+  // creation timestamps remain immutable throughout the cancellation flow.
+  await db.exec(
+    "reset role; alter table channel_actions disable trigger channel_actions_immutable",
+  );
+  try {
+    await db.query(
+      "update channel_actions set created_at=clock_timestamp()-interval '2 minutes' where update_id=$1",
+      [updateId],
+    );
+  } finally {
+    await db.exec(
+      "alter table channel_actions enable trigger channel_actions_immutable; set role service_role",
+    );
+  }
+}
 
 test("channel tables and RPCs are private while service_role can manage the channel", async (t) => {
   const db = await fixture();
@@ -385,6 +402,53 @@ test("manual failure on an expired sending action releases the lock for a new ow
   assert.equal((await claim(db, 4))?.claimed, true);
 });
 
+test("stale pending post and settings actions cancel without claiming or applying a remote result", async (t) => {
+  const db = await fixture();
+  t.after(() => db.close());
+  await bind(db);
+  await create(db);
+  await queue(db, 2, "publish");
+  const cancellation = { op: "cancel_pending", id: postId, revision: 2, action_update_id: 2 };
+  await assert.rejects(commit(db, 3, cancellation), conflict);
+  await agePendingFixture(db, 2);
+  await assert.rejects(commit(db, 3, { ...cancellation, id: otherPostId }), conflict);
+  await assert.rejects(commit(db, 3, { ...cancellation, revision: 99 }), conflict);
+  await commit(db, 3, cancellation);
+  assert.equal((await row(db, "channel_actions", 2)).status, "failed");
+  assert.deepEqual((await row(db, "channel_actions", 2)).result, {
+    manual: true,
+    not_attempted: true,
+  });
+  assert.equal((await row(db, "channel_posts", postId)).status, "draft");
+  assert.equal((await row(db, "channel_posts", postId)).message_id, null);
+  assert.equal((await claim(db, 2))?.claimed, false);
+  assert.equal((await commit(db, 3, cancellation)).duplicate, true);
+  await assert.rejects(commit(db, 4, cancellation), conflict);
+  await queue(db, 4, "publish");
+  assert.equal((await claim(db, 4))?.claimed, true);
+  await queue(db, 5, "set_title", null);
+  await agePendingFixture(db, 5);
+  await commit(db, 6, { op: "cancel_pending", action_update_id: 5 });
+  await queue(db, 7, "set_title", null);
+  assert.equal((await claim(db, 7))?.claimed, true);
+});
+
+test("a sender claim wins over an old pending cancellation and cancellation never closes uncertainty", async (t) => {
+  const db = await fixture();
+  t.after(() => db.close());
+  await bind(db);
+  await create(db);
+  await queue(db, 2, "publish");
+  await agePendingFixture(db, 2);
+  await claim(db, 2);
+  const cancellation = { op: "cancel_pending", id: postId, revision: 2, action_update_id: 2 };
+  await assert.rejects(commit(db, 3, cancellation), conflict);
+  assert.equal((await row(db, "channel_actions", 2)).status, "sending");
+  await finish(db, 2, "uncertain");
+  await assert.rejects(commit(db, 3, cancellation), conflict);
+  assert.equal((await row(db, "channel_actions", 2)).status, "uncertain");
+});
+
 test("settings actions use only the bound channel and also reserve uncertain outcomes", async (t) => {
   const db = await fixture();
   t.after(() => db.close());
@@ -405,4 +469,73 @@ test("settings actions use only the bound channel and also reserve uncertain out
     /Invalid channel action/,
   );
   assert.equal(await value(db, "select count(*)::integer as value from channel_posts"), 0);
+});
+
+test("publication time survives delayed recovery and legacy replies without resetting the deletion window", async (t) => {
+  const db = await fixture();
+  t.after(() => db.close());
+  await bind(db);
+  await create(db);
+  await queue(db, 2, "publish");
+  await claim(db, 2);
+  const publicationDate = Math.floor(Date.now() / 1000) - 49 * 3600;
+  await finish(db, 2, "uncertain");
+  await commit(db, 3, {
+    op: "reconcile",
+    id: postId,
+    revision: 2,
+    action_update_id: 2,
+    resolution: "succeeded",
+    message_id: 123,
+    date: publicationDate,
+  });
+  assert.equal(
+    new Date((await row(db, "channel_posts", postId)).published_at as string).getTime(),
+    publicationDate * 1000,
+  );
+  assert.deepEqual((await row(db, "channel_actions", 2)).result, {
+    manual: true,
+    message_id: 123,
+    date: publicationDate,
+  });
+  await create(db, 4, otherPostId);
+  await queue(db, 5, "publish", otherPostId);
+  await claim(db, 5);
+  await db.query("update channel_actions set started_at=to_timestamp($1) where update_id=5", [
+    publicationDate,
+  ]);
+  await finish(db, 5, "uncertain");
+  await commit(db, 6, {
+    op: "reconcile",
+    id: otherPostId,
+    revision: 2,
+    action_update_id: 5,
+    resolution: "succeeded",
+    message_id: 456,
+  });
+  assert.equal(
+    new Date((await row(db, "channel_posts", otherPostId)).published_at as string).getTime(),
+    publicationDate * 1000,
+  );
+});
+
+test("normal publication preserves Telegram's date and rejects a future result atomically", async (t) => {
+  const db = await fixture();
+  t.after(() => db.close());
+  await bind(db);
+  await create(db);
+  await queue(db, 2, "publish");
+  await claim(db, 2);
+  const date = Math.floor(Date.now() / 1000) - 120;
+  await assert.rejects(
+    finish(db, 2, "succeeded", { message_id: 123, date: date + 3600 }),
+    /Invalid publication date/,
+  );
+  assert.equal((await row(db, "channel_actions", 2)).status, "sending");
+  assert.equal((await row(db, "channel_posts", postId)).status, "draft");
+  assert.equal(await finish(db, 2, "succeeded", { message_id: 123, date }), true);
+  assert.equal(
+    new Date((await row(db, "channel_posts", postId)).published_at as string).getTime(),
+    date * 1000,
+  );
 });

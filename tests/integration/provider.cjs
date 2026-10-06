@@ -85,6 +85,29 @@ if (process.argv.includes("start") && process.env.CMS_VERIFY_CONTROL_PORT) {
           [body.updateId],
         );
         reply({ ok: true });
+      } else if (
+        body.action === "ageAction" &&
+        Number.isSafeInteger(body.seconds) &&
+        body.seconds > 0 &&
+        body.seconds < 5184000
+      ) {
+        const db = await database();
+        // Advancing fixture time is a test-only control. The immutable timestamp
+        // guard remains enabled for every application request and RPC.
+        await db.exec(
+          "reset role; alter table channel_actions disable trigger channel_actions_immutable",
+        );
+        try {
+          await db.query(
+            "update channel_actions set created_at = clock_timestamp() - ($2 * interval '1 second'), started_at = case when started_at is null then null else clock_timestamp() - ($2 * interval '1 second') end where update_id = $1",
+            [body.updateId, body.seconds],
+          );
+        } finally {
+          await db.exec(
+            "alter table channel_actions enable trigger channel_actions_immutable; set role service_role",
+          );
+        }
+        reply({ ok: true });
       } else reply({ error: "Unknown control" }, 400);
     } catch {
       reply({ error: "Verification control failed" }, 500);
@@ -186,6 +209,21 @@ globalThis.fetch = async (input, options = {}) => {
       if (failure.kind === "timeout") {
         event.outcome = "uncertain";
         throw new Error("Local simulated connection timeout");
+      }
+      if (failure.kind === "malformed") {
+        event.outcome = "uncertain";
+        return json({ ok: true, result: false });
+      }
+      if (failure.kind === "not_modified") {
+        event.outcome = "unchanged";
+        return json(
+          {
+            ok: false,
+            error_code: 400,
+            description: "Bad Request: chat description is not modified",
+          },
+          400,
+        );
       }
       event.outcome = "rejected";
       return json(

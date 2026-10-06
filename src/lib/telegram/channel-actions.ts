@@ -36,11 +36,13 @@ function outcome(action: ChannelAction): Reply {
   if (action.status === "failed")
     return {
       text:
-        action.error_code === "permission"
-          ? "Amal bajarilmadi: botning kanal ruxsatlarini tekshiring. Kerakli ruxsatni bergach, postni qayta oching va amalni tasdiqlang."
-          : action.error_code === "rate_limit"
-            ? "Telegram vaqtincha ko‘p so‘rov cheklovini qo‘ydi. Birozdan keyin amalni yana tasdiqlang."
-            : "Telegram amalni qabul qilmadi. Post va bot ruxsatlarini tekshirib, qayta tasdiqlang.",
+        action.error_code === "OWNER_CANCELLED_BEFORE_SEND"
+          ? "Navbatdagi amal yuborilishidan oldin bekor qilingan. Post yoki sozlamani qayta ochib, yangi amalni alohida tasdiqlang."
+          : action.error_code === "permission"
+            ? "Amal bajarilmadi: botning kanal ruxsatlarini tekshiring. Kerakli ruxsatni bergach, postni qayta oching va amalni tasdiqlang."
+            : action.error_code === "rate_limit"
+              ? "Telegram vaqtincha ko‘p so‘rov cheklovini qo‘ydi. Birozdan keyin amalni yana tasdiqlang."
+              : "Telegram amalni qabul qilmadi. Post va bot ruxsatlarini tekshirib, qayta tasdiqlang.",
       reply_markup: { inline_keyboard: rows },
     };
   const labels = {
@@ -67,7 +69,7 @@ export async function processChannelAction(updateId: number): Promise<Reply | nu
   if (!claim.claimed) return outcome(claim.action);
   const action = claim.action;
   let status: "succeeded" | "failed" | "uncertain" = "failed";
-  let result: { message_id?: number } = {};
+  let result: { message_id?: number; date?: number } = {};
   let errorCode: string | null = null;
   let attempted = false;
   try {
@@ -121,7 +123,7 @@ export async function processChannelAction(updateId: number): Promise<Reply | nu
             : { ...common, ...(action.kind === "pin" ? { disable_notification: true } : {}) };
     }
     attempted = true;
-    const sent = await telegram<{ message_id?: number } | boolean>(method, body);
+    const sent = await telegram<{ message_id?: number; date?: number } | boolean>(method, body);
     if (action.kind === "publish") {
       if (
         !sent ||
@@ -130,8 +132,19 @@ export async function processChannelAction(updateId: number): Promise<Reply | nu
         Number(sent.message_id) <= 0
       )
         throw new TelegramFailure(false, "connection");
-      result = { message_id: sent.message_id };
+      result = {
+        message_id: sent.message_id,
+        ...(Number.isSafeInteger(sent.date) && Number(sent.date) > 0 ? { date: sent.date } : {}),
+      };
     }
+    // Boolean methods return true; edits in a channel return the edited Message.
+    // A malformed success response cannot safely establish the remote outcome.
+    else if (
+      action.kind === "edit"
+        ? !sent || typeof sent !== "object" || sent.message_id !== action.payload.message_id
+        : sent !== true
+    )
+      throw new TelegramFailure(false, "connection");
     status = "succeeded";
   } catch (error) {
     if (

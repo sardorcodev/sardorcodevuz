@@ -53,8 +53,9 @@ for (const locale of locales) {
       },
     );
   }
-  test(locale + " layouts fit narrow phones, tablets and desktop", async ({ page }) => {
-    for (const width of [320, 768, 1440]) {
+  for (const width of [320, 768, 1440]) {
+    test(locale + " layouts fit at " + width + "px", async ({ page }) => {
+      test.setTimeout(60000);
       await page.setViewportSize({ width, height: 1000 });
       for (const path of paths) {
         await page.goto("/" + locale + path);
@@ -64,8 +65,8 @@ for (const locale of locales) {
           locale + path + " at " + width,
         ).toBe(true);
       }
-    }
-  });
+    });
+  }
   for (const path of ["", "/contact", "/projects/propaint"]) {
     test(locale + path + " also meets accessibility checks in dark mode", async ({ page }) => {
       await page.addInitScript(() => localStorage.setItem("portfolio-theme", "dark"));

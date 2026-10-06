@@ -11,7 +11,12 @@ import {
   type ChannelStatus,
   type ChannelStore,
 } from "../../src/lib/telegram/channel-model";
-import type { EditorStore, Session, Update } from "../../src/lib/telegram/types";
+import {
+  updateSchema,
+  type EditorStore,
+  type Session,
+  type Update,
+} from "../../src/lib/telegram/types";
 
 const owner = 5452614265;
 const chatId = -1001234567890;
@@ -58,6 +63,7 @@ function settingAction(updateId: number, kind: "set_title" | "set_description"):
     chat_id: chatId,
     status: "uncertain",
     claim_token: null,
+    created_at: new Date().toISOString(),
     started_at: null,
     error_code: "connection",
     result: null,
@@ -355,4 +361,195 @@ test("URL buttons accept valid HTTPS destinations and reject unsafe links or exc
     Array.from({ length: 7 }, (_, i) => "Button " + i + " | https://example.com").join("\n"),
   ])
     assert.throws(() => parseChannelButtons(value), value);
+});
+
+test("Telegram date-time entities survive schema parsing and draft preview", () => {
+  const input = update("Uchrashuv ertaga");
+  input.message!.entities = [
+    { type: "date_time", offset: 10, length: 6, unix_time: 1791356400, date_time_format: "dT" },
+  ];
+  const parsed = updateSchema.parse(input);
+  assert.deepEqual(draftFromMessage(parsed).entities, input.message!.entities);
+  assert.throws(() =>
+    channelDraftSchema.parse({
+      type: "text",
+      text: "ertaga",
+      entities: [{ type: "date_time", offset: 0, length: 6 }],
+    }),
+  );
+});
+
+test("forwarded publication recovery preserves the original channel date", async () => {
+  const original = post();
+  original.last_action_id = 12345;
+  const action: ChannelAction = {
+    ...settingAction(12345, "set_title"),
+    kind: "publish",
+    post_id: original.id,
+    payload: { draft: original.draft },
+  };
+  const f = fixture([original], [action]);
+  const recovery = await f.plan(update(undefined, "ch:resolve:" + original.id));
+  const input = update(original.draft.text);
+  const date = Math.floor(Date.now() / 1000) - 49 * 3600;
+  action.started_at = new Date((date - 1) * 1000).toISOString();
+  input.message!.forward_origin = {
+    type: "channel",
+    chat: { id: chatId, type: "channel" },
+    message_id: 123,
+    date,
+  };
+  const forwarded = await f.plan(updateSchema.parse(input), recovery.session);
+  const confirmed = await f.plan(
+    update(undefined, callback(forwarded, "ch:reconcile:commit:")),
+    forwarded.session,
+  );
+  assert.equal(confirmed.channelMutation?.op, "reconcile");
+  assert.deepEqual(confirmed.channelMutation, {
+    op: "reconcile",
+    id: original.id,
+    revision: original.revision,
+    action_update_id: 12345,
+    resolution: "succeeded",
+    message_id: 123,
+    date,
+  });
+});
+
+test("each recovery decision invalidates earlier choices and confirmation buttons", async () => {
+  const f = fixture([], [settingAction(100, "set_title")]);
+  const opened = await f.plan(update(undefined, "ch:resolve-settings:100"));
+  const yes = await f.plan(
+    update(undefined, callback(opened, "ch:reconcile:yes:")),
+    opened.session,
+  );
+  const staleNo = await f.plan(
+    update(undefined, callback(opened, "ch:reconcile:no:")),
+    yes.session,
+  );
+  assert.equal(staleNo.channelMutation, undefined);
+  assert.equal(staleNo.session.channel?.resolution, "succeeded");
+  const reopened = await f.plan(update(undefined, "ch:resolve-settings:100"));
+  const no = await f.plan(
+    update(undefined, callback(reopened, "ch:reconcile:no:")),
+    reopened.session,
+  );
+  const staleCommit = await f.plan(
+    update(undefined, callback(yes, "ch:reconcile:commit:")),
+    no.session,
+  );
+  assert.equal(staleCommit.channelMutation, undefined);
+  assert.equal(staleCommit.session.channel?.resolution, "failed");
+  assert.equal(
+    (await f.plan(update(undefined, callback(no, "ch:reconcile:commit:")), no.session))
+      .channelMutation?.op,
+    "reconcile",
+  );
+});
+
+test("Forward recovery matches stable media identity, attempt time and latest message confirmation", async () => {
+  for (const type of ["photo", "video", "document"] as const) {
+    const original = post();
+    original.draft = channelDraftSchema.parse({
+      type,
+      text: "",
+      file_id: "original-file",
+      file_unique_id: "original-identity",
+    });
+    original.last_action_id = 12345;
+    const action: ChannelAction = {
+      ...settingAction(12345, "set_title"),
+      kind: "publish",
+      post_id: original.id,
+      payload: { draft: original.draft },
+      started_at: new Date(Date.now() - 60000).toISOString(),
+    };
+    const f = fixture([original], [action]);
+    const recovery = await f.plan(update(undefined, "ch:resolve:" + original.id));
+    function forwarded(
+      fileId: string,
+      uniqueId?: string,
+      messageId = 123,
+      date = Math.floor(Date.now() / 1000),
+    ) {
+      const input = update();
+      const media = { file_id: fileId, ...(uniqueId ? { file_unique_id: uniqueId } : {}) };
+      if (type === "photo") input.message!.photo = [media];
+      else input.message![type] = media;
+      input.message!.forward_origin = {
+        type: "channel",
+        chat: { id: chatId, type: "channel" },
+        message_id: messageId,
+        date,
+      };
+      return updateSchema.parse(input);
+    }
+    for (const invalid of [
+      forwarded("other-file", "other-identity"),
+      forwarded("original-file", "other-identity"),
+      forwarded("original-file"),
+      forwarded("changed-file", "original-identity", 123, Math.floor(Date.now() / 1000) - 120),
+    ]) {
+      const rejected = await f.plan(invalid, recovery.session);
+      assert.equal(rejected.session.channel?.reconcileMessageId, undefined);
+      assert.equal(rejected.channelMutation, undefined);
+    }
+    const first = await f.plan(forwarded("changed-file", "original-identity"), recovery.session);
+    const latest = await f.plan(
+      forwarded("changed-again", "original-identity", 124),
+      first.session,
+    );
+    const stale = await f.plan(
+      update(undefined, callback(first, "ch:reconcile:commit:")),
+      latest.session,
+    );
+    assert.equal(stale.channelMutation, undefined);
+    assert.equal(stale.session.channel?.reconcileMessageId, 124);
+    const confirmed = await f.plan(
+      update(undefined, callback(latest, "ch:reconcile:commit:")),
+      latest.session,
+    );
+    assert.equal(
+      confirmed.channelMutation?.op === "reconcile" && confirmed.channelMutation.message_id,
+      124,
+    );
+    delete original.draft.file_unique_id;
+    const legacy = await f.plan(forwarded("original-file"), recovery.session);
+    assert.equal(legacy.session.channel?.reconcileMessageId, 123);
+    const mismatchedLegacy = await f.plan(forwarded("changed-file"), recovery.session);
+    assert.equal(mismatchedLegacy.session.channel?.reconcileMessageId, undefined);
+  }
+});
+
+test("only stale never-started pending actions offer nonce-bound cancellation", async () => {
+  const action: ChannelAction = { ...settingAction(100, "set_title"), status: "pending" };
+  const f = fixture([], [action]);
+  assert.equal(
+    (await f.plan(update(undefined, "ch:resolve-settings:100"))).session.channel?.mode,
+    undefined,
+  );
+  action.created_at = new Date(Date.now() - 120000).toISOString();
+  const opened = await f.plan(update(undefined, "ch:resolve-settings:100"));
+  const data = callback(opened, "ch:pending-cancel:");
+  assert.equal(
+    (await f.plan(update(undefined, data), { ...opened.session, expires: 1 })).channelMutation,
+    undefined,
+  );
+  const reopened = await f.plan(update(undefined, "ch:resolve-settings:100"));
+  assert.equal(
+    (await f.plan(update(undefined, data), reopened.session)).channelMutation,
+    undefined,
+  );
+  action.status = "sending";
+  assert.equal(
+    (await f.plan(update(undefined, callback(reopened, "ch:pending-cancel:")), reopened.session))
+      .channelMutation,
+    undefined,
+  );
+  action.status = "pending";
+  const confirmed = await f.plan(
+    update(undefined, callback(reopened, "ch:pending-cancel:")),
+    reopened.session,
+  );
+  assert.deepEqual(confirmed.channelMutation, { op: "cancel_pending", action_update_id: 100 });
 });

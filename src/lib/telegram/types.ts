@@ -20,19 +20,33 @@ const message = z.object({
       type: z.string().max(30),
       chat: chat.optional(),
       message_id: z.number().int().positive().optional(),
+      date: z.number().int().positive().optional(),
     })
     .optional(),
   photo: z
-    .array(z.object({ file_id: z.string().max(200), file_size: z.number().optional() }))
+    .array(
+      z.object({
+        file_id: z.string().max(200),
+        file_unique_id: z.string().min(1).max(200).optional(),
+        file_size: z.number().optional(),
+      }),
+    )
     .optional(),
   document: z
     .object({
       file_id: z.string().max(200),
+      file_unique_id: z.string().min(1).max(200).optional(),
       file_name: z.string().optional(),
       file_size: z.number().optional(),
     })
     .optional(),
-  video: z.object({ file_id: z.string().max(200), file_size: z.number().optional() }).optional(),
+  video: z
+    .object({
+      file_id: z.string().max(200),
+      file_unique_id: z.string().min(1).max(200).optional(),
+      file_size: z.number().optional(),
+    })
+    .optional(),
 });
 export const updateSchema = z.object({
   update_id: z.number().int().nonnegative(),
@@ -60,6 +74,12 @@ export type Session = {
   entryId?: string;
   field?: string;
   entryRevision?: number;
+  confirmation?: {
+    action: "publish" | "unpublish";
+    entryId: string;
+    revision: number;
+    nonce: string;
+  };
   expires?: number;
   channel?: ChannelSession;
 };

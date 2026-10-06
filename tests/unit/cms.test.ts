@@ -99,6 +99,61 @@ test("request body limits work even without a Content-Length header", async () =
   const body = new Request("http://localhost", { method: "POST", body: "123456" });
   await assert.rejects(() => readLimitedBody(body, 5), /BODY_TOO_LARGE/);
 });
+test("CMS publication requires the current unexpired confirmation, including after cancel", async () => {
+  const entry: AdminEntry = {
+    ...seedEntries()[0],
+    id: randomUUID(),
+    revision: 4,
+    draft: { ...seedEntries()[0].published },
+    published: null,
+    published_at: null,
+  };
+  const store: EditorStore = {
+    async get(id) {
+      return id === entry.id ? entry : null;
+    },
+    async list() {
+      return [entry];
+    },
+    async find() {
+      return entry;
+    },
+    async previous() {
+      return null;
+    },
+  };
+  const confirm = () =>
+    planUpdate(update(undefined, "confirm:" + entry.id + ":publish"), { locale: "uz" }, store);
+  const data = (plan: Plan) => plan.reply.reply_markup!.inline_keyboard[0][0].callback_data!;
+  const first = await confirm();
+  const current = await confirm();
+  assert.notEqual(data(first), data(current));
+  assert.ok(Buffer.byteLength(data(current)) <= 64);
+  for (const [callback, session] of [
+    [data(first), current.session],
+    [data(current), { ...current.session, expires: 1 }],
+    [data(current).replace("publish:", "unpublish:"), current.session],
+    ["publish:" + entry.id + ":" + entry.revision, current.session],
+  ] as const) {
+    assert.equal((await planUpdate(update(undefined, callback), session, store)).mutation, null);
+  }
+  const cancelled = await planUpdate(update("/cancel"), current.session, store);
+  assert.equal(
+    (await planUpdate(update(undefined, data(current)), cancelled.session, store)).mutation,
+    null,
+  );
+  const valid = await planUpdate(update(undefined, data(current)), current.session, store);
+  assert.equal(valid.mutation?.op, "publish");
+  assert.equal(
+    (await planUpdate(update(undefined, data(current)), valid.session, store)).mutation,
+    null,
+  );
+  entry.revision++;
+  assert.equal(
+    (await planUpdate(update(undefined, data(current)), current.session, store)).mutation,
+    null,
+  );
+});
 test("SQL transactions, access isolation and complete editor flows", async (t) => {
   const db = new PGlite();
   await db.exec(
@@ -235,7 +290,10 @@ test("SQL transactions, access isolation and complete editor flows", async (t) =
       assert.equal(entry.published, null);
       const confirmation = await run(undefined, "confirm:" + id + ":publish");
       assert.match(confirmation.plan.reply.text, /Nashr qilinsinmi/);
-      const publication = await run(undefined, "publish:" + id + ":" + entry.revision);
+      const publication = await run(
+        undefined,
+        confirmation.plan.reply.reply_markup!.inline_keyboard[0][0].callback_data,
+      );
       entry = (await store.get(id))!;
       assert.equal(entry.published?.title, data[kind].title);
       const publicationDate = (
@@ -264,15 +322,19 @@ test("SQL transactions, access isolation and complete editor flows", async (t) =
       assert.equal((await store.get(id))!.draft.title, data[kind].title);
       // A publication snapshot has the same draft; restoration must skip it.
       entry = (await store.get(id))!;
-      await run(undefined, "publish:" + id + ":" + entry.revision);
+      const republication = await run(undefined, "confirm:" + id + ":publish");
+      await run(
+        undefined,
+        republication.plan.reply.reply_markup!.inline_keyboard[0][0].callback_data,
+      );
       assert.notEqual((await store.previous(id))!.title, data[kind].title);
       entry = (await store.get(id))!;
       await run(undefined, "copy:" + id + ":en");
       const translation = (await store.find(kind, "test-" + kind, "en"))!;
       assert.ok(translation);
       assert.equal(translation.published, null);
-      await run(undefined, "confirm:" + id + ":unpublish");
-      await run(undefined, "unpublish:" + id + ":" + entry.revision);
+      const removal = await run(undefined, "confirm:" + id + ":unpublish");
+      await run(undefined, removal.plan.reply.reply_markup!.inline_keyboard[0][0].callback_data);
       assert.equal((await store.get(id))!.published, null);
       assert.equal((await store.get(id))!.draft.title, data[kind].title);
     });
@@ -292,6 +354,10 @@ test("SQL transactions, access isolation and complete editor flows", async (t) =
     await run(undefined, "field:" + entry.id + ":title");
     await run("/cancel");
     await run("Should not save");
+    assert.equal((await store.get(entry.id))!.draft.title, data.post.title);
+    await run(undefined, "field:" + entry.id + ":title");
+    await run("/cancel@sardorcodevbot");
+    await run("Should not save after addressed cancellation");
     assert.equal((await store.get(entry.id))!.draft.title, data.post.title);
   });
   await db.close();
