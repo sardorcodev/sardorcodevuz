@@ -5,7 +5,7 @@ import { PGlite } from "@electric-sql/pglite";
 
 const migrations = [
   "20261004181759_portfolio_content_cms.sql",
-  "20261006063840_telegram_channel_manager.sql",
+  "20261006065225_telegram_channel_manager.sql",
 ].map((filename) =>
   readFileSync(new URL("../../supabase/migrations/" + filename, import.meta.url), "utf8"),
 );
