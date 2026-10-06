@@ -85,16 +85,36 @@ Blog tarjimasi hali nashr qilinmagan bo‘lsa, saytda mavjud tillarga havola ko�
 
 ## Boshqaruv chegaralari
 
-- Botning dastlabki versiyasi blog, loyihalar va profillarni boshqaradi. Sayt dizayni va navigatsiya tarjimalari kodda qoladi.
-- Telegram kanaliga avtomatik post yuborish, rejalashtirib nashr qilish va AI tarjima ushbu versiyaga kiritilmagan.
+- Bot blog, loyihalar, profillar va @sardorcodev kanalini boshqaradi. Sayt dizayni va navigatsiya tarjimalari kodda qoladi.
+- Kanal postlari egasi tomonidan tayyorlanadi yoki nashr qilingan blogdan qoralama yaratiladi. AI matn yozish, rejalashtirilgan nashr va AI tarjima ushbu versiyaga kiritilmagan.
 - Draft preview 30 daqiqada eskiradi va aynan bitta tahrirga bog‘langan. Matn o‘zgargach, botdan yangi preview havolasini oling.
 - Telegram update qayta kelsa kontent amali takrorlanmaydi. Telegram xabarni qabul qilganidan keyin tarmoq uzilsa, tasdiq xabari takror kelishi mumkin; kontent o‘zgarishi takrorlanmaydi.
 - Bazada ruxsat faqat server service-role orqali beriladi. Brauzerga yoki ommaviy endpointga maxfiy kalit berilmaydi.
 - Provider ulanishidagi xato mavjud sahifalarni bo‘sh kontent bilan almashtirish uchun sabab bo‘lmaydi: xato holati tekshirishga qoldiriladi, mavjud cache imkon qadar xizmat qiladi.
 
+## Telegram kanalini boshqarish
+
+Botni @sardorcodev kanaliga administrator qilib qo‘shing. Post yozish uchun **Post messages**, tahrirlash va pin uchun **Edit messages**, kanal nomi/tavsifi uchun **Change channel info** ruxsatlari kerak. **Delete messages** ruxsatini ham berishingiz mumkin. Boshqa administratorlarni tayinlash ruxsati talab qilinmaydi. Boshqaruv faqat TELEGRAM_ADMIN_USER_ID egasining bot bilan shaxsiy chatida ochiladi.
+
+Kanal migratsiyasi: **supabase/migrations/20261006063840_telegram_channel_manager.sql**. U mavjud CMS jadvallarini va kontentni o‘zgartirmaydi; kanal qoralamalari va amallarini server uchun yopiq jadvallarga qo‘shadi. Yangi Production deploydan oldin migratsiya bajariladi. Yangi maxfiy sozlama talab qilinmaydi; amaldagi webhook va token ishlatiladi. Production-only setup endpointidagi **action: channel** bot va egasining administratorligini, kanal identifikatori va ruxsatlarini tekshiradi; kanalga xabar yubormaydi.
+
+1. Botga **/channel** yuboring yoki bosh menyudagi **Telegram kanal** tugmasini bosing. Kanal nomi, obunachilar soni va bot ruxsatlari ko‘rinadi. Birinchi tekshiruv @sardorcodev kanalini raqamli chat ID’siga bog‘laydi; keyingi amallar shu kanalga tegishli bo‘ladi.
+2. **+ Yangi post** ni tanlang. Oddiy matn yoki bitta rasm, video yoki hujjatni tavsifi bilan yuboring. Telegram’dagi qalin, kursiv, havola va boshqa standart formatlar saqlanadi. Bu bosqichda post kanalga chiqmaydi.
+3. **Havola tugmalari** bo‘limida har qatorda `Tugma nomi | https://havola` yozing. Ko‘pi bilan 6 ta tugma. Tugmalarni olib tashlash uchun **-** yuboring. Yangi post uchun bildirishnoma va matn havolasining oldindan ko‘rinishini sozlash mumkin.
+4. **Oldindan ko‘rish** postning aynan shu formatdagi nusxasini shaxsiy chatga yuboradi. Tekshirgach **Nashr qilish → Tasdiqlash** ni bosing.
+5. **Postlar va qoralamalar** ro‘yxatidan postni oching. Matn/tavsif, media yoki tugmalarni tahrirlang, so‘ng **Kanaldagi postni yangilash → Tasdiqlash** ni bosing. Nashr qilingan postning turi saqlanadi: masalan, foto o‘rniga matn qo‘yilmaydi.
+6. **Pin qilish / Pinni olish** va **Kanaldan o‘chirish** ham alohida tasdiqlanadi. Telegram 48 soatdan eski postni bot orqali o‘chirishga ruxsat bermaydi. Qoralamani yopish uni kanalda nashr qilmaydi.
+7. **Kanal sozlamalari** kanal nomi va tavsifini alohida tasdiq bilan o‘zgartiradi. Kanal username’i yoki boshqa adminlarning ruxsatlari o‘zgartirilmaydi.
+
+Saytda nashr qilingan blog yozuvini ochib, **Kanal uchun post tayyorlash** ni bosing. Sarlavha, qisqa mazmun va maqolaga havola tugmasi bilan qoralama yaratiladi; uni ko‘rib chiqib, alohida nashr qiling.
+
+Matn chegarasi **4096 belgi**, media tavsifi **1024 belgi**. Rasm **10 MB**, video/fayl **50 MB** gacha qabul qilinadi. Kanal media fayllari Telegram file_id orqali qayta ishlatiladi va portfolio’ning ommaviy Supabase omboriga yuklanmaydi. Albom, so‘rovnoma va kanalning oldingi postlar tarixini avtomatik import qilish hozircha qo‘llanmaydi. Boshqariladigan postlar shu bot orqali nashr qilinib, bazada qayd etiladi. [Telegram Bot API](https://core.telegram.org/bots/api).
+
+Telegram xabarni qabul qilganidan keyin tarmoq uzilsa, bot uni avtomatik qayta yubormaydi. Kanal amali **uncertain** holatida qoladi. **Natijani tekshirish** tugmasini oching: nashr qilingan postni kanalning o‘zidan botga Forward qilib bog‘lang yoki kanalni tekshirib, amal bajarilmaganini tasdiqlang. Pin, tahrir va kanal sozlamalari uchun ham haqiqiy natija alohida tasdiqlanadi. **sending** holati faol bo‘lsa kuting; 90 soniyadan keyin qayta ochilganda u tekshiriladigan noaniq holatga o‘tadi. Eski tasdiq tugmasi yangilangan qoralama yoki boshqa sozlamani tasdiqlay olmaydi.
+
 ## Tekshiruv va muammolarni aniqlash
 
-Buyruqlar: **npm run check**, **npm run test:unit**, **npm run build**, **npm test**.
+Buyruqlar: **npm run check**, **npm run test:unit**, **npm run build**, **npm test**, **npm run test:channel:flow -- --webpack**.
 
 Unit tekshiruvlar haqiqiy PostgreSQL semantikasini PGlite orqali ishga tushiradi: SQL migratsiya, seed, private access, atomik saqlash, takroriy update, barcha uch kontent turini nashr qilish va nashrdan olish sinovlari bor. Bu tanlangan Supabase loyihasidagi jonli integratsiya tekshiruvi o‘rnini bosmaydi.
 

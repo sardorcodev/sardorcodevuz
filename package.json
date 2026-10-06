@@ -15,6 +15,7 @@
     "test:ui": "playwright test --ui",
     "test:unit": "node --import tsx --test --test-isolation=none tests/unit/*.test.ts",
     "test:cms:flow": "node tests/integration/verify-flow.mjs",
+    "test:channel:flow": "node tests/integration/verify-channel.mjs",
     "cms:seed:generate": "node --import tsx scripts/generate-seed.ts",
     "bot:info": "node --import tsx scripts/configure-bot.ts info",
     "bot:identity": "node --import tsx scripts/configure-bot.ts identity",

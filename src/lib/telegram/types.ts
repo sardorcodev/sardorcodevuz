@@ -1,13 +1,27 @@
 import { z } from "zod";
 import type { Locale } from "@/lib/locales";
 import type { ContentKind, AdminEntry } from "@/lib/cms/model";
+import { entitySchema, type ChannelDraft, type ChannelSession } from "./channel-model";
 
 const user = z.object({ id: z.number().int().positive() });
 const chat = z.object({ id: z.number().int(), type: z.string() });
 const message = z.object({
+  message_id: z.number().int().positive().optional(),
+  date: z.number().int().nonnegative().optional(),
   from: user.optional(),
   chat,
   text: z.string().max(60000).optional(),
+  caption: z.string().max(4096).optional(),
+  entities: z.array(entitySchema).max(100).optional(),
+  caption_entities: z.array(entitySchema).max(100).optional(),
+  media_group_id: z.string().max(100).optional(),
+  forward_origin: z
+    .object({
+      type: z.string().max(30),
+      chat: chat.optional(),
+      message_id: z.number().int().positive().optional(),
+    })
+    .optional(),
   photo: z
     .array(z.object({ file_id: z.string().max(200), file_size: z.number().optional() }))
     .optional(),
@@ -18,6 +32,7 @@ const message = z.object({
       file_size: z.number().optional(),
     })
     .optional(),
+  video: z.object({ file_id: z.string().max(200), file_size: z.number().optional() }).optional(),
 });
 export const updateSchema = z.object({
   update_id: z.number().int().nonnegative(),
@@ -33,7 +48,11 @@ export const updateSchema = z.object({
 });
 export type Update = z.infer<typeof updateSchema>;
 export type Button = { text: string; callback_data?: string; url?: string };
-export type Reply = { text: string; reply_markup?: { inline_keyboard: Button[][] } };
+export type Reply = {
+  text: string;
+  reply_markup?: { inline_keyboard: Button[][] };
+  channelPreview?: ChannelDraft;
+};
 export type Session = {
   locale: Locale;
   kind?: ContentKind;
@@ -42,6 +61,7 @@ export type Session = {
   field?: string;
   entryRevision?: number;
   expires?: number;
+  channel?: ChannelSession;
 };
 export type Mutation =
   | {

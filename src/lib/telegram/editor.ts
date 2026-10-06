@@ -25,6 +25,7 @@ function menu(session: Session): Reply {
     "sardorcodev boshqaruvi\nKontent tili: " + session.locale.toUpperCase() + "\nBo‘limni tanlang.",
     [
       ...kinds.map((kind) => [button(names[kind], "list:" + kind + ":0")]),
+      [button("Telegram kanal", "ch:menu")],
       [button("O‘zbekcha", "lang:uz"), button("English", "lang:en"), button("Русский", "lang:ru")],
       [button("Foydalanish qo‘llanmasi", "help")],
     ],
@@ -53,6 +54,8 @@ function entryMenu(entry: AdminEntry, message = ""): Reply {
   ]);
   rows.push([button("Nashr qilish", "confirm:" + entry.id + ":publish")]);
   if (entry.published) rows.push([button("Nashrdan olish", "confirm:" + entry.id + ":unpublish")]);
+  if (entry.kind === "post" && entry.published)
+    rows.push([button("Kanal uchun post tayyorlash", "ch:blog:" + entry.id)]);
   rows.push([button("Oldingi qoralamani tiklash", "restore:" + entry.id)]);
   rows.push(
     ["uz", "en", "ru"]
@@ -109,7 +112,7 @@ export async function planUpdate(
       return plan(
         reply(
           "sardorcodev · Qisqa qo‘llanma\n\n" +
-            "/menu — bosh menyu va kontent tili\n/blog — blog yozuvlari\n/projects — loyihalar\n/profiles — profillar\n/cancel — joriy kiritishni bekor qilish\n\n" +
+            "/menu — bosh menyu va kontent tili\n/blog — blog yozuvlari\n/projects — loyihalar\n/profiles — profillar\n/channel — Telegram kanal boshqaruvi\n/cancel — joriy kiritishni bekor qilish\n\n" +
             "1. Til va bo‘limni tanlang. Yozuvni oching yoki + Yangi ni bosing.\n" +
             "2. Maydon tugmasini bosib, qiymatni yuboring. Tahrir qoralamada saqlanadi.\n" +
             "3. Saytda oldindan ko‘rish orqali tekshiring.\n" +
