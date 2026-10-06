@@ -5,6 +5,7 @@ import { site } from "@/lib/site";
 import {
   channelDraftSchema,
   draftFromMessage,
+  isCancellablePendingAction,
   parseChannelButtons,
   type ChannelActionKind,
   type ChannelMutation,
@@ -308,6 +309,32 @@ export async function planChannelUpdate(
       if (!Number.isSafeInteger(updateId) || updateId <= 0)
         throw new Error("Kanal amali topilmadi.");
       const action = await store.action(updateId);
+      if (action && isCancellablePendingAction(action)) {
+        session = {
+          locale: current.locale,
+          channel: {
+            mode: "cancel-pending",
+            reconcileUpdateId: action.update_id,
+            reconcileNonce: nonce(),
+            ...(post ? { postId: post.id, revision: post.revision } : {}),
+          },
+          expires: hour(),
+        };
+        return plan(
+          reply(
+            "Amal navbatda qolgan va Telegram’ga yuborish boshlanmagan. Navbatdagi amal bekor qilinsinmi? Keyin uni qayta ochib, alohida tasdiqlashingiz mumkin.",
+            [
+              [
+                button(
+                  "Navbatdagi amalni bekor qilish",
+                  "ch:pending-cancel:" + session.channel!.reconcileNonce,
+                ),
+              ],
+              [button("Kanal", "ch:menu")],
+            ],
+          ),
+        );
+      }
       if (!action || action.status !== "uncertain")
         throw new Error(
           "Amal hali bajarilmoqda yoki natijasi allaqachon saqlangan. Birozdan keyin qayta oching.",
@@ -347,6 +374,31 @@ export async function planChannelUpdate(
         ),
       );
     }
+    if (callback.startsWith("ch:pending-cancel:")) {
+      const state = session.channel;
+      if (
+        !session.expires ||
+        session.expires < Date.now() ||
+        state?.mode !== "cancel-pending" ||
+        !state.reconcileUpdateId ||
+        !state.reconcileNonce ||
+        callback !== "ch:pending-cancel:" + state.reconcileNonce
+      )
+        throw new Error("Tasdiq eskirgan. Amalni qayta oching.");
+      const action = await store.action(state.reconcileUpdateId);
+      if (!action || !isCancellablePendingAction(action))
+        throw new Error("Amal holati o‘zgargan. Qayta ochib, natijani tekshiring.");
+      const mutation: ChannelMutation = {
+        op: "cancel_pending",
+        action_update_id: state.reconcileUpdateId,
+        ...(state.postId ? { id: state.postId, revision: state.revision } : {}),
+      };
+      reset();
+      return plan(
+        reply("Yuborilmagan navbatdagi amal bekor qilindi.", [[button("Kanal", "ch:menu")]]),
+        mutation,
+      );
+    }
     if (callback.startsWith("ch:reconcile:")) {
       if (
         !session.expires ||
@@ -365,6 +417,7 @@ export async function planChannelUpdate(
         if (decision === "yes" && action.kind === "publish" && !session.channel.reconcileMessageId)
           throw new Error("Nashrni tasdiqlash uchun postni kanaldan Forward qiling.");
         session.channel.resolution = decision === "yes" ? "succeeded" : "failed";
+        session.channel.reconcileNonce = nonce();
         return plan(
           reply(
             decision === "yes"
@@ -386,6 +439,7 @@ export async function planChannelUpdate(
         action_update_id: state.reconcileUpdateId!,
         resolution: state.resolution!,
         ...(state.reconcileMessageId ? { message_id: state.reconcileMessageId } : {}),
+        ...(state.reconcileDate ? { date: state.reconcileDate } : {}),
       };
       reset();
       return plan(reply("Tekshirilgan natija saqlandi.", [[button("Kanal", "ch:menu")]]), mutation);
@@ -546,13 +600,26 @@ export async function planChannelUpdate(
       )
         throw new Error("Postni aynan @sardorcodev kanalidan Forward qiling.");
       const forwarded = draftFromMessage(update);
+      const expected = action.payload.draft;
+      const attemptedAt = Date.parse(action.started_at || action.created_at);
       if (
-        forwarded.type !== action.payload.draft?.type ||
-        forwarded.text !== action.payload.draft?.text
+        !expected ||
+        forwarded.type !== expected.type ||
+        forwarded.text !== expected.text ||
+        (expected.type !== "text" &&
+          (expected.file_unique_id
+            ? forwarded.file_unique_id !== expected.file_unique_id
+            : forwarded.file_id !== expected.file_id)) ||
+        !origin.date ||
+        !Number.isFinite(attemptedAt) ||
+        origin.date < Math.floor(attemptedAt / 1000) ||
+        origin.date > Math.floor(Date.now() / 1000) + 60
       )
         throw new Error("Forward qilingan post qoralamaga mos kelmadi. To‘g‘ri postni yuboring.");
       state.reconcileMessageId = origin.message_id;
+      state.reconcileDate = origin.date;
       state.resolution = "succeeded";
+      state.reconcileNonce = nonce();
       return plan(
         reply("Kanaldagi post topildi. Shu nashrni bazaga bog‘lashni tasdiqlang.", [
           [button("Tasdiqlash", "ch:reconcile:commit:" + state.reconcileNonce)],

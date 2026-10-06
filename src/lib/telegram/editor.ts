@@ -1,4 +1,4 @@
-import { randomUUID } from "node:crypto";
+import { randomBytes, randomUUID } from "node:crypto";
 import { ZodError } from "zod";
 import { isLocale } from "@/lib/locales";
 import { site } from "@/lib/site";
@@ -95,14 +95,11 @@ export async function planUpdate(
     "/profiles": "list:profile:0",
     "/help": "help",
   };
-  const callback =
-    update.callback_query?.data ??
-    shortcuts[
-      text
-        ?.trim()
-        .replace(/@sardorcodevbot$/i, "")
-        .toLowerCase() || ""
-    ];
+  const command = text
+    ?.trim()
+    .replace(/@sardorcodevbot$/i, "")
+    .toLowerCase();
+  const callback = update.callback_query?.data ?? shortcuts[command || ""];
   const reset = () => {
     session = { locale: session.locale };
   };
@@ -126,7 +123,7 @@ export async function planUpdate(
         ),
       );
     }
-    if (text === "/start" || text === "/menu" || text === "/cancel" || callback === "menu") {
+    if (["/start", "/menu", "/cancel"].includes(command || "") || callback === "menu") {
       reset();
       return plan(menu(session));
     }
@@ -219,19 +216,40 @@ export async function planUpdate(
       }
       if (action === "confirm" && (extra === "publish" || extra === "unpublish")) {
         if (extra === "publish") validateContent(entry.kind, entry.draft);
+        const nonce = randomBytes(8).toString("hex");
+        session.confirmation = {
+          action: extra,
+          entryId: entry.id,
+          revision: entry.revision,
+          nonce,
+        };
+        session.expires = Date.now() + 3600000;
         return plan(
           reply(
             extra === "publish"
               ? "Shu qoralama saytda ommaga ko‘rinadi. Nashr qilinsinmi?"
               : "Kontent saytdan yashiriladi, qoralama saqlanadi. Davom etilsinmi?",
             [
-              [button("Tasdiqlash", extra + ":" + entry.id + ":" + entry.revision)],
+              [button("Tasdiqlash", extra + ":" + entry.id + ":" + nonce)],
               [button("Qaytish", "open:" + entry.id)],
             ],
           ),
         );
       }
-      if ((action === "publish" || action === "unpublish") && Number(extra) === entry.revision) {
+      if (action === "publish" || action === "unpublish") {
+        const confirmation = current.confirmation;
+        if (
+          !current.expires ||
+          current.expires <= Date.now() ||
+          !confirmation ||
+          confirmation.action !== action ||
+          confirmation.entryId !== entry.id ||
+          confirmation.revision !== entry.revision ||
+          confirmation.nonce !== extra
+        ) {
+          session = { ...current };
+          throw new Error("Tasdiq eskirgan. Kontentni qayta ochib, amalni tasdiqlang.");
+        }
         const mutation: Plan["mutation"] =
           action === "publish"
             ? {

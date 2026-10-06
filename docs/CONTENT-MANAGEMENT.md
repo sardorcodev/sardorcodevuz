@@ -69,6 +69,8 @@ Preview deploylarda haqiqiy kontentni sinash uchun alohida Supabase loyiha/bot s
 
 Tahrirlar darhol qoralamada saqlanadi. Avvalgi nashr qilingan matn yangi nashr tasdiqlanmaguncha o‘zgarmaydi. **Nashrdan olish** sahifani yashiradi va qoralamani saqlaydi.
 
+Nashr va nashrdan olish tasdig‘i joriy seans va aynan shu tahrirga bog‘langan, bir soatda eskiradi. **/cancel**, boshqa yozuvni ochish yoki yangi tasdiq olish eski tasdiqni bekor qiladi. Bot yangilangach eski tugma ishlamasa, **/menu** orqali yozuvni qayta oching.
+
 Maqola matni Markdown ko‘rinishida bo‘ladi. Telegram xabar chegarasidan uzun maqolani UTF-8 .md fayl qilib yuborish mumkin (ilova chegarasi 60 000 belgi). Muqova/loyiha rasmi maydoniga JPEG, PNG yoki WebP yuboriladi, maksimal 8 MB. Rasm tavsifi ham to‘ldiriladi. Blog muqovasini olib tashlash uchun **-** yuboring. Loyiha rasmi majburiy.
 
 Blog mavzulari: **work** — ishlarim, **milestone** — yutuqlar, **thoughts** — fikrlar, **learning** — o‘rganish.
@@ -98,6 +100,10 @@ Botni @sardorcodev kanaliga administrator qilib qo‘shing. Post yozish uchun **
 
 Kanal migratsiyasi: **supabase/migrations/20261006065225_telegram_channel_manager.sql**. U 2026-10-06 kuni jonli loyihaga qo‘llandi; fayl versiyasi Supabase migratsiya tarixiga mos. U mavjud CMS jadvallarini va kontentni o‘zgartirmaydi; kanal qoralamalari va amallarini server uchun yopiq jadvallarga qo‘shadi. Boshqa loyihaga o‘rnatishda yangi Production deploydan oldin migratsiya bajariladi. Yangi maxfiy sozlama talab qilinmaydi; amaldagi webhook va token ishlatiladi. Production-only setup endpointidagi **action: channel** bot va egasining administratorligini, kanal identifikatori va ruxsatlarini tekshiradi; kanalga xabar yubormaydi.
 
+Audit tuzatishi **supabase/migrations/20261006080007_audit_channel_publication_time.sql** orqali qo‘llandi. U nashrning Telegram’dagi asl sanasini saqlaydi va oxirgi kanal amali uchun indeks qo‘shadi. Boshqa loyihaga o‘rnatishda bu migratsiyani ham tartib bilan bajaring.
+
+Navbatda qolgan amallarni bekor qilish **supabase/migrations/20261006082210_audit_channel_pending_recovery.sql** orqali qo‘shildi va 2026-10-06 kuni jonli bazaga qo‘llandi. Bu migratsiyani nashr vaqti tuzatishidan keyin bajaring; u mavjud kontentni o‘chirmaydi va server funksiya ruxsatlarini saqlaydi.
+
 1. Botga **/channel** yuboring yoki bosh menyudagi **Telegram kanal** tugmasini bosing. Kanal nomi, obunachilar soni va bot ruxsatlari ko‘rinadi. Birinchi tekshiruv @sardorcodev kanalini raqamli chat ID’siga bog‘laydi; keyingi amallar shu kanalga tegishli bo‘ladi.
 2. **+ Yangi post** ni tanlang. Oddiy matn yoki bitta rasm, video yoki hujjatni tavsifi bilan yuboring. Telegram’dagi qalin, kursiv, havola va boshqa standart formatlar saqlanadi. Bu bosqichda post kanalga chiqmaydi.
 3. **Havola tugmalari** bo‘limida har qatorda `Tugma nomi | https://havola` yozing. Ko‘pi bilan 6 ta tugma. Tugmalarni olib tashlash uchun **-** yuboring. Yangi post uchun bildirishnoma va matn havolasining oldindan ko‘rinishini sozlash mumkin.
@@ -111,6 +117,12 @@ Saytda nashr qilingan blog yozuvini ochib, **Kanal uchun post tayyorlash** ni bo
 Matn chegarasi **4096 belgi**, media tavsifi **1024 belgi**. Rasm **10 MB**, video/fayl **50 MB** gacha qabul qilinadi. Kanal media fayllari Telegram file_id orqali qayta ishlatiladi va portfolio’ning ommaviy Supabase omboriga yuklanmaydi. Albom, so‘rovnoma va kanalning oldingi postlar tarixini avtomatik import qilish hozircha qo‘llanmaydi. Boshqariladigan postlar shu bot orqali nashr qilinib, bazada qayd etiladi. [Telegram Bot API](https://core.telegram.org/bots/api).
 
 Telegram xabarni qabul qilganidan keyin tarmoq uzilsa, bot uni avtomatik qayta yubormaydi. Kanal amali **uncertain** holatida qoladi. **Natijani tekshirish** tugmasini oching: nashr qilingan postni kanalning o‘zidan botga Forward qilib bog‘lang yoki kanalni tekshirib, amal bajarilmaganini tasdiqlang. Pin, tahrir va kanal sozlamalari uchun ham haqiqiy natija alohida tasdiqlanadi. **sending** holati faol bo‘lsa kuting; 90 soniyadan keyin qayta ochilganda u tekshiriladigan noaniq holatga o‘tadi. Eski tasdiq tugmasi yangilangan qoralama yoki boshqa sozlamani tasdiqlay olmaydi.
+
+Tiklangan postning asl nashr sanasi Forward ma’lumotidan olinadi. Eski javobda sana bo‘lmasa, birinchi yuborish urinishining vaqti ishlatiladi; 48 soatlik o‘chirish oynasi tiklash paytida yangidan boshlanmaydi. Telegram’ning `date_time` sana formati ham matnda saqlanadi.
+
+Forward media qoralama bilan `file_unique_id` orqali solishtiriladi. Eski media qoralamasida bu qiymat bo‘lmasa, faqat aynan bir xil `file_id` qabul qilinadi. Urinishdan oldin nashr qilingan xabarni bog‘lab bo‘lmaydi. Har bir tanlangan qaror yoki qayta Forward yangi tasdiq tugmasini beradi; avvalgi tugma ishlamaydi.
+
+**pending** amal 90 soniyadan uzoq navbatda qolsa va yuborish hali boshlanmagan bo‘lsa, **Natijani tekshirish** orqali uni alohida tasdiq bilan bekor qilish mumkin. Keyingi yuborish yangidan tasdiqlanadi. Yuboruvchi amalni allaqachon egallagan bo‘lsa, bekor qilish rad etiladi; **sending** va **uncertain** holatlarida kanalning haqiqiy natijasini tekshirish tartibi saqlanadi.
 
 ## Tekshiruv va muammolarni aniqlash
 

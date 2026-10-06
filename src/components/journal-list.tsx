@@ -4,6 +4,7 @@ import Link from "next/link";
 import type { Locale } from "@/lib/locales";
 import { workshop } from "@/content/workshop";
 import { Icon } from "./icon";
+import { searchText } from "@/lib/navigation";
 
 export type JournalItem = {
   slug: string;
@@ -18,13 +19,12 @@ export function JournalList({ locale, entries }: { locale: Locale; entries: Jour
   const d = workshop[locale];
   const [query, setQuery] = useState("");
   const [topic, setTopic] = useState("");
-  const filtered = entries.filter(
-    (entry) =>
-      (!topic || entry.category === topic) &&
-      (entry.title + " " + entry.summary)
-        .toLocaleLowerCase(locale)
-        .includes(query.toLocaleLowerCase(locale).trim()),
-  );
+  const words = searchText(query, locale).trim().split(/\s+/).filter(Boolean);
+  const filtered = entries.filter((entry) => {
+    if (topic && entry.category !== topic) return false;
+    const text = searchText(entry.title + " " + entry.summary, locale);
+    return words.every((word) => text.includes(word));
+  });
   return (
     <>
       <div className="journal-filters">

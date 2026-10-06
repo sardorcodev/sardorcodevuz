@@ -31,12 +31,15 @@ export const entitySchema = z.object({
     "text_link",
     "text_mention",
     "custom_emoji",
+    "date_time",
   ]),
   offset: z.number().int().nonnegative(),
   length: z.number().int().positive(),
   url: z.string().max(2048).optional(),
   language: z.string().max(100).optional(),
   custom_emoji_id: z.string().max(100).optional(),
+  unix_time: z.number().int().optional(),
+  date_time_format: z.string().max(100).optional(),
   user: z
     .object({
       id: z.number().int().positive(),
@@ -53,6 +56,7 @@ export const channelDraftSchema = z
     text: z.string().max(4096),
     entities: z.array(entitySchema).max(100).default([]),
     file_id: z.string().min(1).max(200).optional(),
+    file_unique_id: z.string().min(1).max(200).optional(),
     buttons: z
       .array(z.object({ text: z.string().trim().min(1).max(40), url: httpsLink }))
       .max(6)
@@ -90,6 +94,12 @@ export const channelDraftSchema = z
         });
       if (entity.type === "custom_emoji" && !entity.custom_emoji_id)
         ctx.addIssue({ code: "custom", path: ["entities"], message: "Emoji identifikatori kerak" });
+      if (entity.type === "date_time" && entity.unix_time === undefined)
+        ctx.addIssue({
+          code: "custom",
+          path: ["entities"],
+          message: "Sana uchun Unix vaqti kerak",
+        });
     }
   });
 export type ChannelDraft = z.infer<typeof channelDraftSchema>;
@@ -123,9 +133,10 @@ export type ChannelAction = {
   chat_id: number;
   status: "pending" | "sending" | "succeeded" | "failed" | "uncertain";
   claim_token: string | null;
+  created_at: string;
   started_at: string | null;
   error_code: string | null;
-  result: { message_id?: number } | null;
+  result: { message_id?: number; date?: number } | null;
 };
 export type ChannelSession = {
   mode?:
@@ -135,6 +146,7 @@ export type ChannelSession = {
     | "buttons"
     | "settings-title"
     | "settings-description"
+    | "cancel-pending"
     | "reconcile";
   postId?: string;
   revision?: number;
@@ -147,6 +159,7 @@ export type ChannelSession = {
   };
   reconcileUpdateId?: number;
   reconcileMessageId?: number;
+  reconcileDate?: number;
   resolution?: "succeeded" | "failed";
   reconcileNonce?: string;
 };
@@ -162,12 +175,19 @@ export type ChannelMutation =
       payload: ChannelAction["payload"];
     }
   | {
+      op: "cancel_pending";
+      id?: string;
+      revision?: number;
+      action_update_id: number;
+    }
+  | {
       op: "reconcile";
       id?: string;
       revision?: number;
       action_update_id: number;
       resolution: "succeeded" | "failed";
       message_id?: number;
+      date?: number;
     };
 export type ChannelPlan = Plan & { channelMutation?: ChannelMutation };
 export type ChannelStatus = {
@@ -183,6 +203,14 @@ export interface ChannelStore {
   action(updateId: number): Promise<ChannelAction | null>;
   status(): Promise<ChannelStatus>;
   unfinishedSettings(): Promise<ChannelAction[]>;
+}
+export function isCancellablePendingAction(action: ChannelAction) {
+  return (
+    action.status === "pending" &&
+    !action.claim_token &&
+    !action.started_at &&
+    Date.parse(action.created_at) + 90000 < Date.now()
+  );
 }
 export function draftFromMessage(update: Update): ChannelDraft {
   const message = update.message;
@@ -205,7 +233,7 @@ export function draftFromMessage(update: Update): ChannelDraft {
     type,
     text: type === "text" ? message.text || "" : message.caption || "",
     entities: type === "text" ? message.entities || [] : message.caption_entities || [],
-    ...(media ? { file_id: media.file_id } : {}),
+    ...(media ? { file_id: media.file_id, file_unique_id: media.file_unique_id } : {}),
   });
 }
 export function parseChannelButtons(text: string) {

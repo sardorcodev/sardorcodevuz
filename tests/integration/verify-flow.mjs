@@ -150,7 +150,7 @@ try {
   const title = "CMS orqali nashr sinovi";
   for (const [field, value] of Object.entries({
     title,
-    summary: "Boshqaruv va maqola ko‘rinishini tekshiruvchi lokal yozuv.",
+    summary: "Boshqaruv va maqola ko‘rinishini tekshiruvchi o‘rganish yozuvi.",
     body: "## Tekshirish\n\nHaqiqiy Markdown va [GitHub](https://github.com/sardorcodev).\n\n<script>window.cmsUnsafeExecuted=true</script>\n\n[Unsafe](javascript:alert(1))\n\n![blocked](https://attacker.invalid/unsafe.svg)\n\n```js\nconst test = 1;\n```\n\n## Takroriy sarlavha\n\nYana bir bo‘lim.\n\n## Takroriy sarlavha\n\nBoshqa bo‘lim.",
     category: "learning",
   })) {
@@ -166,9 +166,19 @@ try {
   assert.match(previewResponse.headers.get("cache-control"), /private/);
   assert.ok(!(await textAt("/uz/blog")).includes(title));
   assert.equal((await request("/uz/blog/cms-integration-story")).status, 404);
-  const confirmation = await send(undefined, "confirm:" + id + ":publish");
-  const publish = buttons(confirmation.reply).find((b) => b.callback_data?.startsWith("publish:"));
+  let confirmation = await send(undefined, "confirm:" + id + ":publish");
+  let publish = buttons(confirmation.reply).find((b) => b.callback_data?.startsWith("publish:"));
   assert.ok(publish);
+  const cancelledCallback = publish.callback_data;
+  await send("/cancel@sardorcodevbot");
+  await send(undefined, cancelledCallback);
+  assert.equal((await request("/uz/blog/cms-integration-story")).status, 404);
+  confirmation = await send(undefined, "confirm:" + id + ":publish");
+  publish = buttons(confirmation.reply).find((b) => b.callback_data?.startsWith("publish:"));
+  assert.ok(publish);
+  assert.notEqual(publish.callback_data, cancelledCallback);
+  await send(undefined, cancelledCallback);
+  assert.equal((await request("/uz/blog/cms-integration-story")).status, 404);
   const publication = await send(undefined, publish.callback_data);
   await send(undefined, publish.callback_data, publication.input.update_id);
   console.log(
@@ -203,6 +213,10 @@ try {
   const errors = [];
   page.on("pageerror", (e) => errors.push(e.message));
   await page.goto(origin + "/uz/blog");
+  await page.locator(".journal-search input").fill("o'rganish");
+  assert.equal(await page.locator(".journal-row").count(), 1);
+  await page.locator(".journal-search input").fill("yozuvi o’rganish");
+  assert.equal(await page.locator(".journal-row").count(), 1);
   await page.locator(".journal-search input").fill("Nashr sinovi");
   assert.equal(await page.locator(".journal-row").count(), 1);
   await page.locator(".journal-row h2 a").click();
