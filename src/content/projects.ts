@@ -9,7 +9,7 @@ export const projects: Record<
     repository: "https://github.com/sardorcodev/PromptPilot",
     image: "/images/projects/promptpilot.webp",
     accent: "violet",
-    stack: ["Next.js", "TypeScript", "Supabase", "OpenAI"],
+    stack: ["Next.js", "TypeScript", "OpenAI"],
   },
   "smart-agro-ai": {
     name: "Smart Agro AI",
