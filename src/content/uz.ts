@@ -66,7 +66,7 @@ export const uz = {
   home: {
     eyebrow: "Full-stack dasturchi · ML o‘rganyapman",
     greeting: "Salom, men Sardorbek.",
-    headline: "Veb-ilovalar yarataman",
+    headline: "Veb-ilovalar yarataman.",
     intro:
       "Interfeysdan backendgacha — g‘oyalarni foydali veb-ilovalarga aylantirishni yoqtiraman. Hozir mashinaviy o‘rganish yo‘nalishini ham o‘rganyapman.",
     availability: "Full-stack ish takliflariga ochiqman",
