@@ -23,7 +23,7 @@ Bu manbalarning uzoq muddatli uptime yoki boshqa saytlardan ustunligi o‘lchang
 - Manrope shriftlari mahalliy yuklanadi. Lotin va kirill matni bir tizimda; sarlavhalar 500 og‘irlikda, erkin satr balandligi bilan.
 - Bosh sarlavha desktopda 72–84 px, kichik ekranda 33–44 px atrofida moslashadi. Sahifa bo‘shliqlari desktopda 64–96 px, mobil versiyada 40–64 px.
 - Asosiy tugmalar 48–52 px balandlikda, kapsula shaklida. Kartalar 24 px radiusli; mobil joylashuv bitta ustunga o‘tadi.
-- `base.css` — asosiy token va umumiy kontent; `workshop.css` — interaktiv vositalar; `google.css` — navigatsiya, bosh sahifa va umumiy editorial uslub; `editorial.css` — ichki sahifalar. Eski bosh sahifa stillari tozalandi. Interaktiv shader va qidiruv CSS Modules bilan cheklangan.
+- `foundation.css` — asosiy token va umumiy kontent; `workshop.css` — interaktiv vositalar; `google.css` — navigatsiya, bosh sahifa va umumiy editorial uslub; `editorial.css` — ichki sahifalar. Eski bosh sahifa stillari tozalandi. Interaktiv shader va qidiruv CSS Modules bilan cheklangan.
 - Haqiqiy loyiha rasmlari, prototip/MVP holati va egasining hissasi ko‘rsatiladi. Yangi tajriba, natija yoki nashr qilingan blog yozuvi to‘qib chiqarilmaydi.
 
 ## Navigatsiya va qidiruv
@@ -52,3 +52,5 @@ Control panel alohida layout va uslublarda ishlaydi. Sahifa matnlari, brend, kon
 ## Lokal ishlab chiqish
 
 Next.js development bundleri uchun zarur `unsafe-eval` va HMR WebSocket ruxsati faqat `NODE_ENV=development` holatida qo‘shiladi. Production CSP’da bu ruxsatlar yo‘q. Bu kompyuterda `npm run dev` orqali navigatsiya, tablar, qidiruv va animatsiyani ishlatishni ta’minlaydi.
+
+Production’da manba bilan yig‘ilgan CSS orasida nomuvofiqlik kuzatilgani uchun Turbopack build fayl tizimi keshi o‘chirilgan. Aniq kesh qatlami tasdiqlanmagan; bu eski compiler natijasini qayta ishlatishni cheklovchi chora. Development, CDN, rasmlar va CMS kontent keshlari ishlashda davom etadi. Build biroz ko‘proq vaqt olishi mumkin. Yangi deploy’dan keyin yorug‘ va qorong‘i ranglar brauzerda tekshiriladi.

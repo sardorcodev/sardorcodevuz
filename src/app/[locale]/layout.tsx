@@ -11,7 +11,7 @@ import { getPublicWorkshop } from "@/lib/cms/settings";
 import type { NavigationItem } from "@/lib/navigation";
 import { locales, localePath } from "@/lib/locales";
 import { safeJson, site } from "@/lib/site";
-import "../styles/base.css";
+import "../styles/foundation.css";
 import "../styles/workshop.css";
 import "../styles/google.css";
 import "../styles/editorial.css";

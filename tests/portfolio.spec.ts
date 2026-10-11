@@ -115,13 +115,17 @@ test("mobile navigation closes on Escape and after navigation", async ({ page })
 
 test("theme choice persists across reload and languages", async ({ page }) => {
   await page.goto("/en");
+  await expect(page.locator("body")).toHaveCSS("background-color", "rgb(255, 255, 255)");
+  await expect(page.locator(".header-contact")).toHaveCSS("background-color", "rgb(25, 103, 210)");
   await page.locator(".theme-button").click();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+  await expect(page.locator("body")).toHaveCSS("background-color", "rgb(16, 17, 20)");
   await page.reload();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
   await page.locator(".language-picker summary").click();
   await page.locator('.language-options a[lang="ru"]').click();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+  await expect(page.locator("body")).toHaveCSS("background-color", "rgb(16, 17, 20)");
 });
 
 test("email copying and personal Telegram use the owner’s confirmed contacts", async ({
