@@ -146,7 +146,7 @@ function renderer(canvas: HTMLCanvasElement) {
   };
 }
 
-export function ParticleField({ locale }: { locale: Locale }) {
+export function ParticleField({ locale, tone }: { locale: Locale; tone?: "dark" }) {
   const { copy } = usePublicSettings();
   const canvas = useRef<HTMLCanvasElement>(null);
   const control = useRef<(paused: boolean) => void>(() => {});
@@ -169,7 +169,7 @@ export function ParticleField({ locale }: { locale: Locale }) {
       width: bounds.width,
       height: bounds.height,
       dpr: Math.min(window.devicePixelRatio || 1, 1.5),
-      dark: document.documentElement.dataset.theme === "dark",
+      dark: tone === "dark" || document.documentElement.dataset.theme === "dark",
     };
     const stop = () => {
       cancelAnimationFrame(frame);
@@ -236,7 +236,7 @@ export function ParticleField({ locale }: { locale: Locale }) {
     const resize = new ResizeObserver(measure);
     resize.observe(node);
     const theme = new MutationObserver(() => {
-      surface.dark = document.documentElement.dataset.theme === "dark";
+      surface.dark = tone === "dark" || document.documentElement.dataset.theme === "dark";
       gpu?.configure(surface);
       if (inView && !document.hidden) paint();
     });
@@ -299,7 +299,7 @@ export function ParticleField({ locale }: { locale: Locale }) {
       node.removeEventListener("webglcontextrestored", restored);
       control.current = () => {};
     };
-  }, []);
+  }, [tone]);
   useEffect(() => {
     control.current(paused);
   }, [paused]);

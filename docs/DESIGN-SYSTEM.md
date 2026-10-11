@@ -1,56 +1,46 @@
-# sardorcodev · Google uslubidagi editorial portfolio
+# sardorcodev · Research kompozitsiyasi
 
-2026-10-11 kuni egasi so‘ragan yangi yo‘nalish: Google saytlariga yaqin oq fon, katta tipografiya, keng bo‘shliqlar, rasmli kartalar va sokin interaktiv vizual. Maqsad — shaxsiy brendni esda qoldirish, full-stack hissani tushuntirish va bog‘lanishni osonlashtirish.
+2026-10-11. Asosiy namuna — [Google Research](https://research.google/). Bosh sahifa shu saytning aniq kompozitsiyasi bo‘yicha qayta qurildi: katta asimmetrik sarlavha, oq maydonda alohida obyektlar, matn va katta media yonma-yon, keng hikoya bloki, rasmli editorial kartalar va sodda footer.
 
-## Ilhom manbalari
+## Referenslar va sahifa tuzilishi
 
-2026-10-11 kuni jonli sahifalari va desktop/mobil ko‘rinishlari o‘rganilgan manbalar:
+- **Research:** asosiy skelet. 64 px navigatsiya, 1440 px ekranda 72 px yon maydon, chap va o‘ngga ajratilgan ulkan qora sarlavha. Kapalak, kompyuter, ingichka yoy va rangli nuqtalar oq maydonda mustaqil joylashadi. Mobil ko‘rinish: ikki satr sarlavha → grafika → qisqa kirish matni.
+- **DeepMind:** sarlavha ostidagi qorong‘i ko‘k katta media maydon va sokin yorug‘lik.
+- **Gemini:** shu media maydondagi original WebGL zarrachalar va pauza boshqaruvi.
+- **Antigravity:** keng bo‘sh maydonlar, yengil navigatsiya va sodda interaktiv detallar.
 
-- [Google Antigravity](https://antigravity.google/): markazlangan sarlavha, oq fon, sodda navigatsiya va kapsula tugmalar.
-- [Gemini](https://gemini.google/about/): zarrachalar va katta vizual maydon. Portfolio uchun geometriya, shader va boshqaruvlar mustaqil yozildi.
-- [Google Research](https://research.google/): editorial ierarxiya, blog va loyiha hikoyalarining o‘qilishi.
-- [Google DeepMind](https://deepmind.google/): media, qorong‘i rang rejimi va mazmunni katta bloklarda taqdim qilish.
-- [Google About](https://about.google/): tushunarli sahifa kirishi va asosiy harakatning aniq ajratilishi.
-- [Google AI](https://ai.google/): rasmga urg‘u berilgan kartalar va bo‘limlar orasidagi keng bo‘shliqlar.
-- [Google Labs](https://labs.google/): tajriba kartalari, filterlar va interaktiv detallar.
+Manbalar: https://research.google/, https://deepmind.google/, https://gemini.google/about/, https://antigravity.google/.
 
-Bu manbalarning uzoq muddatli uptime yoki boshqa saytlardan ustunligi o‘lchangan deb da’vo qilinmaydi. Ulardan foydalanish qulayligi va vizual usullar o‘rganildi; portfolio o‘z testlari bilan tekshiriladi.
+Bosh sahifa ketma-ketligi: asimmetrik kirish → yondashuv va animatsiya → shaxsiy hikoya → haqiqiy loyihalar → nashr qilingan blog → frontend/backend/ML yondashuvi va interaktiv ustaxona → o‘rganish yo‘li → aloqa → footer.
 
-## Vizual tizim
+## Grafika va tipografiya
 
-- Yorug‘ rejim: oq fon `#ffffff`, siyoh `#202124`, ko‘k aksent `#1967d2`, yengil kulrang `#f6f8fc`.
-- Qorong‘i rejim: `#101114` fon, yorug‘ matn, pastel ko‘k aksentlar.
-- Manrope shriftlari mahalliy yuklanadi. Lotin va kirill matni bir tizimda; sarlavhalar 500 og‘irlikda, erkin satr balandligi bilan.
-- Bosh sarlavha desktopda 72–84 px, kichik ekranda 33–44 px atrofida moslashadi. Sahifa bo‘shliqlari desktopda 64–96 px, mobil versiyada 40–64 px.
-- Asosiy tugmalar 48–52 px balandlikda, kapsula shaklida. Kartalar 24 px radiusli; mobil joylashuv bitta ustunga o‘tadi.
-- `foundation.css` — asosiy token va umumiy kontent; `workshop.css` — interaktiv vositalar; `google.css` — navigatsiya, bosh sahifa va umumiy editorial uslub; `editorial.css` — ichki sahifalar. Eski bosh sahifa stillari tozalandi. Interaktiv shader va qidiruv CSS Modules bilan cheklangan.
-- Haqiqiy loyiha rasmlari, prototip/MVP holati va egasining hissasi ko‘rsatiladi. Yangi tajriba, natija yoki nashr qilingan blog yozuvi to‘qib chiqarilmaydi.
+Kapalak portfolio uchun yaratilgan alohida tasvir; Google saytidan rasm yoki shrift ko‘chirilmagan. WebP fayli taxminan 106 KB, Next.js orqali ekranga mos yuklanadi. Kompyuter haykalchasi, zarrachalar posteri va keng tarmoq grafikasi original SVG/WebGL kodidan iborat. Ular dekorativ bo‘lgani uchun screen reader o‘qimaydi.
 
-## Navigatsiya va qidiruv
+Manrope mahalliy yuklanadi; katta sarlavhalar 400 og‘irlikda, gradientsiz. Asosiy sarlavha desktopda 156 px gacha, 390 px ekranda 67,86 px; keyingi qatori 0,92 em. Asosiy matn 16–18 px. Kartalar ko‘pincha tashqi ramkasiz, media burchagi 16 px.
 
-Header qidiruvi yoki Ctrl/⌘ K → matn → ↑/↓ → Enter. Escape yopadi va fokusni qaytaradi. Native dialog tashqi kontentni inert qiladi; sensorli qurilmada ham tugma mavjud.
+Oq `#ffffff`, matn `#202124`, ikkilamchi matn `#5f6368`. Asosiy bosh sahifa tugmalari qora/oq kapsula, yordamchi havolalar ko‘k `#1967d2`. Rang rejimi shaxsiy tanlovni saqlaydi; qorong‘i rejimda tegishli tokenlar almashadi.
 
-Indeks: shu tildagi ommaviy sahifalar, nashr qilingan loyihalar va eng so‘nggi 25 nashr qilingan blog yozuvi. To‘liq arxiv Blog sahifasida. Brauzerga maqola body, draft, server kaliti yoki preview tokeni berilmaydi. Qidiruv apostrof turlari va aksentlarni bir xil qabul qiladi.
+## Kontent va control panel
 
-## Zarrachali fon
+Yangi kirish maydonlari har uch tilda control panelga avtomatik qo‘shiladi:
 
-Original oqim shakli WebGL shaderida, bitta draw call bilan. Desktop 7200, mobil 2800 nuqta; DPR 1.5 bilan cheklangan, chizish taxminan 30 fps gacha.
+- `dictionary.home.researchLead` — birinchi katta qator.
+- `dictionary.home.researchEnd` — ikkinchi katta qator.
+- `dictionary.home.researchIntro` — qisqa kirish matni.
 
-- 44 px pauza tugmasi harakatni to‘xtatadi.
-- Reduced-motion statik tasvir beradi.
-- Offscreen va yashirilgan tab holatida animation frame loop to‘xtaydi.
-- WebGL yo‘qligi yoki context loss sahifani buzmaydi: statik fon saqlanadi.
-- Rang rejimi va o‘lcham o‘zgarganda tasvir yangilanadi. O‘lcham, DPR va rang rejimi keshlanadi: chizish siklida DOM geometriyasi qayta o‘qilmaydi. Vizual sarlavha ostidagi alohida maydonda, sensorli scrollni tutmaydi.
-- Harakat o‘chirilsa yoki WebGL mavjud bo‘lmasa original SVG orbit posteri qoladi. Mazmun va navigatsiya JavaScriptsiz ham o‘qiladi.
+Mavjud `greeting` va `headline` katta animatsiya blokida; `intro` yondashuv matnida ishlatiladi. Blog, loyiha, profil, kontakt va hikoya nashr qilingan CMS qiymatlaridan olinadi. Faqat yangi maydonlar qo‘shildi; mavjud override va nashrlar almashtirilmadi. Baza migratsiyasi talab qilinmaydi. Control panel, login/MFA va API alohida layout hamda stillarda qoladi.
 
-## Blog va boshqaruv paneli
+Loyiha hissalari o‘zgarishsiz: ProPaint va PromptPilot — Sardorbekning mustaqil loyihalari; Smart Agro AI — ML modelidan tashqari frontend/backend hissasi. O‘rganish bosqichi professional ML tajribasi deb ko‘rsatilmaydi. Blog kartalari mavjud haqiqiy maqolalar soniga mos; bo‘sh arxiv uchun soxta nashr yaratilmaydi.
 
-Maqola mazmuni haqiqiy Markdown ASTdan olinadi. Fenced code ichidagi matn sarlavha deb olinmaydi. Takroriy sarlavhalar uchun noyob anchorlar yaratiladi; Unicode ham qo‘llanadi. HTML bajarilmaydi va rasm/link cheklovlari saqlanadi.
+## Navigatsiya va harakat
 
-Control panel alohida layout va uslublarda ishlaydi. Sahifa matnlari, brend, kontaktlar, blog va loyihalar yangi dizaynda ham nashr qilingan panel qiymatlaridan olinadi. Qoralama saqlash va nashr qilish alohida amallar; eski tahrir yangisini bosmaydi. Kirish Supabase Auth va authenticator orqali himoyalangan. Telegram kanal oddiy ommaviy havola sifatida qoladi.
+Loyihalar, blog, ustaxona, haqida, profillar, ochiq manbalar va aloqa header/footer orqali ochiladi. Qidiruv tugmasi yoki Ctrl/⌘ K → matn → ↑/↓ → Enter. Escape fokusni qaytaradi. Til almashtirish sahifa, query va anchor’ni saqlaydi.
 
-## Lokal ishlab chiqish
+Zarrachalar bosh sarlavha ortida emas, alohida qorong‘i media blokida. 44 px pauza, reduced motion, offscreen va yashirilgan tabda to‘xtash, WebGL yo‘qligida statik poster, context loss/restoration mavjud. Bitta GPU draw call, desktop 7200 / mobil 2800 nuqta, DPR 1,5 va 30 FPS chegarasi saqlangan. Yorug‘ sahifada ham shu qorong‘i blokning zarracha palitrasi yorqin qoladi. Dekorativ kapalak va yoylar doimiy animatsiya ishlatmaydi.
 
-Next.js development bundleri uchun zarur `unsafe-eval` va HMR WebSocket ruxsati faqat `NODE_ENV=development` holatida qo‘shiladi. Production CSP’da bu ruxsatlar yo‘q. Bu kompyuterda `npm run dev` orqali navigatsiya, tablar, qidiruv va animatsiyani ishlatishni ta’minlaydi.
+## Fayllar va lokal ish
 
-Production’da manba bilan yig‘ilgan CSS orasida nomuvofiqlik kuzatilgani uchun Turbopack build fayl tizimi keshi o‘chirilgan. Aniq kesh qatlami tasdiqlanmagan; bu eski compiler natijasini qayta ishlatishni cheklovchi chora. Development, CDN, rasmlar va CMS kontent keshlari ishlashda davom etadi. Build biroz ko‘proq vaqt olishi mumkin. Yangi deploy’dan keyin yorug‘ va qorong‘i ranglar brauzerda tekshiriladi.
+`foundation.css` — tokenlar va umumiy kontent; `workshop.css` — interaktiv vositalar; `editorial.css` — ichki sahifalar; `research.css` — yangi public layout. Oldingi markazlangan bosh sahifa komponenti va uning CSS fayli olib tashlandi.
+
+Development eval/HMR WebSocket ruxsati faqat development CSP’da mavjud. Production CSP’da `unsafe-eval` yo‘q. Oldingi source/CSS nomuvofiqligi sabab production Turbopack build fayl tizimi keshi o‘chirilgan; dev, CDN, rasmlar va CMS keshlari ishlaydi. Aniq eski kesh qatlami tasdiqlanmagan, yangi deploy assetlari jonli ko‘rinishda tekshiriladi.

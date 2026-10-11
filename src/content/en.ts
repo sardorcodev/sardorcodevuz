@@ -62,6 +62,10 @@ export const en = {
       "GitHub and social profiles associated with sardorcodev, the personal brand of Sardorbek Musurmonov.",
   },
   home: {
+    researchIntro:
+      "I build web applications, from frontend to backend. Now I’m also exploring machine learning.",
+    researchLead: "Ideas,",
+    researchEnd: "into reality.",
     eyebrow: "Full-stack developer · Learning ML",
     greeting: "Hi, I’m Sardorbek.",
     headline: "I build for the web.",

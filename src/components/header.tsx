@@ -36,6 +36,8 @@ export function Header({
     { path: "/blog", label: copy.workshop.blog },
     { path: "/lab", label: copy.workshop.lab },
     { path: "/about", label: labels.about },
+    { path: "/official", label: labels.official },
+    { path: "/press", label: labels.press },
     { path: "/contact", label: labels.contact },
   ];
   useEffect(() => {
@@ -99,19 +101,15 @@ export function Header({
           </span>
         </Link>
         <nav className="desktop-nav" aria-label={labels.navigation}>
-          {links
-            .filter((link) => link.path !== "/contact")
-            .map((link) => (
-              <Link
-                key={link.path}
-                href={localePath(locale, link.path)}
-                aria-current={
-                  pathname.startsWith(localePath(locale, link.path)) ? "page" : undefined
-                }
-              >
-                {link.label}
-              </Link>
-            ))}
+          {links.map((link) => (
+            <Link
+              key={link.path}
+              href={localePath(locale, link.path)}
+              aria-current={pathname.startsWith(localePath(locale, link.path)) ? "page" : undefined}
+            >
+              {link.label}
+            </Link>
+          ))}
         </nav>
         <div className="header-tools">
           <button
@@ -126,6 +124,7 @@ export function Header({
             }}
           >
             <Icon name="search" />
+            <span className="search-label">{copy.studio.search}</span>
             <kbd aria-hidden="true">⌘ K</kbd>
           </button>
           <details
@@ -179,13 +178,6 @@ export function Header({
             <Icon name="moon" className="show-light" />
             <Icon name="sun" className="show-dark" />
           </button>
-          <Link
-            className="button button-primary header-contact"
-            href={localePath(locale, "/contact")}
-          >
-            {labels.getInTouch}
-            <Icon name="arrow" />
-          </Link>
           <button
             type="button"
             className="icon-button mobile-menu-button"

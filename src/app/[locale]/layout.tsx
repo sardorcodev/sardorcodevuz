@@ -13,8 +13,8 @@ import { locales, localePath } from "@/lib/locales";
 import { safeJson, site } from "@/lib/site";
 import "../styles/foundation.css";
 import "../styles/workshop.css";
-import "../styles/google.css";
 import "../styles/editorial.css";
+import "../styles/research.css";
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
