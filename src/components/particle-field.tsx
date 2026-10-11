@@ -16,7 +16,7 @@ uniform vec2 uPointer;
 varying vec4 vColor;
 void main() {
   float a = aSeed.x * 6.2831853 + uTime * 0.09;
-  float band = (aSeed.y - 0.5) * 0.38;
+  float band = (aSeed.y - 0.5) * 0.34 + sin(a * 8.0 + uTime * 0.65 + aSeed.z * 6.2831853) * 0.035;
   float r = 1.0 + 0.26 * cos(3.0 * a + uTime * 0.13) + band;
   vec3 p = vec3(r * cos(2.0 * a), r * sin(2.0 * a), 0.62 * sin(3.0 * a) + (aSeed.z - 0.5) * 0.34);
   float turn = 0.55 + uTime * 0.055 + uPointer.x * 0.12;
@@ -24,7 +24,7 @@ void main() {
   float z = -p.x * sin(turn) + p.z * cos(turn);
   float y = p.y * 0.79 + p.z * 0.22 + uPointer.y * 0.04;
   float mobile = 1.0 - step(760.0, uSize.x);
-  float scale = min(uSize.x * 0.29, uSize.y * 0.30);
+  float scale = min(uSize.x * 0.29, uSize.y * 0.33);
   float stretch = mix(2.05, 1.20, mobile);
   // A smaller cloud of dispersed points gives the dense ribbon a soft outer halo.
   float halo = step(0.91, aSeed.w);
@@ -33,13 +33,14 @@ void main() {
   vec2 center = uSize * vec2(0.50, 0.51);
   vec2 pixel = center + vec2(x * stretch, y) * scale / (1.0 + z * 0.10);
   gl_Position = vec4(pixel / uSize * 2.0 - 1.0, 0.0, 1.0);
-  gl_PointSize = mix(1.25, 2.55, aSeed.w) * uDpr;
+  float depth = smoothstep(-0.9, 0.9, z);
+  gl_PointSize = mix(1.15, 2.65, aSeed.w) * (0.7 + depth * 0.55) * uDpr;
   vec3 blue = mix(vec3(0.18, 0.32, 0.88), vec3(0.38, 0.63, 1.0), uDark);
   vec3 cyan = mix(vec3(0.05, 0.49, 0.67), vec3(0.36, 0.88, 0.98), uDark);
   vec3 lilac = mix(vec3(0.55, 0.32, 0.83), vec3(0.74, 0.62, 1.0), uDark);
   vec3 color = mix(blue, cyan, smoothstep(0.10, 0.58, aSeed.x));
   color = mix(color, lilac, smoothstep(0.58, 0.96, aSeed.x));
-  vColor = vec4(color, mix(0.63, 0.92, uDark) * (0.6 + aSeed.w * 0.4) * mix(1.0, 0.40, halo));
+  vColor = vec4(color, mix(0.63, 0.95, uDark) * (0.5 + depth * 0.5) * (0.6 + aSeed.w * 0.4) * mix(1.0, 0.40, halo));
 }`;
 const fragment = `
 precision mediump float;
@@ -164,6 +165,7 @@ export function ParticleField({ locale, tone }: { locale: Locale; tone?: "dark" 
       previous = 0,
       elapsed = 0;
     const pointer: [number, number] = [0, 0];
+    const targetPointer: [number, number] = [0, 0];
     let bounds = node.getBoundingClientRect();
     const surface: Surface = {
       width: bounds.width,
@@ -182,6 +184,8 @@ export function ParticleField({ locale, tone }: { locale: Locale; tone?: "dark" 
       if (previous && now - previous < 1000 / 30) return;
       if (previous) elapsed += Math.min(now - previous, 80) / 1000;
       previous = now;
+      pointer[0] += (targetPointer[0] - pointer[0]) * 0.12;
+      pointer[1] += (targetPointer[1] - pointer[1]) * 0.12;
       paint();
     }
     function sync() {
@@ -243,11 +247,11 @@ export function ParticleField({ locale, tone }: { locale: Locale; tone?: "dark" 
     theme.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
     const move = (event: PointerEvent) => {
       if (event.pointerType !== "mouse" || !bounds.width || !bounds.height) return;
-      pointer[0] = Math.max(
+      targetPointer[0] = Math.max(
         -0.5,
         Math.min(0.5, (event.clientX - bounds.left) / bounds.width - 0.5),
       );
-      pointer[1] = Math.max(
+      targetPointer[1] = Math.max(
         -0.5,
         Math.min(0.5, (event.clientY - bounds.top) / bounds.height - 0.5),
       );
@@ -256,8 +260,8 @@ export function ParticleField({ locale, tone }: { locale: Locale; tone?: "dark" 
       if (inView) bounds = node.getBoundingClientRect();
     };
     const leave = () => {
-      pointer[0] = 0;
-      pointer[1] = 0;
+      targetPointer[0] = 0;
+      targetPointer[1] = 0;
     };
     const lost = (event: Event) => {
       event.preventDefault();

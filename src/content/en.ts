@@ -41,6 +41,19 @@ export const en = {
     profile: "Open profile",
     independent: "Independent project",
   },
+  footer: {
+    follow: "Follow along",
+    explore: "Build. Learn. Share.",
+    projectsText: "Web applications, the decisions behind them, and what I contributed.",
+    journalText: "Work in progress, things I’ve learned, and milestones along the way.",
+    labText: "Small experiments with code, interfaces, and machine learning.",
+    aboutText: "The developer behind sardorcodev and how I approach my work.",
+    profilesText: "Find sardorcodev across the web. One name, a few different places.",
+    connectText: "Have a role, a project, or an idea? Let’s start a conversation.",
+    email: "Send an email",
+    telegram: "Message me on Telegram",
+    backToTop: "Back to top",
+  },
   meta: {
     home: "Full-stack developer, exploring machine learning",
     description:

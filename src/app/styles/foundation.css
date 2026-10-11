@@ -1,4 +1,4 @@
-@import "@fontsource-variable/manrope";
+@import "./fonts.css";
 @import "tailwindcss";
 
 :root {
@@ -36,7 +36,7 @@
   color-scheme: dark;
 }
 @theme inline {
-  --font-sans: "Manrope Variable", Arial, sans-serif;
+  --font-sans: "Google Sans Flex Variable", "Google Sans Variable", Arial, sans-serif;
 }
 * {
   box-sizing: border-box;
@@ -49,7 +49,7 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--ink);
-  font-family: "Manrope Variable", Arial, sans-serif;
+  font-family: "Google Sans Flex Variable", "Google Sans Variable", Arial, sans-serif;
   font-size: 16px;
   line-height: 1.75;
   -webkit-font-smoothing: antialiased;
@@ -621,7 +621,7 @@ figcaption {
   margin-top: 20px;
 }
 .tags li {
-  font-family: "Manrope Variable", sans-serif;
+  font-family: "Google Sans Flex Variable", "Google Sans Variable", sans-serif;
   font-size: 0.6875rem;
   font-weight: 650;
   border: 1px solid var(--line);
