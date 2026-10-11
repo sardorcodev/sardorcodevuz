@@ -1,10 +1,9 @@
 "use client";
+import { usePublicSettings } from "./public-settings";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
-import { workshop } from "@/content/workshop";
-import { studio } from "@/content/studio";
 import type { NavigationItem } from "@/lib/navigation";
 import { Icon } from "@/components/icon";
 import {
@@ -26,6 +25,7 @@ export function Header({
   labels: Dictionary["common"];
   searchItems: NavigationItem[];
 }) {
+  const { copy, brand } = usePublicSettings();
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -33,8 +33,8 @@ export function Header({
   const header = useRef<HTMLElement>(null);
   const links = [
     { path: "/projects", label: labels.projects },
-    { path: "/blog", label: workshop[locale].blog },
-    { path: "/lab", label: workshop[locale].lab },
+    { path: "/blog", label: copy.workshop.blog },
+    { path: "/lab", label: copy.workshop.lab },
     { path: "/about", label: labels.about },
     { path: "/contact", label: labels.contact },
   ];
@@ -87,14 +87,15 @@ export function Header({
         <Link
           href={localePath(locale)}
           className="brand"
-          aria-label={"sardorcodev · " + labels.home}
+          aria-label={brand.name + " · " + labels.home}
           onClick={() => setOpen(false)}
         >
           <span className="brand-symbol" aria-hidden="true">
             s<span>.</span>
           </span>
           <span className="brand-name">
-            sardorcodev<span>.</span>
+            {brand.name}
+            <span>.</span>
           </span>
         </Link>
         <nav className="desktop-nav" aria-label={labels.navigation}>
@@ -112,9 +113,9 @@ export function Header({
           <button
             type="button"
             className="search-trigger"
-            aria-label={studio[locale].search}
+            aria-label={copy.studio.search}
             aria-keyshortcuts="Control+k Meta+k"
-            title={studio[locale].search + " (Ctrl / ⌘ K)"}
+            title={copy.studio.search + " (Ctrl / ⌘ K)"}
             onClick={() => {
               setOpen(false);
               setSearchOpen(true);

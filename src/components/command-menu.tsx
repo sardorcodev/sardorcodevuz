@@ -1,9 +1,9 @@
 "use client";
+import { usePublicSettings } from "./public-settings";
 import { useEffect, useId, useRef, useState, type KeyboardEvent } from "react";
 import Link from "next/link";
 import type { Locale } from "@/lib/locales";
 import { filterNavigation, type NavigationItem } from "@/lib/navigation";
-import { studio } from "@/content/studio";
 import { Icon } from "./icon";
 import styles from "./command-menu.module.css";
 
@@ -16,7 +16,8 @@ export default function CommandMenu({
   items: NavigationItem[];
   onClose: () => void;
 }) {
-  const d = studio[locale];
+  const { copy } = usePublicSettings();
+  const d = copy.studio;
   const dialog = useRef<HTMLDialogElement>(null);
   const input = useRef<HTMLInputElement>(null);
   const id = useId();

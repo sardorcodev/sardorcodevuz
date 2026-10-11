@@ -1,10 +1,9 @@
 "use client";
+import { usePublicSettings } from "./public-settings";
 import { useId, useState } from "react";
 import Link from "next/link";
 import type { Locale } from "@/lib/locales";
 import { localePath } from "@/lib/locales";
-import { workshop } from "@/content/workshop";
-import { studio } from "@/content/studio";
 import { Icon } from "./icon";
 
 export function Workbench({
@@ -18,7 +17,8 @@ export function Workbench({
 }) {
   const [active, setActive] = useState(0);
   const id = useId();
-  const d = workshop[locale];
+  const { copy } = usePublicSettings();
+  const d = copy.workshop;
   const links = [
     localePath(locale, projectSlugs.includes("propaint") ? "/projects/propaint" : "/projects"),
     localePath(
@@ -113,7 +113,7 @@ export function Workbench({
             </>
           )}
         </div>
-        <div className="workbench-skillline">{studio[locale].deskSkills[active]}</div>
+        <div className="workbench-skillline">{copy.studio.deskSkills[active]}</div>
         <p>{d.deskNotes[active]}</p>
         <Link href={links[active]} className="text-link">
           {labels[active]}

@@ -1,7 +1,7 @@
 "use client";
+import { usePublicSettings } from "./public-settings";
 import { useEffect, useRef, useState } from "react";
 import type { Locale } from "@/lib/locales";
-import { studio } from "@/content/studio";
 import { Icon } from "./icon";
 import styles from "./particle-field.module.css";
 
@@ -136,6 +136,7 @@ function renderer(canvas: HTMLCanvasElement) {
 }
 
 export function ParticleField({ locale }: { locale: Locale }) {
+  const { copy } = usePublicSettings();
   const canvas = useRef<HTMLCanvasElement>(null);
   const control = useRef<(paused: boolean) => void>(() => {});
   const [paused, setPaused] = useState(false);
@@ -253,10 +254,10 @@ export function ParticleField({ locale }: { locale: Locale }) {
   useEffect(() => {
     control.current(paused);
   }, [paused]);
-  const label = paused ? studio[locale].playMotion : studio[locale].pauseMotion;
+  const label = paused ? copy.studio.playMotion : copy.studio.pauseMotion;
   return (
     <>
-      <div className={styles.field} aria-hidden="true">
+      <div lang={locale} className={styles.field} aria-hidden="true">
         <canvas ref={canvas} data-motion="static" />
       </div>
       <button
