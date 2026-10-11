@@ -1,5 +1,5 @@
 import Link from "next/link";
-import "./styles/base.css";
+import "./styles/foundation.css";
 export const metadata = { title: "404 · sardorcodev", robots: { index: false, follow: true } };
 export default function GlobalNotFound() {
   return (
