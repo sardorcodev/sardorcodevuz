@@ -9,6 +9,15 @@ import { ContactCallout, ExternalLink, Eyebrow, PageIntro, Tags } from "@/compon
 type Props = { locale: Locale; dictionary: Dictionary };
 const universitySource = "https://t.me/s/terdu340/38920";
 
+function contactHandle(url: string, fallback: string) {
+  try {
+    const handle = new URL(url).pathname.split("/").filter(Boolean)[0];
+    return handle ? "@" + handle : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
 function Skills({ d }: { d: Dictionary }) {
   const icons: IconName[] = ["code", "server", "spark"];
   return (
@@ -37,10 +46,10 @@ function Skills({ d }: { d: Dictionary }) {
 export async function AboutPage({ locale, dictionary: d }: Props) {
   const brand = await getBrand();
   return (
-    <div className="container">
+    <div className="container editorial-page editorial-about">
       <PageIntro label={d.about.label} title={d.about.title} intro={d.about.intro} />
       <div className="bio-grid">
-        <div className="prose">
+        <div className="prose bio-copy">
           {d.about.paragraphs.map((p) => (
             <p key={p}>{p}</p>
           ))}
@@ -55,13 +64,14 @@ export async function AboutPage({ locale, dictionary: d }: Props) {
             width={640}
             height={960}
             alt={d.home.portraitAlt}
-            sizes="(max-width: 760px) 80vw, 300px"
+            sizes="(max-width: 640px) 80vw, 420px"
+            priority
           />
           <figcaption>{d.home.portraitNote}</figcaption>
         </figure>
       </div>
       <Skills d={d} />
-      <section className="section">
+      <section className="section approach-section">
         <div className="section-heading">
           <Eyebrow>{d.about.approachLabel}</Eyebrow>
           <h2>{d.about.approachTitle}</h2>
@@ -93,7 +103,7 @@ export async function AboutPage({ locale, dictionary: d }: Props) {
             src={brand.teamImage}
             width={1159}
             height={869}
-            sizes="(max-width: 760px) 90vw, 520px"
+            sizes="(max-width: 640px) 92vw, 580px"
             alt={d.about.teamImageAlt}
           />
           <figcaption>{d.about.teamCaption}</figcaption>
@@ -107,7 +117,7 @@ export async function AboutPage({ locale, dictionary: d }: Props) {
 export async function ContactPage({ dictionary: d }: Props) {
   const brand = await getBrand();
   return (
-    <div className="container">
+    <div className="container editorial-page editorial-contact">
       <PageIntro label={d.contact.label} title={d.contact.title} intro={d.contact.intro} />
       <div className="contact-grid">
         <section className="contact-email">
@@ -116,22 +126,24 @@ export async function ContactPage({ dictionary: d }: Props) {
           </span>
           <h2>{d.contact.emailTitle}</h2>
           <p>{d.contact.emailText}</p>
-          <a className="email-address" href={"mailto:" + brand.email}>
-            {brand.email}
-          </a>
-          <CopyEmail
-            email={brand.email}
-            label={d.common.copyEmail}
-            success={d.common.copied}
-            failure={d.common.copyFailed}
-          />
+          <div className="contact-email-actions">
+            <a className="email-address" href={"mailto:" + brand.email}>
+              {brand.email}
+            </a>
+            <CopyEmail
+              email={brand.email}
+              label={d.common.copyEmail}
+              success={d.common.copied}
+              failure={d.common.copyFailed}
+            />
+          </div>
         </section>
         <section className="contact-card">
           <Icon name="telegram" />
           <h2>{d.contact.telegramTitle}</h2>
           <p>{d.contact.telegramText}</p>
           <ExternalLink href={brand.telegram} className="text-link" label={d.common.newTab}>
-            @sardorbek_musurmonov
+            {contactHandle(brand.telegram, brand.name)}
             <Icon name="external" />
           </ExternalLink>
         </section>
@@ -140,7 +152,7 @@ export async function ContactPage({ dictionary: d }: Props) {
           <h2>{d.contact.githubTitle}</h2>
           <p>{d.contact.githubText}</p>
           <ExternalLink href={brand.github} className="text-link" label={d.common.newTab}>
-            @sardorcodev
+            {contactHandle(brand.github, brand.name)}
             <Icon name="external" />
           </ExternalLink>
         </section>
@@ -149,7 +161,7 @@ export async function ContactPage({ dictionary: d }: Props) {
           <h2>{d.contact.channelTitle}</h2>
           <p>{d.contact.channelText}</p>
           <ExternalLink href={brand.channel} className="text-link" label={d.common.newTab}>
-            @sardorcodev
+            {contactHandle(brand.channel, brand.name)}
             <Icon name="external" />
           </ExternalLink>
         </section>
@@ -178,15 +190,16 @@ export async function ContactPage({ dictionary: d }: Props) {
 export async function PressPage({ locale, dictionary: d }: Props) {
   const brand = await getBrand();
   return (
-    <div className="container">
+    <div className="container editorial-page editorial-press">
       <PageIntro label={d.press.label} title={d.press.title} intro={d.press.intro} />
       <figure className="press-image">
         <Image
           src={brand.teamImage}
           width={1159}
           height={869}
-          sizes="(max-width: 900px) 90vw, 850px"
+          sizes="(max-width: 640px) 92vw, 1120px"
           alt={d.about.teamImageAlt}
+          priority
         />
         <figcaption>{d.about.teamCaption}</figcaption>
       </figure>

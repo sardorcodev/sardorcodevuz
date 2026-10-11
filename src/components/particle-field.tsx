@@ -16,25 +16,30 @@ uniform vec2 uPointer;
 varying vec4 vColor;
 void main() {
   float a = aSeed.x * 6.2831853 + uTime * 0.09;
-  float band = (aSeed.y - 0.5) * 0.32;
-  float r = 1.0 + 0.32 * cos(3.0 * a + uTime * 0.13) + band;
-  vec3 p = vec3(r * cos(2.0 * a), r * sin(2.0 * a), 0.62 * sin(3.0 * a) + (aSeed.z - 0.5) * 0.28);
+  float band = (aSeed.y - 0.5) * 0.38;
+  float r = 1.0 + 0.26 * cos(3.0 * a + uTime * 0.13) + band;
+  vec3 p = vec3(r * cos(2.0 * a), r * sin(2.0 * a), 0.62 * sin(3.0 * a) + (aSeed.z - 0.5) * 0.34);
   float turn = 0.55 + uTime * 0.055 + uPointer.x * 0.12;
   float x = p.x * cos(turn) + p.z * sin(turn);
   float z = -p.x * sin(turn) + p.z * cos(turn);
-  float y = p.y * 0.86 + p.z * 0.28 + uPointer.y * 0.04;
-  float mobile = step(uSize.x, 760.0);
-  float scale = min(uSize.x * 0.56, uSize.y * 0.43);
-  vec2 center = vec2(uSize.x * mix(0.68, 0.50, mobile), uSize.y * mix(0.50, 0.28, mobile));
-  vec2 pixel = center + vec2(x, y) * scale / (1.0 + z * 0.15);
+  float y = p.y * 0.79 + p.z * 0.22 + uPointer.y * 0.04;
+  float mobile = 1.0 - step(760.0, uSize.x);
+  float scale = min(uSize.x * 0.29, uSize.y * 0.30);
+  float stretch = mix(2.05, 1.20, mobile);
+  // A smaller cloud of dispersed points gives the dense ribbon a soft outer halo.
+  float halo = step(0.91, aSeed.w);
+  x *= 1.0 + halo * (aSeed.z - 0.3) * 0.65;
+  y *= 1.0 + halo * (aSeed.y - 0.3) * 0.35;
+  vec2 center = uSize * vec2(0.50, 0.51);
+  vec2 pixel = center + vec2(x * stretch, y) * scale / (1.0 + z * 0.10);
   gl_Position = vec4(pixel / uSize * 2.0 - 1.0, 0.0, 1.0);
-  gl_PointSize = mix(1.25, 2.7, aSeed.w) * uDpr;
-  vec3 blue = mix(vec3(0.18, 0.32, 0.68), vec3(0.35, 0.63, 1.0), uDark);
-  vec3 green = mix(vec3(0.24, 0.47, 0.38), vec3(0.30, 0.86, 0.69), uDark);
-  vec3 gold = mix(vec3(0.68, 0.43, 0.16), vec3(1.0, 0.73, 0.39), uDark);
-  vec3 color = mix(blue, green, smoothstep(0.20, 0.75, aSeed.x));
-  color = mix(color, gold, smoothstep(0.78, 1.0, aSeed.x));
-  vColor = vec4(color, mix(0.50, 0.84, uDark) * (0.6 + aSeed.w * 0.4));
+  gl_PointSize = mix(1.25, 2.55, aSeed.w) * uDpr;
+  vec3 blue = mix(vec3(0.18, 0.32, 0.88), vec3(0.38, 0.63, 1.0), uDark);
+  vec3 cyan = mix(vec3(0.05, 0.49, 0.67), vec3(0.36, 0.88, 0.98), uDark);
+  vec3 lilac = mix(vec3(0.55, 0.32, 0.83), vec3(0.74, 0.62, 1.0), uDark);
+  vec3 color = mix(blue, cyan, smoothstep(0.10, 0.58, aSeed.x));
+  color = mix(color, lilac, smoothstep(0.58, 0.96, aSeed.x));
+  vColor = vec4(color, mix(0.63, 0.92, uDark) * (0.6 + aSeed.w * 0.4) * mix(1.0, 0.40, halo));
 }`;
 const fragment = `
 precision mediump float;
@@ -44,6 +49,8 @@ void main() {
   float alpha = 1.0 - smoothstep(0.25, 0.5, distance);
   gl_FragColor = vec4(vColor.rgb, vColor.a * alpha);
 }`;
+
+type Surface = { width: number; height: number; dpr: number; dark: boolean };
 
 function renderer(canvas: HTMLCanvasElement) {
   const gl = canvas.getContext("webgl", {
@@ -90,8 +97,7 @@ function renderer(canvas: HTMLCanvasElement) {
   }
   gl.useProgram(program);
   gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-  const count = window.matchMedia("(max-width: 760px)").matches ? 2800 : 7200;
-  const seeds = new Float32Array(count * 4);
+  const seeds = new Float32Array(7200 * 4);
   // Seeded noise keeps static/reduced-motion views stable across reloads.
   let noise = 271828;
   for (let i = 0; i < seeds.length; i++) {
@@ -110,12 +116,14 @@ function renderer(canvas: HTMLCanvasElement) {
   );
   gl.enable(gl.BLEND);
   gl.blendFuncSeparate(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+  let count = 7200;
+  let drawable = false;
   return {
     dispose,
-    draw(time: number, pointer: [number, number]) {
-      const { width, height } = canvas.getBoundingClientRect();
-      if (!width || !height) return;
-      const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    configure({ width, height, dpr, dark }: Surface) {
+      drawable = width > 0 && height > 0;
+      if (!drawable) return;
+      count = width <= 760 ? 2800 : 7200;
       const w = Math.round(width * dpr),
         h = Math.round(height * dpr);
       if (canvas.width !== w || canvas.height !== h) {
@@ -123,12 +131,15 @@ function renderer(canvas: HTMLCanvasElement) {
         canvas.height = h;
       }
       gl.viewport(0, 0, w, h);
+      gl.uniform1f(uniforms.uDpr, dpr);
+      gl.uniform1f(uniforms.uDark, dark ? 1 : 0);
+      gl.uniform2f(uniforms.uSize, width, height);
+    },
+    draw(time: number, pointer: [number, number]) {
+      if (!drawable) return;
       gl.clearColor(0, 0, 0, 0);
       gl.clear(gl.COLOR_BUFFER_BIT);
       gl.uniform1f(uniforms.uTime, time);
-      gl.uniform1f(uniforms.uDpr, dpr);
-      gl.uniform1f(uniforms.uDark, document.documentElement.dataset.theme === "dark" ? 1 : 0);
-      gl.uniform2f(uniforms.uSize, width, height);
       gl.uniform2f(uniforms.uPointer, pointer[0], pointer[1]);
       gl.drawArrays(gl.POINTS, 0, count);
     },
@@ -147,11 +158,19 @@ export function ParticleField({ locale }: { locale: Locale }) {
     const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
     let inView = false,
       initialized = false,
+      contextLost = false,
       userPaused = false,
       frame = 0,
       previous = 0,
       elapsed = 0;
     const pointer: [number, number] = [0, 0];
+    let bounds = node.getBoundingClientRect();
+    const surface: Surface = {
+      width: bounds.width,
+      height: bounds.height,
+      dpr: Math.min(window.devicePixelRatio || 1, 1.5),
+      dark: document.documentElement.dataset.theme === "dark",
+    };
     const stop = () => {
       cancelAnimationFrame(frame);
       frame = 0;
@@ -160,7 +179,7 @@ export function ParticleField({ locale }: { locale: Locale }) {
     const paint = () => gpu?.draw(elapsed, pointer);
     function tick(now: number) {
       frame = requestAnimationFrame(tick);
-      if (previous && now - previous < 32) return;
+      if (previous && now - previous < 1000 / 30) return;
       if (previous) elapsed += Math.min(now - previous, 80) / 1000;
       previous = now;
       paint();
@@ -188,6 +207,7 @@ export function ParticleField({ locale }: { locale: Locale }) {
       gpu?.dispose();
       initialized = true;
       gpu = renderer(node!);
+      gpu?.configure(surface);
       sync();
       paint();
     }
@@ -198,25 +218,42 @@ export function ParticleField({ locale }: { locale: Locale }) {
     const visible = new IntersectionObserver(
       ([entry]) => {
         inView = entry.isIntersecting;
-        if (inView && !gpu) init();
+        if (inView && !initialized && !contextLost) init();
         else sync();
       },
       { rootMargin: "0px" },
     );
     visible.observe(node);
-    const resize = new ResizeObserver(() => {
-      if (inView) paint();
-    });
+    const measure = () => {
+      // Read layout only when the stage changes, never inside the animation loop.
+      bounds = node.getBoundingClientRect();
+      surface.width = bounds.width;
+      surface.height = bounds.height;
+      surface.dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+      gpu?.configure(surface);
+      if (inView && !document.hidden) paint();
+    };
+    const resize = new ResizeObserver(measure);
     resize.observe(node);
     const theme = new MutationObserver(() => {
-      if (inView) paint();
+      surface.dark = document.documentElement.dataset.theme === "dark";
+      gpu?.configure(surface);
+      if (inView && !document.hidden) paint();
     });
     theme.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
     const move = (event: PointerEvent) => {
-      if (event.pointerType !== "mouse") return;
-      const bounds = node.getBoundingClientRect();
-      pointer[0] = (event.clientX - bounds.left) / bounds.width - 0.5;
-      pointer[1] = (event.clientY - bounds.top) / bounds.height - 0.5;
+      if (event.pointerType !== "mouse" || !bounds.width || !bounds.height) return;
+      pointer[0] = Math.max(
+        -0.5,
+        Math.min(0.5, (event.clientX - bounds.left) / bounds.width - 0.5),
+      );
+      pointer[1] = Math.max(
+        -0.5,
+        Math.min(0.5, (event.clientY - bounds.top) / bounds.height - 0.5),
+      );
+    };
+    const position = () => {
+      if (inView) bounds = node.getBoundingClientRect();
     };
     const leave = () => {
       pointer[0] = 0;
@@ -224,30 +261,42 @@ export function ParticleField({ locale }: { locale: Locale }) {
     };
     const lost = (event: Event) => {
       event.preventDefault();
+      contextLost = true;
       stop();
       gpu?.dispose();
       gpu = null;
       node.dataset.motion = "fallback";
     };
-    const host = node.closest("section");
+    const restored = () => {
+      contextLost = false;
+      init();
+    };
+    const stage = node.closest(".hero-universe") || node.closest("section");
+    const host = stage instanceof HTMLElement ? stage : null;
+    host?.addEventListener("pointerenter", measure, { passive: true });
     host?.addEventListener("pointermove", move, { passive: true });
     host?.addEventListener("pointerleave", leave);
+    window.addEventListener("resize", measure, { passive: true });
+    window.addEventListener("scroll", position, { passive: true });
     document.addEventListener("visibilitychange", sync);
     motion.addEventListener("change", sync);
     node.addEventListener("webglcontextlost", lost);
-    node.addEventListener("webglcontextrestored", init);
+    node.addEventListener("webglcontextrestored", restored);
     return () => {
       stop();
       gpu?.dispose();
       visible.disconnect();
       resize.disconnect();
       theme.disconnect();
+      host?.removeEventListener("pointerenter", measure);
       host?.removeEventListener("pointermove", move);
       host?.removeEventListener("pointerleave", leave);
+      window.removeEventListener("resize", measure);
+      window.removeEventListener("scroll", position);
       document.removeEventListener("visibilitychange", sync);
       motion.removeEventListener("change", sync);
       node.removeEventListener("webglcontextlost", lost);
-      node.removeEventListener("webglcontextrestored", init);
+      node.removeEventListener("webglcontextrestored", restored);
       control.current = () => {};
     };
   }, []);
@@ -265,6 +314,7 @@ export function ParticleField({ locale }: { locale: Locale }) {
         className={styles.control}
         onClick={() => setPaused((value) => !value)}
         aria-label={label}
+        aria-pressed={paused}
         title={label}
       >
         <Icon name={paused ? "play" : "pause"} />

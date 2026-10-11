@@ -39,7 +39,8 @@ const en = {
   translationTitle: "This translation is still on its way.",
   translationText: "You can read the published version in one of these languages.",
   preview: "Private draft preview",
-  previewText: "Only this revision is shown. Publication is a separate action in the bot.",
+  previewText:
+    "Only this revision is shown. Publication is a separate action in the control panel.",
   emptyDraft: "This field has not been filled in yet.",
   profileLabel: "One name, around the web",
   profileTitle: "Elsewhere, I’m sardorcodev.",
@@ -119,7 +120,8 @@ const uz: Copy = {
   translationTitle: "Bu tarjima hali tayyorlanmoqda.",
   translationText: "Nashr qilingan variantni quyidagi tillardan birida o‘qishingiz mumkin.",
   preview: "Qoralamani shaxsiy ko‘rish",
-  previewText: "Bu yerda faqat shu tahrir ko‘rsatiladi. Nashr qilish botda alohida tasdiqlanadi.",
+  previewText:
+    "Bu yerda faqat shu tahrir ko‘rsatiladi. Nashr qilish boshqaruv panelida alohida tasdiqlanadi.",
   emptyDraft: "Bu maydon hali to‘ldirilmagan.",
   profileLabel: "Turli platformalarda bir nom",
   profileTitle: "Boshqa joylarda ham sardorcodev.",
@@ -199,7 +201,8 @@ const ru: Copy = {
   translationTitle: "Этот перевод ещё готовится.",
   translationText: "Опубликованную версию можно прочитать на одном из этих языков.",
   preview: "Личный просмотр черновика",
-  previewText: "Здесь показана только эта редакция. Публикация отдельно подтверждается в боте.",
+  previewText:
+    "Здесь показана только эта редакция. Публикация отдельно подтверждается в панели управления.",
   emptyDraft: "Это поле пока не заполнено.",
   profileLabel: "Одно имя на разных платформах",
   profileTitle: "В других местах — тоже sardorcodev.",

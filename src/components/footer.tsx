@@ -23,16 +23,31 @@ export async function Footer({
             </Link>
             <p>{d.common.footerNote}</p>
           </div>
-          <div className="footer-links">
+          <nav className="footer-column" aria-label={d.common.navigation}>
+            <span className="footer-column-title">{d.common.projects}</span>
+            <Link href={localePath(locale, "/projects")}>{d.common.projects}</Link>
+            <Link href={localePath(locale, "/blog")}>{w.blog}</Link>
+            <Link href={localePath(locale, "/lab")}>{w.lab}</Link>
+          </nav>
+          <nav className="footer-column" aria-label={d.common.about}>
+            <span className="footer-column-title">{d.common.about}</span>
+            <Link href={localePath(locale, "/about")}>{d.common.about}</Link>
+            <Link href={localePath(locale, "/official")}>{d.common.official}</Link>
+            <Link href={localePath(locale, "/press")}>{d.common.press}</Link>
+          </nav>
+          <div className="footer-column">
+            <span className="footer-column-title">{d.common.contact}</span>
+            <Link href={localePath(locale, "/contact")}>
+              {d.common.getInTouch}
+              <Icon name="arrow" />
+            </Link>
             <ExternalLink href={brand.github} label={d.common.newTab}>
               <Icon name="github" />
               GitHub
-              <Icon name="external" />
             </ExternalLink>
             <ExternalLink href={brand.channel} label={d.common.newTab}>
               <Icon name="telegram" />
               {d.common.channel}
-              <Icon name="external" />
             </ExternalLink>
           </div>
         </div>

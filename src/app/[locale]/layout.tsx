@@ -13,6 +13,8 @@ import { locales, localePath } from "@/lib/locales";
 import { safeJson, site } from "@/lib/site";
 import "../styles/base.css";
 import "../styles/workshop.css";
+import "../styles/google.css";
+import "../styles/editorial.css";
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
@@ -22,8 +24,8 @@ export const viewport: Viewport = {
   initialScale: 1,
   colorScheme: "light dark",
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#faf8f3" },
-    { media: "(prefers-color-scheme: dark)", color: "#101820" },
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#101114" },
   ],
 };
 export async function generateMetadata({
