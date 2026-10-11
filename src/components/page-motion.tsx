@@ -20,11 +20,13 @@ export function PageMotion() {
           if (!entry.isIntersecting) continue;
           observer.unobserve(entry.target);
           if (preference.matches || document.hidden) continue;
+          // Keep reading contrast intact throughout the entrance, including its first frame.
+          const opacity = entry.target.matches(".research-butterfly, .research-browser") ? 0.2 : 1;
           const base = getComputedStyle(entry.target).transform;
           const transform = base === "none" ? "" : base;
           const animation = entry.target.animate(
             [
-              { opacity: 0.2, transform: "translateY(20px) " + transform },
+              { opacity, transform: "translateY(20px) " + transform },
               { opacity: 1, transform: "translateY(0) " + transform },
             ],
             {
