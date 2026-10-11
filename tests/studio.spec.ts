@@ -51,6 +51,7 @@ test("background motion pauses, stops offscreen and honors reduced motion", asyn
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto("/en");
   const canvas = page.locator("canvas[data-motion]");
+  await canvas.scrollIntoViewIfNeeded();
   await expect(canvas).toHaveAttribute("data-motion", /running|fallback/);
   // A GPU-free browser keeps the static poster, while the software/GPU verification exercises motion.
   if ((await canvas.getAttribute("data-motion")) === "fallback") {
@@ -64,7 +65,7 @@ test("background motion pauses, stops offscreen and honors reduced motion", asyn
   await expect(canvas).toHaveAttribute("data-motion", "running");
   await page.locator(".site-footer").scrollIntoViewIfNeeded();
   await expect(canvas).toHaveAttribute("data-motion", "offscreen");
-  await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
+  await canvas.scrollIntoViewIfNeeded();
   await expect(canvas).toHaveAttribute("data-motion", "running");
   await page.emulateMedia({ reducedMotion: "reduce" });
   await expect(canvas).toHaveAttribute("data-motion", "reduced");
@@ -82,6 +83,7 @@ test("navigation and content remain usable when WebGL is unavailable", async ({ 
     } as typeof original;
   });
   await page.goto("/uz");
+  await page.locator("canvas[data-motion]").scrollIntoViewIfNeeded();
   await expect(page.locator("canvas[data-motion]")).toHaveAttribute("data-motion", "fallback");
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
   await page.getByRole("button", { name: studio.uz.search, exact: true }).click();

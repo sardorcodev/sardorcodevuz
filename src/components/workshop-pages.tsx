@@ -16,13 +16,13 @@ import { ContactCallout, ExternalLink, Eyebrow, PageIntro } from "./ui";
 import { JournalList } from "./journal-list";
 import { ArticleContents, MarkdownContent } from "./markdown";
 import { DrawingBoard } from "./drawing-board";
-import { GoogleHome } from "./google-home";
+import { ResearchHome } from "./research-home";
 import { ManagedProjectCard } from "./managed-project-card";
 
 export { ManagedProjectCard } from "./managed-project-card";
 
 export async function WorkshopHome({ locale }: { locale: Locale }) {
-  return <GoogleHome locale={locale} />;
+  return <ResearchHome locale={locale} />;
 }
 export async function ManagedWorkPage({ locale }: { locale: Locale }) {
   const [d, w, entries] = await Promise.all([

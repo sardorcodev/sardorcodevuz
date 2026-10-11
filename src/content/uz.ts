@@ -64,6 +64,10 @@ export const uz = {
       "Sardorbek Musurmonovning sardorcodev shaxsiy brendiga tegishli GitHub va ijtimoiy tarmoq profillari.",
   },
   home: {
+    researchIntro:
+      "Frontend va backend yarataman. Hozir ML’ni o‘rganyapman va bilimimni amaliy loyihalarda sinayman.",
+    researchLead: "G‘oyadan,",
+    researchEnd: "mahsulotga.",
     eyebrow: "Full-stack dasturchi · ML o‘rganyapman",
     greeting: "Salom, men Sardorbek.",
     headline: "Veb-ilovalar yarataman.",
