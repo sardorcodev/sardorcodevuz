@@ -1,8 +1,8 @@
 "use client";
+import { usePublicSettings } from "./public-settings";
 import { useState } from "react";
 import Link from "next/link";
 import type { Locale } from "@/lib/locales";
-import { workshop } from "@/content/workshop";
 import { Icon } from "./icon";
 import { searchText } from "@/lib/navigation";
 
@@ -16,7 +16,8 @@ export type JournalItem = {
   minutes: number;
 };
 export function JournalList({ locale, entries }: { locale: Locale; entries: JournalItem[] }) {
-  const d = workshop[locale];
+  const { copy } = usePublicSettings();
+  const d = copy.workshop;
   const [query, setQuery] = useState("");
   const [topic, setTopic] = useState("");
   const words = searchText(query, locale).trim().split(/\s+/).filter(Boolean);

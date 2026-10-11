@@ -26,22 +26,23 @@ export function pageMetadata(
   title: string,
   description: string,
   path = "",
+  name: string = site.name,
 ): Metadata {
   const url = site.url + "/" + locale + path;
   const languages = Object.fromEntries(locales.map((lang) => [lang, site.url + "/" + lang + path]));
   return {
     metadataBase: new URL(site.url),
-    title: { absolute: title + " · " + site.name },
+    title: { absolute: title + " · " + name },
     description,
     alternates: {
       canonical: url,
       languages: { ...languages, "x-default": site.url + "/en" + path },
     },
     openGraph: {
-      title: title + " · " + site.name,
+      title: title + " · " + name,
       description,
       url,
-      siteName: site.name,
+      siteName: name,
       locale: ogLocales[locale],
       alternateLocale: locales.filter((lang) => lang !== locale).map((lang) => ogLocales[lang]),
       type: "website",
@@ -50,13 +51,13 @@ export function pageMetadata(
           url: "/images/og/" + locale + ".png",
           width: 1200,
           height: 630,
-          alt: title + " · " + site.name,
+          alt: title + " · " + name,
         },
       ],
     },
     twitter: {
       card: "summary_large_image",
-      title: title + " · " + site.name,
+      title: title + " · " + name,
       description,
       images: ["/images/og/" + locale + ".png"],
     },

@@ -3,8 +3,8 @@ import Image from "next/image";
 import { requireLocale } from "@/content";
 import { uuid } from "@/lib/cms/database";
 import { verifyPreviewToken } from "@/lib/cms/preview-token";
-import { editorStore } from "@/lib/telegram/store";
-import { workshop } from "@/content/workshop";
+import { getEntry } from "@/lib/control/store";
+import { getPublicWorkshop } from "@/lib/cms/settings";
 import { MarkdownContent } from "@/components/markdown";
 import { fields, imagePath } from "@/lib/cms/model";
 
@@ -27,9 +27,10 @@ export default async function Page({
     notFound();
   const revision = verifyPreviewToken(id, token);
   if (!revision) notFound();
-  const entry = await editorStore.get(id);
-  if (!entry || entry.locale !== locale || entry.revision !== revision) notFound();
-  const w = workshop[locale];
+  const entry = await getEntry(id);
+  if (!entry || entry.archived_at || entry.locale !== locale || entry.revision !== revision)
+    notFound();
+  const w = await getPublicWorkshop(locale);
   const text = (key: string) =>
     typeof entry.draft[key] === "string" ? (entry.draft[key] as string) : "";
   return (

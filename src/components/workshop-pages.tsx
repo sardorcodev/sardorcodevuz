@@ -2,9 +2,12 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Locale } from "@/lib/locales";
 import { localePath } from "@/lib/locales";
-import { getDictionary } from "@/content";
-import { workshop } from "@/content/workshop";
-import { studio } from "@/content/studio";
+import {
+  getPublicDictionary as getDictionary,
+  getPublicWorkshop,
+  getPublicStudio,
+  getBrand,
+} from "@/lib/cms/settings";
 import { site, safeJson } from "@/lib/site";
 import { getPosts, getProjects, getProfiles } from "@/lib/cms/content";
 import { readingMinutes, type PublicEntry, type ProjectData, type PostData } from "@/lib/cms/model";
@@ -16,7 +19,7 @@ import { ArticleContents, MarkdownContent } from "./markdown";
 import { DrawingBoard } from "./drawing-board";
 import { ParticleField } from "./particle-field";
 
-export function ManagedProjectCard({
+export async function ManagedProjectCard({
   entry,
   featured = false,
   number,
@@ -26,7 +29,7 @@ export function ManagedProjectCard({
   number?: number;
 }) {
   const p = entry.published,
-    d = getDictionary(entry.locale);
+    d = await getDictionary(entry.locale);
   return (
     <article
       className={"project-card " + (featured ? "project-featured" : "")}
@@ -65,7 +68,7 @@ export function ManagedProjectCard({
         </h3>
         <p>{p.summary}</p>
         <dl className="project-contribution">
-          <dt>{studio[entry.locale].role}</dt>
+          <dt>{(await getPublicStudio(entry.locale)).role}</dt>
           <dd>{p.role}</dd>
         </dl>
         <Tags items={p.stack} />
@@ -82,17 +85,18 @@ export function ManagedProjectCard({
   );
 }
 export async function WorkshopHome({ locale }: { locale: Locale }) {
-  const d = getDictionary(locale),
-    w = workshop[locale];
+  const brand = await getBrand();
+  const d = await getDictionary(locale),
+    w = await getPublicWorkshop(locale);
   const [projects, posts] = await Promise.all([getProjects(locale), getPosts(locale)]);
   return (
     <div className="container workshop-home">
       <section className="workshop-hero">
-        <ParticleField locale={locale} />
+        {brand.animation && <ParticleField locale={locale} />}
         <div className="workshop-hero-copy">
           <div className="portrait-signature">
             <Image
-              src="/images/portrait.webp"
+              src={brand.portrait}
               alt={d.home.portraitAlt}
               width={88}
               height={88}
@@ -210,7 +214,7 @@ export async function WorkshopHome({ locale }: { locale: Locale }) {
             <div>
               <h3>{w.journalEmpty}</h3>
               <p>{w.journalEmptyText}</p>
-              <ExternalLink href={site.channel} label={d.common.newTab} className="text-link">
+              <ExternalLink href={brand.channel} label={d.common.newTab} className="text-link">
                 {w.follow}
                 <Icon name="arrow" />
               </ExternalLink>
@@ -258,7 +262,7 @@ export async function WorkshopHome({ locale }: { locale: Locale }) {
   );
 }
 export async function ManagedWorkPage({ locale }: { locale: Locale }) {
-  const d = getDictionary(locale),
+  const d = await getDictionary(locale),
     entries = await getProjects(locale);
   return (
     <div className="container">
@@ -270,11 +274,11 @@ export async function ManagedWorkPage({ locale }: { locale: Locale }) {
         ))}
       </section>
       <div className="section learning-note">
-        <Eyebrow>{workshop[locale].labLabel}</Eyebrow>
-        <h2>{workshop[locale].labTitle}</h2>
-        <p>{workshop[locale].labIntro}</p>
+        <Eyebrow>{(await getPublicWorkshop(locale)).labLabel}</Eyebrow>
+        <h2>{(await getPublicWorkshop(locale)).labTitle}</h2>
+        <p>{(await getPublicWorkshop(locale)).labIntro}</p>
         <Link href={localePath(locale, "/lab")} className="text-link">
-          {workshop[locale].labCta}
+          {(await getPublicWorkshop(locale)).labCta}
           <Icon name="arrow" />
         </Link>
       </div>
@@ -282,9 +286,9 @@ export async function ManagedWorkPage({ locale }: { locale: Locale }) {
     </div>
   );
 }
-export function ManagedProjectPage({ entry }: { entry: PublicEntry<ProjectData> }) {
+export async function ManagedProjectPage({ entry }: { entry: PublicEntry<ProjectData> }) {
   const p = entry.published,
-    d = getDictionary(entry.locale);
+    d = await getDictionary(entry.locale);
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "CreativeWork",
@@ -337,8 +341,9 @@ export function ManagedProjectPage({ entry }: { entry: PublicEntry<ProjectData> 
   );
 }
 export async function ManagedProfilesPage({ locale }: { locale: Locale }) {
-  const d = getDictionary(locale),
-    w = workshop[locale],
+  const brand = await getBrand();
+  const d = await getDictionary(locale),
+    w = await getPublicWorkshop(locale),
     entries = await getProfiles(locale);
   const labels = {
     code: w.profileCode,
@@ -351,7 +356,7 @@ export async function ManagedProfilesPage({ locale }: { locale: Locale }) {
       <PageIntro label={w.profileLabel} title={w.profileTitle} intro={w.profileIntro} />
       <div className="profile-handle-banner">
         <span aria-hidden="true">@</span>
-        <strong>sardorcodev</strong>
+        <strong>{brand.name}</strong>
         <Icon name="globe" />
       </div>
       <section className="profiles-grid">
@@ -374,17 +379,18 @@ export async function ManagedProfilesPage({ locale }: { locale: Locale }) {
   );
 }
 export async function JournalPage({ locale }: { locale: Locale }) {
-  const w = workshop[locale],
-    d = getDictionary(locale),
+  const brand = await getBrand();
+  const w = await getPublicWorkshop(locale),
+    d = await getDictionary(locale),
     entries = await getPosts(locale);
   return (
     <div className="container journal-container">
       <PageIntro label={w.journalLabel} title={w.journalTitle} intro={w.journalIntro} />
       <div className="journal-topline">
         <span>
-          sardorcodev / {w.blog.toLocaleLowerCase(locale)}
+          {brand.name} / {w.blog.toLocaleLowerCase(locale)}
           <span className="journal-entry-count">
-            {entries.length} {studio[locale].journalCount}
+            {entries.length} {(await getPublicStudio(locale)).journalCount}
           </span>
         </span>
         <a className="text-link" href={localePath(locale, "/blog/feed.xml")}>
@@ -422,7 +428,7 @@ export async function JournalPage({ locale }: { locale: Locale }) {
           <h2>{w.journalEmpty}</h2>
           <p>{w.journalEmptyText}</p>
           <ExternalLink
-            href={site.channel}
+            href={brand.channel}
             label={d.common.newTab}
             className="button button-primary"
           >
@@ -434,15 +440,16 @@ export async function JournalPage({ locale }: { locale: Locale }) {
     </div>
   );
 }
-export function JournalArticle({
+export async function JournalArticle({
   entry,
   translations,
 }: {
   entry: PublicEntry<PostData>;
   translations: Locale[];
 }) {
+  const brand = await getBrand();
   const p = entry.published,
-    w = workshop[entry.locale];
+    w = await getPublicWorkshop(entry.locale);
   const date = new Intl.DateTimeFormat(entry.locale, {
     day: "numeric",
     month: "long",
@@ -457,7 +464,7 @@ export function JournalArticle({
     datePublished: entry.published_at,
     dateModified: entry.updated_at,
     inLanguage: entry.locale,
-    author: { "@type": "Person", "@id": site.url + "/#person", name: site.owner },
+    author: { "@type": "Person", "@id": site.url + "/#person", name: brand.owner },
     ...(p.image ? { image: new URL(p.image, site.url).href } : {}),
   };
   return (
@@ -471,7 +478,7 @@ export function JournalArticle({
         <h1>{p.title}</h1>
         <p className="intro-text">{p.summary}</p>
         <div className="article-byline">
-          <Image src="/images/portrait.webp" width={44} height={44} alt="" />
+          <Image src={brand.portrait} width={44} height={44} alt="" />
           <div>
             <strong>{w.author}</strong>
             <span>
@@ -509,7 +516,7 @@ export function JournalArticle({
         <Link href={localePath(entry.locale, "/blog")} className="text-link">
           ← {w.back}
         </Link>
-        <a href={site.channel} className="text-link">
+        <a href={brand.channel} className="text-link">
           {w.follow}
           <Icon name="telegram" />
         </a>
@@ -518,8 +525,8 @@ export function JournalArticle({
   );
 }
 export async function LabPage({ locale }: { locale: Locale }) {
-  const w = workshop[locale],
-    d = getDictionary(locale);
+  const w = await getPublicWorkshop(locale),
+    d = await getDictionary(locale);
   const hasProPaint = (await getProjects(locale)).some((project) => project.slug === "propaint");
   return (
     <div className="container">

@@ -1,11 +1,12 @@
 "use client";
+import { usePublicSettings } from "./public-settings";
 import { useCallback, useEffect, useRef, useState, type PointerEvent } from "react";
 import type { Locale } from "@/lib/locales";
-import { workshop } from "@/content/workshop";
 
 type Stroke = { color: string; width: number; points: [number, number][] };
 export function DrawingBoard({ locale }: { locale: Locale }) {
-  const d = workshop[locale];
+  const { copy } = usePublicSettings();
+  const d = copy.workshop;
   const canvas = useRef<HTMLCanvasElement>(null);
   const strokes = useRef<Stroke[]>([]);
   const current = useRef<Stroke | null>(null);
@@ -73,7 +74,7 @@ export function DrawingBoard({ locale }: { locale: Locale }) {
     ["#326d40", d.leaf],
   ];
   return (
-    <div className="drawing-board">
+    <div className="drawing-board" lang={locale}>
       <div className="drawing-tools">
         <div className="swatches" aria-label={d.ink}>
           {colors.map(([value, label]) => (

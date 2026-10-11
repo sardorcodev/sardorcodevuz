@@ -1,139 +1,66 @@
-# sardorcodev kontent boshqaruvi
+# Portfolio boshqaruvi
 
-Bot: **@sardorcodevbot**. Supabase loyihasi: **psxkpfymzezlcsaasomg**.
-Asosiy yozish tili o‘zbekcha; English va Russian variantlari alohida qoralama va nashr holatiga ega.
+Panel: `https://sardorcodev.uz/control`. Ommaviy menyuda havola yo‘q. Manzilni bilish kirish ruxsatini bermaydi: server egasining emaili, tasdiqlangan hisob va authenticator sessiyasini har bir so‘rovda tekshiradi.
 
-## Birinchi ulash
+## Birinchi kirish
 
-2026-10-04 kuni psxkpfymzezlcsaasomg loyihasiga migratsiya va boshlang‘ich kontent qo‘llandi. Aynan shu loyihada 1–3-qadamlarni qayta bajarish kerak emas. Boshqa yangi Supabase loyihasi uchun ular quyida keltirilgan.
+1. Supabase → Authentication → Users’da tasdiqlangan `sardorcodev@gmail.com` hisobingiz bo‘lsin. Saytda ro‘yxatdan o‘tish ochilmagan.
+2. Panelga shu email va parol bilan kiring.
+3. «Authenticator ulash»ni bosing. Google Authenticator, 1Password yoki boshqa TOTP ilovasida QR’ni skaner qiling. QR ishlamasa qo‘lda kiritish kaliti mavjud.
+4. Ilovadagi 6 xonali kodni kiriting. Keyingi kirishlarda parol va authenticator kodi so‘raladi.
 
-Vercel Production uchun quyidagi barcha 6 sozlama mavjudligi tekshirildi. Preview muhitiga jonli baza yoki bot kalitlari berilmagan. Mavjud maxfiy qiymatlarni qayta yaratish shart emas. Mahalliy webhook skriptlari uchun aynan shu qiymatlar .env.local faylida bo‘lishi kerak. Vercel’dagi Sensitive qiymatni qayta ko‘rib bo‘lmasa, uni o‘zingiz saqlagan manbadan oling; himoyalangan setup endpointi esa tokenni tashqariga chiqarmasdan ulash imkonini beradi.
+Parol yoki authenticator kalitini chatga yubormang. Authenticator ilovasining himoyalangan zaxira nusxasini saqlang. Qurilma yo‘qolsa Supabase Dashboard → Authentication → Users → hisobingiz → MFA factors orqali yo‘qolgan factor’ni olib tashlang. Panel yangi authenticator ulashni talab qiladi. Dashboard’ingizni ham MFA bilan himoyalang.
 
-1. Supabase loyihasida **SQL Editor → New query** oching.
-2. **supabase/migrations/20261004181759_portfolio_content_cms.sql** faylini to‘liq bajaring. Bu yangi portfolio loyihasi uchun bir martalik migratsiya.
-3. Keyin **supabase/seed.sql** faylini bajaring. U amaldagi 3 loyiha va 6 profilni uch tilda ko‘chiradi hamda birinchi blog yozuvining o‘zbekcha qoralamasini yaratadi. Seed qayta bajarilsa mavjud matnlaringiz ustiga yozmaydi.
-4. Kompyuteringizda **.env.example** nusxasidan **.env.local** yarating. Bu fayl git tomonidan e’tiborga olinmaydi.
-5. Quyidagi server sozlamalarini to‘ldiring va Vercel loyihasining **Settings → Environment Variables → Production** bo‘limiga kiriting.
+## Kontent
 
-| Nomi                      | Qiymat manbai                                                                                                                                             |
-| ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| SUPABASE_URL              | https://psxkpfymzezlcsaasomg.supabase.co                                                                                                                  |
-| SUPABASE_SERVICE_ROLE_KEY | Supabase Settings → API Keys → server Secret kaliti (sb_secret_..., tavsiya). Legacy service_role JWT ham ishlaydi. Anon yoki publishable kalit mos emas. |
-| TELEGRAM_BOT_TOKEN        | BotFather bergan @sardorcodevbot tokeni                                                                                                                   |
-| TELEGRAM_ADMIN_USER_ID    | O‘zingizning raqamli Telegram user ID’ingiz; username emas                                                                                                |
-| TELEGRAM_WEBHOOK_SECRET   | npm run bot:secrets yaratgan birinchi maxfiy qiymat                                                                                                       |
-| CMS_PREVIEW_SECRET        | npm run bot:secrets yaratgan ikkinchi, alohida qiymat                                                                                                     |
+Blog, loyihalar va profillarda qidirish, til/holat filtri va yangi qoralama yaratish bor. `slug` doimiy manzil: kichik lotin harflari, raqam va tire; yaratilgach o‘zgarmaydi. Sarlavhani tahrirlash manzilni o‘zgartirmaydi.
 
-Maxfiy qiymatlarni chatga yoki GitHub fayliga yubormang. Ularni o‘zingizning .env.local faylingiz va Vercel’ning maxfiy sozlamalariga kiriting. Qiymatlarni birgalikda to‘ldiring: qisman kiritilgan baza konfiguratsiyasi ishga tushmaydi.
+Tahrir 1.8 soniyalik tanaffusdan keyin qoralamaga saqlanadi. «Saqlash» yoki Ctrl/Cmd+S ham ishlaydi. Saqlash xatosida matn oynada qoladi; qayta saqlang. Yopishdan oldin saqlash holatini tekshiring. Ikki oynadagi eski tahrir yangi nusxani bosib ketmaydi: to‘qnashuvda mahalliy tahrirni JSON qilib yuklab olib, bazadagi yangi nusxani ochish mumkin.
 
-## Telegram user ID
+«Nashr qilish» maydonlarni tekshiradi va jonli saytni yangilaydi. Qoralama saqlash saytdagi oldingi nashrni o‘zgartirmaydi. «Saytdagi ko‘rinish» 30 daqiqalik maxfiy havola yaratadi; yangi tahrirdan keyin eski havola ishlamaydi. Havolani olgan kishi vaqt tugaguncha qoralamani ko‘ra oladi.
 
-.env.local ichida bot tokeni to‘ldirilgan bo‘lsin. Bot hali boshqa webhook bilan ishlamayotgan bo‘lsa:
+O‘zbekcha asosiy til. English va Русский tabidan yetishmayotgan tarjimani qoralama qilib yarating. Ko‘chirilgan matn avtomatik tarjima hisoblanmaydi: tarjimani tekshirib, alohida nashr qiling. Nashr qilinmagan tarjima ommaviy saytga chiqmaydi.
 
-1. Telegram’da o‘z hisobingizdan @sardorcodevbot’ga **/start** yuboring.
-2. Kompyuteringizda **npm run bot:identity** bajaring.
-3. Natijadagi **o‘zingizga tegishli userId** sonini TELEGRAM_ADMIN_USER_ID sifatida saqlang.
+«Tiklash» oldingi nusxani qoralamaga oladi. «Nashrdan olish» ommaviy nusxani olib tashlab, qoralamani saqlaydi. «Arxivga olish» kontentni saytdan yashiradi; arxivdan qaytarilgach qayta nashr qilish kerak. Yozuvlar paneldan butunlay o‘chirilmaydi.
 
-Buyruq xabar matnlarini chiqarmaydi. Botda oldindan webhook bo‘lsa, uni o‘zgartirmasdan to‘xtaydi. **npm run bot:info** amaldagi bot va webhook holatini ko‘rsatadi.
+## Sahifa matnlari va brend
 
-## Saytni ulash va webhook
+«Sahifa matnlari»da har bir til alohida. Sarlavhalar, tugmalar, navigatsiya, bo‘lim tavsiflari va interaktiv matnlarni qidiring va tahrirlang. Loyiha tafsilotlari «Loyihalar» bo‘limida boshqariladi.
 
-1. Migratsiya, seed va Production muhitidagi barcha sozlamalar tayyor bo‘lsin.
-2. Yangi versiya PRini ko‘rib chiqib, main ga birlashtiring. Vercel production deploymentni yakunlasin.
-3. Saytdagi loyihalar va profillarni tekshiring. Blog boshida bo‘sh bo‘lishi tabiiy: boshlang‘ich yozuv qoralama.
-4. Xuddi shu maxfiy qiymatlar yozilgan mahalliy .env.local bilan **npm run bot:register** bajaring.
-5. Telegram’da @sardorcodevbot’ga **/start** yuboring.
+«Sozlamalar»da brend nomi, egasi, aloqa emaili, GitHub, shaxsiy Telegram, kanal, shaxsiy/jamoa rasmi va bosh sahifa animatsiyasi mavjud. Admin hisobining emaili bu yerda o‘zgarmaydi: aloqa emaili ommaviy kontakt uchun.
 
-Webhook manzili: https://sardorcodev.uz/api/telegram.
+«Koddan» — qiymat GitHub’dagi koddan keladi. «Panel qiymati» — o‘zingiz tahrirlagan maydon. Faqat almashtirilgan qiymatlar bazada saqlanadi. «Koddagi qiymatga qaytarish» o‘sha almashtirishni olib tashlaydi; keyin nashr qiling. «Koddagi sozlamalarni qaytarish» guruhning nashrini olib tashlaydi, qoralamasini saqlaydi. Koddagi matnni push qilganingizda panel almashtirishi eski qiymatni ko‘rsatsa, uni kodga qaytaring.
 
-Jonli Production versiyada POST /api/telegram/setup orqali ulanishni tekshirish yoki webhookni o‘rnatish ham mumkin. Xuddi Telegram webhook’dagidek maxfiy x-telegram-bot-api-secret-token headeri talab qilinadi. JSON tanasi action: check yoki action: register bo‘ladi. Endpoint bot username’ini, admin sozlamasini va baza ulanishini tekshiradi; token yoki server kalitini qaytarmaydi. U Preview va Development’da yopiq. Boshqa amaldagi webhookni almashtirish alohida replaceExisting: true qiymatini talab qiladi. Bu imkoniyat Vercel’dagi Sensitive tokenni tashqariga chiqarmasdan ulash uchun ishlatiladi.
-Vercel Preview manzili login bilan himoyalangan bo‘lsa, Telegram uni webhook sifatida ishlata olmaydi. Ro‘yxatdan o‘tkazish skripti aynan production manzilini tekshiradi.
+## Rasmlar va zaxira nusxa
 
-Skript boshqa amaldagi webhookni avtomatik almashtirmaydi. Botni boshqa tizimdan ko‘chirishga qaror qilsangizgina **npm run bot:register -- --replace-existing** ishlating. Telegram’dagi kutayotgan xabarlar o‘chirilmaydi. max_connections qiymati 1 bo‘lib, tahrir amallari tartibini saqlashga yordam beradi.
+JPEG, PNG va WebP rasmlari 8 MB gacha. Fayl Supabase Storage’ga to‘g‘ridan-to‘g‘ri imzolangan manzil bilan yuklanadi. Server format va hajmni tekshiradi. SVG, HTML va boshqa fayllar qabul qilinmaydi. Ombor ommaviy: maxfiy hujjat yuklamang.
 
-Preview deploylarda haqiqiy kontentni sinash uchun alohida Supabase loyiha/bot sozlamalari bilan sinov muhitidan foydalaning. Ommaviy review preview kalitlarsiz mavjud loyihalar va profillar bilan ishlaydi.
+Kutubxonadan rasm tanlang yoki havolasini nusxalang. Kontent, sozlama yoki tahrir tarixida ishlatilgan rasm o‘chirilmaydi: tarixni tiklash havolani buzmaydi. Oldingi rasmlar omborda saqlanadi; kutubxona yangi panel orqali yuklangan fayllarni ro‘yxatlaydi.
 
-## Kundalik foydalanish
+«Kontentni eksport qilish» yozuvlar, qoralamalar, nashrlar, sozlamalar va media ro‘yxatini JSON faylga chiqaradi. Avtomatik import mavjud emas. Rasmlarning o‘zi uchun Supabase Storage’dan alohida nusxa oling. To‘liq baza nusxasi uchun Supabase backup yoki `supabase db dump` ishlating.
 
-**/start** yoki **/menu** asosiy menyuni ochadi. **/cancel** joriy maydonni kiritishni bekor qiladi.
+## Qaysi qism qayerda?
 
-**/help** yoki **Foydalanish qo‘llanmasi** tugmasi bot ichidagi yo‘riqnomani ochadi. **/blog**, **/projects**, **/profiles** tegishli ro‘yxatga tez o‘tadi; joriy tanlangan kontent tili saqlanadi.
+| Qism                          | Joylashuvi                                  | Yangilash                                          |
+| ----------------------------- | ------------------------------------------- | -------------------------------------------------- |
+| Ommaviy sahifalar             | `src/app/[locale]`, `src/components`        | Kompyuter → GitHub → Vercel                        |
+| Asosiy sahifa matnlari        | `src/content`, `src/lib/site.ts`            | GitHub push; panel almashtirishini kodga qaytaring |
+| Control panel                 | `src/app/control`, `src/components/control` | GitHub push                                        |
+| Backend va kirish himoyasi    | `src/app/api/control`, `src/lib/control`    | GitHub push, Vercel Functions                      |
+| Blog, loyihalar, profillar    | Supabase `cms_entries`                      | Panelda saqlash va nashr                           |
+| Sahifa/brend almashtirishlari | Supabase `control_settings`                 | Panelda saqlash va nashr                           |
+| Tahrir tarixi                 | `cms_versions`, `control_settings_versions` | Har bir muvaffaqiyatli tahrirda                    |
+| Yangi rasmlar                 | Supabase `portfolio-media`, `control_media` | Panelda yuklash                                    |
+| Baza tuzilishi                | `supabase/migrations`                       | Tekshirilgan migration’ni qo‘llash                 |
 
-1. Kontent tilini tanlang: Uz / En / Ru.
-2. **Blog**, **Loyihalar** yoki **Profillar** bo‘limiga kiring.
-3. Mavjud yozuvni oching yoki **+ Yangi** ni tanlang.
-4. Yangi yozuv uchun URL nomini kiriting: portfolio-yangilandi kabi.
-5. Tugmalardan kerakli maydonni tanlab, yangi qiymatni yuboring.
-6. **Saytda oldindan ko‘rish** orqali qoralamani tekshiring.
-7. **Nashr qilish → Tasdiqlash** ni bosing.
+## Telegram integratsiyasini yakuniy uzish
 
-Tahrirlar darhol qoralamada saqlanadi. Avvalgi nashr qilingan matn yangi nashr tasdiqlanmaguncha o‘zgarmaydi. **Nashrdan olish** sahifani yashiradi va qoralamani saqlaydi.
+Bot runtime kodi, webhook va setup API’lari olib tashlangan. Shaxsiy Telegram va kanal havolalari oddiy kontakt sifatida qoladi. Oldingi kanal xabarlari va baza tarixi o‘chirilmaydi.
 
-Nashr va nashrdan olish tasdig‘i joriy seans va aynan shu tahrirga bog‘langan, bir soatda eskiradi. **/cancel**, boshqa yozuvni ochish yoki yangi tasdiq olish eski tasdiqni bekor qiladi. Bot yangilangach eski tugma ishlamasa, **/menu** orqali yozuvni qayta oching.
+BotFather’da tokenni `/revoke` orqali bekor qiling; kanal adminlaridan `@sardorcodevbot`ni olib tashlang. Vercel → Environment Variables’dan `TELEGRAM_BOT_TOKEN`, `TELEGRAM_ADMIN_USER_ID`, `TELEGRAM_WEBHOOK_SECRET` va bo‘lsa `TELEGRAM_CHANNEL_ID`ni olib tashlang. Yangi tizim ularni ishlatmaydi. Supabase’dagi `cms_sessions`, `cms_updates`, `channel_*` eski jadvallari tarix sifatida qoladi; yangi panel ularga murojaat qilmaydi.
 
-Maqola matni Markdown ko‘rinishida bo‘ladi. Telegram xabar chegarasidan uzun maqolani UTF-8 .md fayl qilib yuborish mumkin (ilova chegarasi 60 000 belgi). Muqova/loyiha rasmi maydoniga JPEG, PNG yoki WebP yuboriladi, maksimal 8 MB. Rasm tavsifi ham to‘ldiriladi. Blog muqovasini olib tashlash uchun **-** yuboring. Loyiha rasmi majburiy.
+## Server sozlamalari
 
-Blog mavzulari: **work** — ishlarim, **milestone** — yutuqlar, **thoughts** — fikrlar, **learning** — o‘rganish.
+`SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `CMS_PREVIEW_SECRET` kerak. Server kaliti `sb_secret_...` yoki legacy `service_role`; anon/publishable kalitini bu o‘zgaruvchiga qo‘ymang. Auth uchun loyiha public publishable key’i kodda bor. Boshqa Supabase loyihasiga ko‘chirsangiz `SUPABASE_PUBLISHABLE_KEY` va rasm domeni cheklovlarini moslang. `CONTROL_ADMIN_EMAIL` egasining ruxsatli emailini almashtiradi; standart `sardorcodev@gmail.com`.
 
-Rasmlar Supabase’ning ommaviy **portfolio-media** omboriga yuklanadi. Qoralama matni va tarixi maxfiy jadvallarda turadi; maxfiy rasm yoki hujjatlarni ommaviy media sifatida yuklamang.
-
-## Tarjimalar va tiklash
-
-Kontent ichidagi **EN tarjima / RU tarjima / UZ tarjima** tugmasi shu URL nomiga tegishli variantni ochadi yoki manba matndan yangi qoralama yaratadi. Bu avtomatik tarjima emas. Matnni tarjima qilib tekshiring, keyin tegishli tilda nashr qiling. Tarjima tugmasi mavjud variantni qayta yozmaydi.
-
-Blog tarjimasi hali nashr qilinmagan bo‘lsa, saytda mavjud tillarga havola ko‘rsatiladi. Yetishmayotgan variant sitemap yoki hreflangga nashr qilingandek kiritilmaydi.
-
-**Oldingi qoralamani tiklash** oxirgi saqlangan nusxani qoralamaga qaytaradi; uni ommaga chiqarish alohida tasdiqlanadi. Bazadagi **cms_versions** avvalgi snapshotlarni saqlaydi. Muntazam Supabase backup/export tartibini tanlangan tarif imkoniyatiga mos tashkil qiling.
-
-## Boshqaruv chegaralari
-
-- Bot blog, loyihalar, profillar va @sardorcodev kanalini boshqaradi. Sayt dizayni va navigatsiya tarjimalari kodda qoladi.
-- Kanal postlari egasi tomonidan tayyorlanadi yoki nashr qilingan blogdan qoralama yaratiladi. AI matn yozish, rejalashtirilgan nashr va AI tarjima ushbu versiyaga kiritilmagan.
-- Draft preview 30 daqiqada eskiradi va aynan bitta tahrirga bog‘langan. Matn o‘zgargach, botdan yangi preview havolasini oling.
-- Telegram update qayta kelsa kontent amali takrorlanmaydi. Telegram xabarni qabul qilganidan keyin tarmoq uzilsa, tasdiq xabari takror kelishi mumkin; kontent o‘zgarishi takrorlanmaydi.
-- Bazada ruxsat faqat server service-role orqali beriladi. Brauzerga yoki ommaviy endpointga maxfiy kalit berilmaydi.
-- Provider ulanishidagi xato mavjud sahifalarni bo‘sh kontent bilan almashtirish uchun sabab bo‘lmaydi: xato holati tekshirishga qoldiriladi, mavjud cache imkon qadar xizmat qiladi.
-
-## Telegram kanalini boshqarish
-
-Botni @sardorcodev kanaliga administrator qilib qo‘shing. Post yozish uchun **Post messages**, tahrirlash va pin uchun **Edit messages**, kanal nomi/tavsifi uchun **Change channel info** ruxsatlari kerak. **Delete messages** ruxsatini ham berishingiz mumkin. Boshqa administratorlarni tayinlash ruxsati talab qilinmaydi. Boshqaruv faqat TELEGRAM_ADMIN_USER_ID egasining bot bilan shaxsiy chatida ochiladi.
-
-Kanal migratsiyasi: **supabase/migrations/20261006065225_telegram_channel_manager.sql**. U 2026-10-06 kuni jonli loyihaga qo‘llandi; fayl versiyasi Supabase migratsiya tarixiga mos. U mavjud CMS jadvallarini va kontentni o‘zgartirmaydi; kanal qoralamalari va amallarini server uchun yopiq jadvallarga qo‘shadi. Boshqa loyihaga o‘rnatishda yangi Production deploydan oldin migratsiya bajariladi. Yangi maxfiy sozlama talab qilinmaydi; amaldagi webhook va token ishlatiladi. Production-only setup endpointidagi **action: channel** bot va egasining administratorligini, kanal identifikatori va ruxsatlarini tekshiradi; kanalga xabar yubormaydi.
-
-Audit tuzatishi **supabase/migrations/20261006080007_audit_channel_publication_time.sql** orqali qo‘llandi. U nashrning Telegram’dagi asl sanasini saqlaydi va oxirgi kanal amali uchun indeks qo‘shadi. Boshqa loyihaga o‘rnatishda bu migratsiyani ham tartib bilan bajaring.
-
-Navbatda qolgan amallarni bekor qilish **supabase/migrations/20261006082210_audit_channel_pending_recovery.sql** orqali qo‘shildi va 2026-10-06 kuni jonli bazaga qo‘llandi. Bu migratsiyani nashr vaqti tuzatishidan keyin bajaring; u mavjud kontentni o‘chirmaydi va server funksiya ruxsatlarini saqlaydi.
-
-1. Botga **/channel** yuboring yoki bosh menyudagi **Telegram kanal** tugmasini bosing. Kanal nomi, obunachilar soni va bot ruxsatlari ko‘rinadi. Birinchi tekshiruv @sardorcodev kanalini raqamli chat ID’siga bog‘laydi; keyingi amallar shu kanalga tegishli bo‘ladi.
-2. **+ Yangi post** ni tanlang. Oddiy matn yoki bitta rasm, video yoki hujjatni tavsifi bilan yuboring. Telegram’dagi qalin, kursiv, havola va boshqa standart formatlar saqlanadi. Bu bosqichda post kanalga chiqmaydi.
-3. **Havola tugmalari** bo‘limida har qatorda `Tugma nomi | https://havola` yozing. Ko‘pi bilan 6 ta tugma. Tugmalarni olib tashlash uchun **-** yuboring. Yangi post uchun bildirishnoma va matn havolasining oldindan ko‘rinishini sozlash mumkin.
-4. **Oldindan ko‘rish** postning aynan shu formatdagi nusxasini shaxsiy chatga yuboradi. Tekshirgach **Nashr qilish → Tasdiqlash** ni bosing.
-5. **Postlar va qoralamalar** ro‘yxatidan postni oching. Matn/tavsif, media yoki tugmalarni tahrirlang, so‘ng **Kanaldagi postni yangilash → Tasdiqlash** ni bosing. Nashr qilingan postning turi saqlanadi: masalan, foto o‘rniga matn qo‘yilmaydi.
-6. **Pin qilish / Pinni olish** va **Kanaldan o‘chirish** ham alohida tasdiqlanadi. Telegram 48 soatdan eski postni bot orqali o‘chirishga ruxsat bermaydi. Qoralamani yopish uni kanalda nashr qilmaydi.
-7. **Kanal sozlamalari** kanal nomi va tavsifini alohida tasdiq bilan o‘zgartiradi. Kanal username’i yoki boshqa adminlarning ruxsatlari o‘zgartirilmaydi.
-
-Saytda nashr qilingan blog yozuvini ochib, **Kanal uchun post tayyorlash** ni bosing. Sarlavha, qisqa mazmun va maqolaga havola tugmasi bilan qoralama yaratiladi; uni ko‘rib chiqib, alohida nashr qiling.
-
-Matn chegarasi **4096 belgi**, media tavsifi **1024 belgi**. Rasm **10 MB**, video/fayl **50 MB** gacha qabul qilinadi. Kanal media fayllari Telegram file_id orqali qayta ishlatiladi va portfolio’ning ommaviy Supabase omboriga yuklanmaydi. Albom, so‘rovnoma va kanalning oldingi postlar tarixini avtomatik import qilish hozircha qo‘llanmaydi. Boshqariladigan postlar shu bot orqali nashr qilinib, bazada qayd etiladi. [Telegram Bot API](https://core.telegram.org/bots/api).
-
-Telegram xabarni qabul qilganidan keyin tarmoq uzilsa, bot uni avtomatik qayta yubormaydi. Kanal amali **uncertain** holatida qoladi. **Natijani tekshirish** tugmasini oching: nashr qilingan postni kanalning o‘zidan botga Forward qilib bog‘lang yoki kanalni tekshirib, amal bajarilmaganini tasdiqlang. Pin, tahrir va kanal sozlamalari uchun ham haqiqiy natija alohida tasdiqlanadi. **sending** holati faol bo‘lsa kuting; 90 soniyadan keyin qayta ochilganda u tekshiriladigan noaniq holatga o‘tadi. Eski tasdiq tugmasi yangilangan qoralama yoki boshqa sozlamani tasdiqlay olmaydi.
-
-Tiklangan postning asl nashr sanasi Forward ma’lumotidan olinadi. Eski javobda sana bo‘lmasa, birinchi yuborish urinishining vaqti ishlatiladi; 48 soatlik o‘chirish oynasi tiklash paytida yangidan boshlanmaydi. Telegram’ning `date_time` sana formati ham matnda saqlanadi.
-
-Forward media qoralama bilan `file_unique_id` orqali solishtiriladi. Eski media qoralamasida bu qiymat bo‘lmasa, faqat aynan bir xil `file_id` qabul qilinadi. Urinishdan oldin nashr qilingan xabarni bog‘lab bo‘lmaydi. Har bir tanlangan qaror yoki qayta Forward yangi tasdiq tugmasini beradi; avvalgi tugma ishlamaydi.
-
-**pending** amal 90 soniyadan uzoq navbatda qolsa va yuborish hali boshlanmagan bo‘lsa, **Natijani tekshirish** orqali uni alohida tasdiq bilan bekor qilish mumkin. Keyingi yuborish yangidan tasdiqlanadi. Yuboruvchi amalni allaqachon egallagan bo‘lsa, bekor qilish rad etiladi; **sending** va **uncertain** holatlarida kanalning haqiqiy natijasini tekshirish tartibi saqlanadi.
-
-## Tekshiruv va muammolarni aniqlash
-
-Buyruqlar: **npm run check**, **npm run test:unit**, **npm run build**, **npm test**, **npm run test:channel:flow -- --webpack**.
-
-Unit tekshiruvlar haqiqiy PostgreSQL semantikasini PGlite orqali ishga tushiradi: SQL migratsiya, seed, private access, atomik saqlash, takroriy update, barcha uch kontent turini nashr qilish va nashrdan olish sinovlari bor. Bu tanlangan Supabase loyihasidagi jonli integratsiya tekshiruvi o‘rnini bosmaydi.
-
-Bot javob bermasa:
-
-1. O‘zingizning raqamli admin ID’ingiz va shaxsiy chatdan yozayotganingizni tekshiring.
-2. **npm run bot:info** orqali webhook to‘g‘ri manzilda ekanini tekshiring.
-3. Supabase migratsiya va seed bajarilganini tekshiring.
-4. Vercel’da barcha sozlamalar mavjudligi va yangi production deployda qo‘llanganini tekshiring.
-5. Server loglarida faqat xato turini tekshiring; tokenlarni nusxalab ulashmang.
+Secret’lar browser yoki GitHub’ga chiqmasin. Production bazasini Preview’ga ulash Preview panelidan ham haqiqiy kontentga yozish imkonini beradi; alohida sinov loyihasi tavsiya qilinadi. CI sinovlari local adapter va PGlite bazasida ishlaydi.

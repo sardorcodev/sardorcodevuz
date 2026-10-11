@@ -26,9 +26,3 @@ export function verifyPreviewToken(id: string, token: string, now = Date.now()):
   const actual = Buffer.from(match[3], "hex");
   return timingSafeEqual(expected, actual) ? Number(match[1]) : null;
 }
-export function secretMatches(actual: string | null, expected: string) {
-  if (!actual) return false;
-  const a = Buffer.from(actual),
-    b = Buffer.from(expected);
-  return a.length === b.length && timingSafeEqual(a, b);
-}

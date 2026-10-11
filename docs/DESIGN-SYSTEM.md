@@ -38,8 +38,8 @@ Original oqim shakli WebGL shaderida, bitta draw call bilan. Desktop 7200, mobil
 - WebGL yo‘qligi yoki context loss sahifani buzmaydi: statik fon saqlanadi.
 - Rang rejimi va o‘lcham o‘zgarganda tasvir yangilanadi. Fon kontent ustiga chiqmaydi va sensorli scrollni tutmaydi.
 
-## Blog va Telegram
+## Blog va boshqaruv paneli
 
 Maqola mazmuni haqiqiy Markdown ASTdan olinadi. Fenced code ichidagi matn sarlavha deb olinmaydi. Takroriy sarlavhalar uchun noyob anchorlar yaratiladi; Unicode ham qo‘llanadi. HTML bajarilmaydi va rasm/link cheklovlari saqlanadi.
 
-Botdagi /help, /blog, /projects, /profiles mavjud private-chat/admin tekshiruvidan o‘tadi. Tez buyruqlar kontentni nashr qilmaydi, tanlangan tilni saqlaydi va kiritish holatidan chiqadi. Nashr alohida tasdiqlanishi shart.
+Control panel ommaviy saytning iliq ranglari va Manrope shriftini davom ettiradi. Alohida navigatsiya, qidiruv, til va holat filtrlari mavjud. Qoralama saqlash va nashr qilish alohida amallar; eski tahrir yangisini bosmaydi. Kirish Supabase Auth va authenticator orqali himoyalangan. Telegram kanal oddiy ommaviy havola sifatida qoladi.

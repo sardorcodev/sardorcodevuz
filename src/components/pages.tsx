@@ -1,8 +1,8 @@
+import { getBrand } from "@/lib/cms/settings";
 import Image from "next/image";
 import Link from "next/link";
 import type { Dictionary } from "@/content/types";
 import { localePath, type Locale } from "@/lib/locales";
-import { site } from "@/lib/site";
 import { Icon, type IconName } from "@/components/icon";
 import { CopyEmail } from "@/components/copy-email";
 import { ContactCallout, ExternalLink, Eyebrow, PageIntro, Tags } from "@/components/ui";
@@ -34,7 +34,8 @@ function Skills({ d }: { d: Dictionary }) {
   );
 }
 
-export function AboutPage({ locale, dictionary: d }: Props) {
+export async function AboutPage({ locale, dictionary: d }: Props) {
+  const brand = await getBrand();
   return (
     <div className="container">
       <PageIntro label={d.about.label} title={d.about.title} intro={d.about.intro} />
@@ -50,7 +51,7 @@ export function AboutPage({ locale, dictionary: d }: Props) {
         </div>
         <figure className="about-portrait">
           <Image
-            src="/images/portrait.webp"
+            src={brand.portrait}
             width={640}
             height={960}
             alt={d.home.portraitAlt}
@@ -89,7 +90,7 @@ export function AboutPage({ locale, dictionary: d }: Props) {
         </div>
         <figure>
           <Image
-            src="/images/green-ops.webp"
+            src={brand.teamImage}
             width={1159}
             height={869}
             sizes="(max-width: 760px) 90vw, 520px"
@@ -103,7 +104,8 @@ export function AboutPage({ locale, dictionary: d }: Props) {
   );
 }
 
-export function ContactPage({ dictionary: d }: Props) {
+export async function ContactPage({ dictionary: d }: Props) {
+  const brand = await getBrand();
   return (
     <div className="container">
       <PageIntro label={d.contact.label} title={d.contact.title} intro={d.contact.intro} />
@@ -114,11 +116,11 @@ export function ContactPage({ dictionary: d }: Props) {
           </span>
           <h2>{d.contact.emailTitle}</h2>
           <p>{d.contact.emailText}</p>
-          <a className="email-address" href={"mailto:" + site.email}>
-            {site.email}
+          <a className="email-address" href={"mailto:" + brand.email}>
+            {brand.email}
           </a>
           <CopyEmail
-            email={site.email}
+            email={brand.email}
             label={d.common.copyEmail}
             success={d.common.copied}
             failure={d.common.copyFailed}
@@ -128,7 +130,7 @@ export function ContactPage({ dictionary: d }: Props) {
           <Icon name="telegram" />
           <h2>{d.contact.telegramTitle}</h2>
           <p>{d.contact.telegramText}</p>
-          <ExternalLink href={site.telegram} className="text-link" label={d.common.newTab}>
+          <ExternalLink href={brand.telegram} className="text-link" label={d.common.newTab}>
             @sardorbek_musurmonov
             <Icon name="external" />
           </ExternalLink>
@@ -137,7 +139,7 @@ export function ContactPage({ dictionary: d }: Props) {
           <Icon name="github" />
           <h2>{d.contact.githubTitle}</h2>
           <p>{d.contact.githubText}</p>
-          <ExternalLink href={site.github} className="text-link" label={d.common.newTab}>
+          <ExternalLink href={brand.github} className="text-link" label={d.common.newTab}>
             @sardorcodev
             <Icon name="external" />
           </ExternalLink>
@@ -146,7 +148,7 @@ export function ContactPage({ dictionary: d }: Props) {
           <Icon name="telegram" />
           <h2>{d.contact.channelTitle}</h2>
           <p>{d.contact.channelText}</p>
-          <ExternalLink href={site.channel} className="text-link" label={d.common.newTab}>
+          <ExternalLink href={brand.channel} className="text-link" label={d.common.newTab}>
             @sardorcodev
             <Icon name="external" />
           </ExternalLink>
@@ -173,13 +175,14 @@ export function ContactPage({ dictionary: d }: Props) {
   );
 }
 
-export function PressPage({ locale, dictionary: d }: Props) {
+export async function PressPage({ locale, dictionary: d }: Props) {
+  const brand = await getBrand();
   return (
     <div className="container">
       <PageIntro label={d.press.label} title={d.press.title} intro={d.press.intro} />
       <figure className="press-image">
         <Image
-          src="/images/green-ops.webp"
+          src={brand.teamImage}
           width={1159}
           height={869}
           sizes="(max-width: 900px) 90vw, 850px"

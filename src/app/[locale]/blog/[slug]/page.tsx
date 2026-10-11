@@ -1,10 +1,11 @@
+import { managedPageMetadata as pageMetadata } from "@/lib/cms/settings";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { requireLocale } from "@/content";
 import { JournalArticle } from "@/components/workshop-pages";
 import { getContent } from "@/lib/cms/content";
-import { workshop } from "@/content/workshop";
-import { site, pageMetadata } from "@/lib/site";
+import { getPublicWorkshop } from "@/lib/cms/settings";
+import { site } from "@/lib/site";
 import { localePath } from "@/lib/locales";
 import type { PublicEntry, PostData } from "@/lib/cms/model";
 
@@ -27,16 +28,16 @@ export async function generateMetadata({ params }: Props) {
   if (!all.length) notFound();
   if (!entry)
     return {
-      ...pageMetadata(
+      ...(await pageMetadata(
         locale,
-        workshop[locale].translationTitle,
-        workshop[locale].translationText,
+        (await getPublicWorkshop(locale)).translationTitle,
+        (await getPublicWorkshop(locale)).translationText,
         "/blog/" + slug,
-      ),
+      )),
       robots: { index: false, follow: true },
       alternates: { canonical: null, languages: null },
     };
-  const meta = pageMetadata(
+  const meta = await pageMetadata(
     locale,
     entry.published.title,
     entry.published.summary,
@@ -71,8 +72,8 @@ export default async function Page({ params }: Props) {
   if (!entry)
     return (
       <div className="container translation-notice">
-        <h1>{workshop[locale].translationTitle}</h1>
-        <p>{workshop[locale].translationText}</p>
+        <h1>{(await getPublicWorkshop(locale)).translationTitle}</h1>
+        <p>{(await getPublicWorkshop(locale)).translationText}</p>
         <div className="button-row">
           {all.map((e) => (
             <Link
