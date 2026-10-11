@@ -2,6 +2,7 @@
 import { usePublicSettings } from "./public-settings";
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import type { Locale } from "@/lib/locales";
 import { Icon } from "./icon";
 import { searchText } from "@/lib/navigation";
@@ -14,6 +15,8 @@ export type JournalItem = {
   dateLabel: string;
   category: string;
   minutes: number;
+  image?: string;
+  imageAlt?: string;
 };
 export function JournalList({ locale, entries }: { locale: Locale; entries: JournalItem[] }) {
   const { copy } = usePublicSettings();
@@ -28,15 +31,18 @@ export function JournalList({ locale, entries }: { locale: Locale; entries: Jour
   });
   return (
     <>
-      <div className="journal-filters">
+      <div className="journal-filters editorial-journal-filters">
         <label className="journal-search">
           <span>{d.search}</span>
-          <input
-            type="search"
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            placeholder={d.searchPlaceholder}
-          />
+          <span className="journal-search-field">
+            <Icon name="search" />
+            <input
+              type="search"
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder={d.searchPlaceholder}
+            />
+          </span>
         </label>
         <label className="journal-topic">
           <span>{d.allTopics}</span>
@@ -50,17 +56,26 @@ export function JournalList({ locale, entries }: { locale: Locale; entries: Jour
           </select>
         </label>
       </div>
-      <div className="journal-entries" aria-live="polite">
+      <div className="journal-entries editorial-journal-grid" aria-live="polite">
         {filtered.length ? (
-          filtered.map((entry, i) => (
+          filtered.map((entry) => (
             <article className="journal-row" key={entry.slug}>
-              <div className="journal-date">
-                <span className="journal-index" aria-hidden="true">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-                <time dateTime={entry.date}>{entry.dateLabel}</time>
-              </div>
-              <div>
+              {entry.image && (
+                <Link
+                  href={"/" + locale + "/blog/" + entry.slug}
+                  className="journal-card-image"
+                  aria-label={entry.title}
+                >
+                  <Image
+                    src={entry.image}
+                    alt={entry.imageAlt || ""}
+                    width={1200}
+                    height={800}
+                    sizes="(max-width: 640px) 92vw, 560px"
+                  />
+                </Link>
+              )}
+              <div className="journal-card-body">
                 <div className="journal-category">
                   {d.topics[entry.category as keyof typeof d.topics]} · {entry.minutes} {d.minutes}
                 </div>
@@ -71,6 +86,9 @@ export function JournalList({ locale, entries }: { locale: Locale; entries: Jour
                   </Link>
                 </h2>
                 <p>{entry.summary}</p>
+                <div className="journal-date">
+                  <time dateTime={entry.date}>{entry.dateLabel}</time>
+                </div>
               </div>
             </article>
           ))

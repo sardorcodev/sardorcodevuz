@@ -99,15 +99,19 @@ export function Header({
           </span>
         </Link>
         <nav className="desktop-nav" aria-label={labels.navigation}>
-          {links.map((link) => (
-            <Link
-              key={link.path}
-              href={localePath(locale, link.path)}
-              aria-current={pathname.startsWith(localePath(locale, link.path)) ? "page" : undefined}
-            >
-              {link.label}
-            </Link>
-          ))}
+          {links
+            .filter((link) => link.path !== "/contact")
+            .map((link) => (
+              <Link
+                key={link.path}
+                href={localePath(locale, link.path)}
+                aria-current={
+                  pathname.startsWith(localePath(locale, link.path)) ? "page" : undefined
+                }
+              >
+                {link.label}
+              </Link>
+            ))}
         </nav>
         <div className="header-tools">
           <button
@@ -175,6 +179,13 @@ export function Header({
             <Icon name="moon" className="show-light" />
             <Icon name="sun" className="show-dark" />
           </button>
+          <Link
+            className="button button-primary header-contact"
+            href={localePath(locale, "/contact")}
+          >
+            {labels.getInTouch}
+            <Icon name="arrow" />
+          </Link>
           <button
             type="button"
             className="icon-button mobile-menu-button"

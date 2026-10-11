@@ -1,5 +1,18 @@
 import type { NextConfig } from "next";
 
+// Next's development bundler uses eval and a WebSocket for hot reload.
+// Production keeps the stricter policy without these development permissions.
+const dev = process.env.NODE_ENV === "development";
+const scripts = "script-src 'self' 'unsafe-inline'" + (dev ? " 'unsafe-eval'" : "");
+const developmentConnections = dev ? " ws: wss:" : "";
+const securityPolicy = (storage = false) =>
+  "default-src 'self'; " +
+  scripts +
+  "; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://psxkpfymzezlcsaasomg.supabase.co; font-src 'self'; connect-src 'self'" +
+  (storage ? " https://psxkpfymzezlcsaasomg.supabase.co" : "") +
+  developmentConnections +
+  "; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'";
+
 const nextConfig: NextConfig = {
   experimental: { globalNotFound: true },
   images: {
@@ -54,8 +67,7 @@ const nextConfig: NextConfig = {
           { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
           {
             key: "Content-Security-Policy",
-            value:
-              "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://psxkpfymzezlcsaasomg.supabase.co; font-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'",
+            value: securityPolicy(),
           },
         ],
       },
@@ -66,8 +78,7 @@ const nextConfig: NextConfig = {
           { key: "Cache-Control", value: "private, no-store" },
           {
             key: "Content-Security-Policy",
-            value:
-              "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://psxkpfymzezlcsaasomg.supabase.co; font-src 'self'; connect-src 'self' https://psxkpfymzezlcsaasomg.supabase.co; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'",
+            value: securityPolicy(true),
           },
         ],
       })),

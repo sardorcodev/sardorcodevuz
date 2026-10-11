@@ -17,7 +17,7 @@ export function Workbench({
 }) {
   const [active, setActive] = useState(0);
   const id = useId();
-  const { copy } = usePublicSettings();
+  const { copy, brand } = usePublicSettings();
   const d = copy.workshop;
   const links = [
     localePath(locale, projectSlugs.includes("propaint") ? "/projects/propaint" : "/projects"),
@@ -40,7 +40,9 @@ export function Workbench({
           <i />
           <i />
         </span>
-        <span>sardorcodev / workspace</span>
+        <span>
+          {brand.name} / {d.deskTabs[active]}
+        </span>
         <Icon name="spark" />
       </div>
       <div className="workbench-tabs" role="tablist" aria-label={d.deskTitle}>
