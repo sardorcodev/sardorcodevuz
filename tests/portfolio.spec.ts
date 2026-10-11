@@ -141,7 +141,7 @@ test("email copying and personal Telegram use the owner’s confirmed contacts",
     "href",
     "mailto:sardorcodev@gmail.com",
   );
-  await expect(page.locator('a[href="https://t.me/sardorbek_musurmonov"]')).toBeVisible();
+  await expect(page.locator('main a[href="https://t.me/sardorbek_musurmonov"]')).toBeVisible();
   await page.getByRole("button", { name: "Emailni nusxalash" }).click();
   await expect(page.getByRole("status")).toHaveText("Email nusxalandi");
   expect(await page.evaluate(() => navigator.clipboard.readText())).toBe("sardorcodev@gmail.com");

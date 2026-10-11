@@ -98,7 +98,8 @@
 .google-project-card .project-number {
   margin: 0;
   font:
-    0.75rem "Manrope Variable",
+    0.75rem "Google Sans Flex Variable",
+    "Google Sans Variable",
     Arial,
     sans-serif;
 }
@@ -496,7 +497,8 @@
 
 .editorial-profiles .profile-handle-banner > span {
   font:
-    400 clamp(2rem, 5vw, 3rem) "Manrope Variable",
+    400 clamp(2rem, 5vw, 3rem) "Google Sans Flex Variable",
+    "Google Sans Variable",
     Arial,
     sans-serif;
 }
@@ -570,7 +572,8 @@
 
 .editorial-journal .journal-topline {
   font:
-    0.875rem "Manrope Variable",
+    0.875rem "Google Sans Flex Variable",
+    "Google Sans Variable",
     Arial,
     sans-serif;
   padding-bottom: 24px;
@@ -809,7 +812,8 @@
 
 .editorial-lab .experiment-number {
   font:
-    0.875rem "Manrope Variable",
+    0.875rem "Google Sans Flex Variable",
+    "Google Sans Variable",
     Arial,
     sans-serif;
 }

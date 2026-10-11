@@ -5,6 +5,7 @@ import { getPublicDictionary as getDictionary } from "@/lib/cms/settings";
 import type { Metadata, Viewport } from "next";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
+import { PageMotion } from "@/components/page-motion";
 import { requireLocale } from "@/content";
 import { getPosts, getProfiles, getProjects } from "@/lib/cms/content";
 import { getPublicWorkshop } from "@/lib/cms/settings";
@@ -151,12 +152,13 @@ export default async function LocaleLayout({
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
-      <body>
+      <body id="page-top">
         <a className="skip-link" href="#main-content">
           {d.common.skip}
         </a>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJson(jsonLd) }} />
         <PublicSettingsProvider copy={copy} brand={brand}>
+          <PageMotion />
           <Header locale={locale} labels={d.common} searchItems={searchItems} />
           <main id="main-content" tabIndex={-1}>
             {children}

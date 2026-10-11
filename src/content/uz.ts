@@ -43,6 +43,19 @@ export const uz = {
     profile: "Profilni ochish",
     independent: "Mustaqil loyiha",
   },
+  footer: {
+    follow: "Kuzatib boring",
+    explore: "Yaratish. O‘rganish. Ulashish.",
+    projectsText: "Veb-ilovalar, ular ortidagi texnik qarorlar va mening hissam.",
+    journalText: "Qilayotgan ishlarim, o‘rganganlarim va yo‘ldagi kichik yutuqlarim.",
+    labText: "Kod, interfeys va mashinaviy o‘rganish bilan amaliy tajribalar.",
+    aboutText: "sardorcodev ortidagi dasturchi va ishga yondashuvim haqida.",
+    profilesText: "Internetdagi sardorcodev sahifalari. Bir nom, turli platformalar.",
+    connectText: "Ish taklifi, loyiha yoki g‘oyangiz bormi? Keling, gaplashamiz.",
+    email: "Email yozish",
+    telegram: "Telegram’da shaxsiy xabar",
+    backToTop: "Yuqoriga qaytish",
+  },
   meta: {
     home: "Full-stack dasturchi, ML o‘rganish yo‘lida",
     description:
