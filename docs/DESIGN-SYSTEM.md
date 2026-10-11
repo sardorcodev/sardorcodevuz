@@ -52,3 +52,5 @@ Control panel alohida layout va uslublarda ishlaydi. Sahifa matnlari, brend, kon
 ## Lokal ishlab chiqish
 
 Next.js development bundleri uchun zarur `unsafe-eval` va HMR WebSocket ruxsati faqat `NODE_ENV=development` holatida qo‘shiladi. Production CSP’da bu ruxsatlar yo‘q. Bu kompyuterda `npm run dev` orqali navigatsiya, tablar, qidiruv va animatsiyani ishlatishni ta’minlaydi.
+
+Production’da manba bilan yig‘ilgan CSS orasida nomuvofiqlik kuzatilgani uchun Turbopack build fayl tizimi keshi o‘chirilgan. Aniq kesh qatlami tasdiqlanmagan; bu eski compiler natijasini qayta ishlatishni cheklovchi chora. Development, CDN, rasmlar va CMS kontent keshlari ishlashda davom etadi. Build biroz ko‘proq vaqt olishi mumkin. Yangi deploy’dan keyin yorug‘ va qorong‘i ranglar brauzerda tekshiriladi.
