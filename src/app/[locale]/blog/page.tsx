@@ -1,15 +1,15 @@
+import { managedPageMetadata as pageMetadata } from "@/lib/cms/settings";
 import { requireLocale, type LocaleParams } from "@/content";
 import { JournalPage } from "@/components/workshop-pages";
-import { workshop } from "@/content/workshop";
-import { pageMetadata } from "@/lib/site";
+import { getPublicWorkshop } from "@/lib/cms/settings";
 
 export async function generateMetadata({ params }: LocaleParams) {
   const locale = requireLocale((await params).locale),
-    w = workshop[locale];
+    w = await getPublicWorkshop(locale);
   return {
-    ...pageMetadata(locale, w.journalTitle, w.journalIntro, "/blog"),
+    ...(await pageMetadata(locale, w.journalTitle, w.journalIntro, "/blog")),
     alternates: {
-      ...pageMetadata(locale, w.journalTitle, w.journalIntro, "/blog").alternates,
+      ...(await pageMetadata(locale, w.journalTitle, w.journalIntro, "/blog")).alternates,
       types: { "application/rss+xml": "/" + locale + "/blog/feed.xml" },
     },
   };

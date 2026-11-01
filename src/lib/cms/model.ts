@@ -130,17 +130,3 @@ export const fields: Record<ContentKind, Record<string, string>> = {
     order: "Tartib (0–999)",
   },
 };
-export function fieldValue(field: string, text: string): unknown {
-  if (field === "order") {
-    if (!/^\d{1,3}$/.test(text)) throw new Error("0–999 oralig‘idagi son kiriting.");
-    return Number(text);
-  }
-  if (field === "stack")
-    return text
-      .split(",")
-      .map((x) => x.trim())
-      .filter(Boolean);
-  if (field === "image" && text === "-") return "";
-  if (text.length > (field === "body" ? 60000 : 1000)) throw new Error("Matn juda uzun.");
-  return text.trim();
-}

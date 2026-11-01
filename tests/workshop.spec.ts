@@ -49,11 +49,9 @@ for (const locale of ["uz", "en", "ru"]) {
     }
   });
 }
-test("unconfigured webhook fails closed and unsigned previews never expose data", async ({
-  request,
-}) => {
+test("removed webhook and unsigned previews never expose data", async ({ request }) => {
   const webhook = await request.post("/api/telegram", { data: { update_id: 1 } });
-  expect(webhook.status()).toBe(503);
+  expect(webhook.status()).toBe(404);
   expect(
     (await request.post("/api/telegram/setup", { data: { action: "register" } })).status(),
   ).toBe(404);

@@ -1,14 +1,21 @@
+import { managedPageMetadata as pageMetadata } from "@/lib/cms/settings";
+import { PublicSettingsProvider } from "@/components/public-settings";
+import { getPublicCopy, getBrand } from "@/lib/cms/settings";
+import { getPublicDictionary as getDictionary } from "@/lib/cms/settings";
 import type { Metadata, Viewport } from "next";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
-import { getDictionary, requireLocale } from "@/content";
+import { PageMotion } from "@/components/page-motion";
+import { requireLocale } from "@/content";
 import { getPosts, getProfiles, getProjects } from "@/lib/cms/content";
-import { workshop } from "@/content/workshop";
+import { getPublicWorkshop } from "@/lib/cms/settings";
 import type { NavigationItem } from "@/lib/navigation";
 import { locales, localePath } from "@/lib/locales";
-import { pageMetadata, safeJson, site } from "@/lib/site";
-import "../styles/base.css";
+import { safeJson, site } from "@/lib/site";
+import "../styles/foundation.css";
 import "../styles/workshop.css";
+import "../styles/editorial.css";
+import "../styles/research.css";
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
@@ -18,8 +25,8 @@ export const viewport: Viewport = {
   initialScale: 1,
   colorScheme: "light dark",
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#faf8f3" },
-    { media: "(prefers-color-scheme: dark)", color: "#101820" },
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#101114" },
   ],
 };
 export async function generateMetadata({
@@ -28,12 +35,13 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const locale = requireLocale((await params).locale),
-    d = getDictionary(locale);
+    d = await getDictionary(locale);
+  const brand = await getBrand();
   return {
-    ...pageMetadata(locale, d.meta.home, d.meta.description),
-    applicationName: site.name,
-    authors: [{ name: site.owner, url: site.url }],
-    creator: site.owner,
+    ...(await pageMetadata(locale, d.meta.home, d.meta.description)),
+    applicationName: brand.name,
+    authors: [{ name: brand.owner, url: site.url }],
+    creator: brand.owner,
     robots: { index: true, follow: true },
     manifest: "/manifest.webmanifest",
     icons: { icon: "/icon.svg", apple: "/apple-icon.png" },
@@ -49,13 +57,15 @@ export default async function LocaleLayout({
   params: Promise<{ locale: string }>;
 }) {
   const locale = requireLocale((await params).locale),
-    d = getDictionary(locale);
-  const [profiles, projects, posts] = await Promise.all([
+    d = await getDictionary(locale);
+  const [profiles, projects, posts, copy, brand] = await Promise.all([
     getProfiles(locale),
     getProjects(locale),
     getPosts(locale),
+    getPublicCopy(locale),
+    getBrand(),
   ]);
-  const w = workshop[locale];
+  const w = await getPublicWorkshop(locale);
   const searchItems: NavigationItem[] = [
     {
       href: localePath(locale),
@@ -91,7 +101,7 @@ export default async function LocaleLayout({
     {
       href: localePath(locale, "/contact"),
       title: d.common.contact,
-      description: site.email,
+      description: brand.email,
       group: "pages",
     },
     {
@@ -119,18 +129,18 @@ export default async function LocaleLayout({
       {
         "@type": "Person",
         "@id": site.url + "/#person",
-        name: site.owner,
-        alternateName: site.name,
+        name: brand.owner,
+        alternateName: brand.name,
         url: site.url,
-        email: site.email,
-        image: site.url + "/images/portrait.webp",
+        email: brand.email,
+        image: new URL(brand.portrait, site.url).href,
         sameAs: profiles.map((profile) => profile.published.url),
         description: d.meta.description,
       },
       {
         "@type": "WebSite",
         "@id": site.url + "/#website",
-        name: site.name,
+        name: brand.name,
         url: site.url,
         inLanguage: locales,
         author: { "@id": site.url + "/#person" },
@@ -142,16 +152,19 @@ export default async function LocaleLayout({
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
-      <body>
+      <body id="page-top">
         <a className="skip-link" href="#main-content">
           {d.common.skip}
         </a>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJson(jsonLd) }} />
-        <Header locale={locale} labels={d.common} searchItems={searchItems} />
-        <main id="main-content" tabIndex={-1}>
-          {children}
-        </main>
-        <Footer locale={locale} dictionary={d} />
+        <PublicSettingsProvider copy={copy} brand={brand}>
+          <PageMotion />
+          <Header locale={locale} labels={d.common} searchItems={searchItems} />
+          <main id="main-content" tabIndex={-1}>
+            {children}
+          </main>
+          <Footer locale={locale} dictionary={d} />
+        </PublicSettingsProvider>
       </body>
     </html>
   );

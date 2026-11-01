@@ -41,6 +41,8 @@ export async function database<T>(
   if (!response.ok) {
     const error = await response.json().catch(() => ({}));
     if (error.code === "40001") throw new Error("CMS_CONFLICT");
+    if (error.code === "23505") throw new Error("CMS_DUPLICATE");
+    if (error.code === "22023") throw new Error("CMS_INVALID_REFERENCE");
     // Never include remote response bodies or credentials in logs.
     throw new Error("CMS database request failed (" + response.status + ")");
   }

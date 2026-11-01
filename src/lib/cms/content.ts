@@ -17,7 +17,7 @@ export const getContent = cache(async (): Promise<PublicEntry[]> => {
   const rows: PublicEntry[] = [];
   for (let offset = 0; ; offset += 500) {
     const page = await database<PublicEntry[]>(
-      "cms_entries?select=id,kind,slug,locale,published,published_at,updated_at:published_updated_at&published=not.is.null&order=id.asc&limit=500&offset=" +
+      "cms_entries?select=id,kind,slug,locale,published,published_at,updated_at:published_updated_at&published=not.is.null&archived_at=is.null&order=id.asc&limit=500&offset=" +
         offset,
       {},
       true,

@@ -1,7 +1,6 @@
 import { test, type TestContext } from "node:test";
 import assert from "node:assert/strict";
 import { database } from "../../src/lib/cms/database";
-import { attachmentText } from "../../src/lib/telegram/api";
 
 function configure(t: TestContext) {
   const values = {
@@ -44,48 +43,5 @@ test("CMS REST authenticates modern server secrets without treating them as JWTs
     };
     assert.deepEqual(await database("cms_entries?select=id&limit=1"), [{ id: "fixture-entry" }]);
     assert.equal(requested, true);
-  }
-});
-
-test("Telegram media uploads use the same server-key authentication as the database", async (t) => {
-  configure(t);
-  const image = Uint8Array.from([137, 80, 78, 71, 13, 10, 26, 10, 0, 0, 0, 0, 0, 0, 0, 0]);
-  for (const { key, authorization } of credentials) {
-    process.env.SUPABASE_SERVICE_ROLE_KEY = key;
-    let uploaded = false;
-    globalThis.fetch = async (input, options) => {
-      const url = new URL(String(input));
-      if (url.hostname === "api.telegram.org") {
-        if (url.pathname.endsWith("/getFile"))
-          return Response.json({ ok: true, result: { file_path: "photos/fixture.png" } });
-        assert.equal(url.pathname, "/file/bot12345:fixture/photos/fixture.png");
-        return new Response(image);
-      }
-      assert.equal(url.hostname, "psxkpfymzezlcsaasomg.supabase.co");
-      assert.match(url.pathname, /^\/storage\/v1\/object\/portfolio-media\/[a-f0-9-]+\.png$/);
-      assert.equal(options?.method, "POST");
-      const headers = new Headers(options?.headers);
-      assert.equal(headers.get("apikey"), key);
-      assert.equal(headers.get("authorization"), authorization);
-      assert.equal(headers.get("content-type"), "image/png");
-      uploaded = true;
-      return Response.json({ Key: "fixture" });
-    };
-    const url = await attachmentText(
-      {
-        update_id: 1,
-        message: {
-          from: { id: 123456789 },
-          chat: { id: 123456789, type: "private" },
-          photo: [{ file_id: "fixture-photo", file_size: image.length }],
-        },
-      },
-      "image",
-    );
-    assert.match(
-      url!,
-      /^https:\/\/psxkpfymzezlcsaasomg\.supabase\.co\/storage\/v1\/object\/public\/portfolio-media\/[a-f0-9-]+\.png$/,
-    );
-    assert.equal(uploaded, true);
   }
 });

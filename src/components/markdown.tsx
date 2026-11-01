@@ -6,7 +6,7 @@ import type { ReactNode } from "react";
 import type { ExtraProps } from "react-markdown";
 import { imagePath } from "@/lib/cms/model";
 import type { Locale } from "@/lib/locales";
-import { studio } from "@/content/studio";
+import { getPublicStudio } from "@/lib/cms/settings";
 import {
   headingText,
   remarkHeadings,
@@ -14,7 +14,7 @@ import {
   type MarkdownNode,
 } from "@/lib/markdown-headings";
 
-function SectionHeading({
+async function SectionHeading({
   node,
   children,
   level,
@@ -25,6 +25,7 @@ function SectionHeading({
   level: 2 | 3;
   locale: Locale;
 }) {
+  const d = await getPublicStudio(locale);
   const Tag = level === 2 ? "h2" : "h3";
   const id = String(node?.properties?.id || "section");
   return (
@@ -33,22 +34,21 @@ function SectionHeading({
       <a
         className="heading-permalink"
         href={"#" + encodeURIComponent(id)}
-        aria-label={
-          studio[locale].permalink + ": " + (node ? headingText(node as MarkdownNode) : "")
-        }
+        aria-label={d.permalink + ": " + (node ? headingText(node as MarkdownNode) : "")}
       >
         <span aria-hidden="true">#</span>
       </a>
     </Tag>
   );
 }
-export function ArticleContents({ body, locale }: { body: string; locale: Locale }) {
+export async function ArticleContents({ body, locale }: { body: string; locale: Locale }) {
+  const d = await getPublicStudio(locale);
   const headings = articleHeadings(body);
   if (headings.length < 2) return null;
   return (
-    <nav className="article-contents" aria-label={studio[locale].contents}>
+    <nav className="article-contents" aria-label={d.contents}>
       <details open>
-        <summary>{studio[locale].contents}</summary>
+        <summary>{d.contents}</summary>
         <ol>
           {headings.map((heading) => (
             <li key={heading.id} data-level={heading.level}>

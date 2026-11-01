@@ -1,64 +1,64 @@
 .field {
   position: absolute;
-  inset: -20px -24px 0;
+  inset: 0;
   pointer-events: none;
   z-index: 0;
   overflow: hidden;
-  border-radius: 28px;
+  border-radius: inherit;
   background:
-    radial-gradient(ellipse at 72% 48%, #8fb3e817, transparent 54%),
-    radial-gradient(ellipse at 78% 38%, #c6b27715, transparent 44%);
+    radial-gradient(ellipse at 40% 52%, #6689fb18, transparent 47%),
+    radial-gradient(ellipse at 65% 45%, #bda0ef17, transparent 40%),
+    radial-gradient(ellipse at 50% 68%, #79d5e512, transparent 47%);
 }
 .field canvas {
   display: block;
   width: 100%;
   height: 100%;
-  opacity: 0.72;
-  mask-image: linear-gradient(to right, transparent 12%, #0007 40%, #000 66%, #000a 100%);
+  opacity: 0.88;
+  mask-image: radial-gradient(ellipse at 50% 48%, #000 35%, #000b 66%, transparent 88%);
 }
 :global([data-theme="dark"]) .field {
   background:
-    radial-gradient(ellipse at 72% 48%, #3c68b21c, transparent 55%),
-    radial-gradient(ellipse at 78% 38%, #51a79012, transparent 45%);
+    radial-gradient(ellipse at 38% 50%, #3661e529, transparent 48%),
+    radial-gradient(ellipse at 68% 43%, #9271e021, transparent 42%),
+    radial-gradient(ellipse at 50% 68%, #43a1ba16, transparent 48%);
 }
 :global([data-theme="dark"]) .field canvas {
   opacity: 1;
 }
 .control {
   position: absolute;
-  right: 0;
-  bottom: 12px;
+  right: 20px;
+  bottom: 20px;
   z-index: 2;
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
   display: grid;
   place-items: center;
   color: var(--muted);
-  background: var(--bg);
+  background: var(--surface);
   border: 1px solid var(--line);
   border-radius: 50%;
 }
 .control svg {
-  width: 15px;
-  height: 15px;
+  width: 17px;
+  height: 17px;
 }
 .control:hover {
   color: var(--blue);
   background: var(--blue-soft);
 }
-.field:has(canvas[data-motion="fallback"]) + .control {
+.field:has(canvas[data-motion="fallback"]) + .control,
+.field:has(canvas[data-motion="static"]) + .control {
   display: none;
 }
 @media (max-width: 760px) {
-  .field {
-    inset: 0 -18px;
-  }
   .field canvas {
-    mask-image: linear-gradient(to bottom, transparent 28%, #0006 43%, #000 65%, #0008 100%);
+    mask-image: radial-gradient(ellipse at 50% 48%, #000 32%, #0009 69%, transparent 94%);
   }
   .control {
-    bottom: 8px;
-    right: 0;
+    bottom: 12px;
+    right: 12px;
   }
 }
 @media (prefers-reduced-motion: reduce) {

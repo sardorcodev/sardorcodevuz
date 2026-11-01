@@ -1,7 +1,25 @@
 import type { NextConfig } from "next";
 
+// Next's development bundler uses eval and a WebSocket for hot reload.
+// Production keeps the stricter policy without these development permissions.
+const dev = process.env.NODE_ENV === "development";
+const scripts = "script-src 'self' 'unsafe-inline'" + (dev ? " 'unsafe-eval'" : "");
+const developmentConnections = dev ? " ws: wss:" : "";
+const securityPolicy = (storage = false) =>
+  "default-src 'self'; " +
+  scripts +
+  "; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://psxkpfymzezlcsaasomg.supabase.co; font-src 'self'; connect-src 'self'" +
+  (storage ? " https://psxkpfymzezlcsaasomg.supabase.co" : "") +
+  developmentConnections +
+  "; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'";
+
 const nextConfig: NextConfig = {
-  experimental: { globalNotFound: true },
+  experimental: {
+    globalNotFound: true,
+    // A deployed public CSS bundle differed from its committed source.
+    // Avoid restored compiler output; the exact stale-cache layer is unconfirmed.
+    turbopackFileSystemCacheForBuild: false,
+  },
   images: {
     remotePatterns: [
       {
@@ -54,11 +72,21 @@ const nextConfig: NextConfig = {
           { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
           {
             key: "Content-Security-Policy",
-            value:
-              "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://psxkpfymzezlcsaasomg.supabase.co; font-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'",
+            value: securityPolicy(),
           },
         ],
       },
+      ...["/control/:path*", "/api/control/:path*"].map((source) => ({
+        source,
+        headers: [
+          { key: "X-Robots-Tag", value: "noindex, nofollow, noarchive" },
+          { key: "Cache-Control", value: "private, no-store" },
+          {
+            key: "Content-Security-Policy",
+            value: securityPolicy(true),
+          },
+        ],
+      })),
     ];
   },
 };

@@ -1,9 +1,10 @@
+import { managedPageMetadata as pageMetadata } from "@/lib/cms/settings";
 import { notFound } from "next/navigation";
 import { ManagedProjectPage } from "@/components/workshop-pages";
 import { requireLocale } from "@/content";
 import { getContent } from "@/lib/cms/content";
 import type { PublicEntry, ProjectData } from "@/lib/cms/model";
-import { pageMetadata, site } from "@/lib/site";
+import { site } from "@/lib/site";
 type Props = { params: Promise<{ locale: string; slug: string }> };
 export async function generateStaticParams() {
   return (await getContent())
@@ -26,7 +27,7 @@ export async function generateMetadata({ params }: Props) {
     all.map((e) => [e.locale, site.url + "/" + e.locale + path]),
   );
   return {
-    ...pageMetadata(locale, entry.published.title, entry.published.summary, path),
+    ...(await pageMetadata(locale, entry.published.title, entry.published.summary, path)),
     alternates: {
       canonical: site.url + "/" + locale + path,
       languages: {

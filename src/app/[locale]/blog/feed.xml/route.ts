@@ -1,7 +1,8 @@
+import { getBrand } from "@/lib/cms/settings";
 import { isLocale } from "@/lib/locales";
 import { getPosts } from "@/lib/cms/content";
 import { site } from "@/lib/site";
-import { workshop } from "@/content/workshop";
+import { getPublicWorkshop } from "@/lib/cms/settings";
 
 export const revalidate = 300;
 const xml = (value: string) =>
@@ -12,16 +13,17 @@ const xml = (value: string) =>
 export async function GET(_request: Request, { params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   if (!isLocale(locale)) return new Response("Not found", { status: 404 });
+  const brand = await getBrand();
   const posts = await getPosts(locale);
   const feed =
     '<?xml version="1.0" encoding="utf-8"?><rss version="2.0"><channel><title>' +
-    xml("sardorcodev · " + workshop[locale].blog) +
+    xml(brand.name + " · " + (await getPublicWorkshop(locale)).blog) +
     "</title><link>" +
     site.url +
     "/" +
     locale +
     "/blog</link><description>" +
-    xml(workshop[locale].journalIntro) +
+    xml((await getPublicWorkshop(locale)).journalIntro) +
     "</description><language>" +
     locale +
     "</language>" +
