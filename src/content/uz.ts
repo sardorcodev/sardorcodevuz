@@ -131,7 +131,7 @@ export const uz = {
   },
   work: {
     label: "G‘oyadan yechimgacha",
-    title: "Har loyihaning o‘z hikoyasi bor.",
+    title: "Har loyihaning o‘z hikoyasi bor...",
     intro:
       "Yaratgan ishlarimga yaqinroq nazar: interfeys, backend, texnik qarorlar va hali oldinda turgan vazifalar.",
     supportingLabel: "Yana bir nechta tajriba",
