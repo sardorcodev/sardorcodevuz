@@ -2,7 +2,7 @@ import type { Dictionary } from "@/content/types";
 export const uz = {
   common: {
     home: "Bosh sahifa",
-    projects: "Loyihalar",
+    projects: "Loyihalar.",
     about: "Men haqimda",
     contact: "Bog‘lanish",
     press: "Ochiq manbalar",
