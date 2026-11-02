@@ -15,6 +15,7 @@
 }
 .site-header {
   position: sticky;
+  z-index: 10;
   top: 22px;
   align-self: start;
   padding: 25px 24px 32px 6px;
@@ -111,6 +112,23 @@ a[aria-current="page"] .nav-leaf {
   align-items: center;
   font-family: var(--font-mono);
   font-size: 17px;
+}
+@media (min-width: 761px) {
+  .header-tools {
+    padding: 2px 12px;
+    border-radius: 32px;
+    border: 1px solid color-mix(in srgb, var(--line) 38%, transparent);
+    background: var(--surface);
+    box-shadow:
+      inset 0 1px 0 #ffffff45,
+      0 3px 12px #071f1612;
+  }
+  @supports (backdrop-filter: blur(12px)) {
+    .header-tools {
+      background: color-mix(in srgb, var(--surface) 85%, transparent);
+      backdrop-filter: blur(12px) saturate(125%);
+    }
+  }
 }
 .language-inline a {
   display: inline-flex;

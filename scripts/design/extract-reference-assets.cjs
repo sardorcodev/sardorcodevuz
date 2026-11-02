@@ -126,9 +126,15 @@ async function main() {
       }
     }
     const filename = name + ".webp";
-    await sharp(data, { raw: { width, height, channels: info.channels } })
-      .webp(width >= 240 ? { quality: 90, alphaQuality: 100, effort: 6 } : { lossless: true })
-      .toFile(path.join(outDir, filename));
+    const art = sharp(data, { raw: { width, height, channels: info.channels } });
+    if (width >= 240) {
+      art
+        .sharpen({ sigma: 0.6 })
+        .webp({ quality: 94, alphaQuality: 100, effort: 6, smartSubsample: true });
+    } else {
+      art.webp({ lossless: true });
+    }
+    await art.toFile(path.join(outDir, filename));
     manifest.push({
       name,
       source: `docs/design/references/${source}.png`,

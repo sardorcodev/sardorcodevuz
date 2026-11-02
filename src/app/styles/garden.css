@@ -176,6 +176,7 @@
 .project-row:first-child .marker-link,
 .journal-row:first-child .marker-link {
   background-size: 100% 100%;
+  color: var(--accent-ink);
 }
 .marker-link {
   padding-inline: 18px;
@@ -1230,7 +1231,10 @@
   text-underline-offset: 5px;
 }
 .profile-group:first-of-type .profile-row:first-of-type h3 {
-  background: url("/images/garden/reference/marker.webp") left center / 145px 100% no-repeat;
+  justify-self: start;
+  padding-inline: 12px;
+  color: var(--accent-ink);
+  background: url("/images/garden/reference/marker.webp") center / 100% 100% no-repeat;
 }
 .profiles-email {
   margin-top: 24px;
@@ -2779,6 +2783,59 @@
   }
   .home-notes h2 .icon {
     width: 14px;
+  }
+}
+/* Keep the whole selected-work list in view on laptop-sized homepages. */
+@media (min-width: 1101px) {
+  .garden-shell > main:has(.garden-home) {
+    padding-top: clamp(50px, 8svh, 86px);
+  }
+  .garden-hero-copy {
+    padding-top: 4px;
+  }
+  .garden-hero h1 {
+    font-size: clamp(64px, min(6.3vw, 11svh), 92px);
+  }
+  .hero-description,
+  .hero-note {
+    font-size: 20px;
+  }
+  .hero-note {
+    margin-top: 12px;
+  }
+  .garden-hero .button-row {
+    margin-top: 20px;
+    gap: 30px;
+  }
+  .garden-hero .button {
+    font-size: 21px;
+  }
+  .hero-workspace {
+    width: min(100%, 57svh, 609px);
+    justify-self: end;
+    margin: 0;
+  }
+  .garden-home .section-heading-row {
+    margin-bottom: 9px;
+  }
+  .garden-home .section-heading-row h2 {
+    font-size: 32px;
+  }
+  .project-row-compact {
+    min-height: 62px;
+    padding-block: 5px;
+  }
+  .project-row-compact .project-pixel {
+    width: 58px;
+  }
+  .project-row-compact .project-copy h3 {
+    font-size: 28px;
+  }
+  .project-row-compact .project-teaser {
+    font-size: 17px;
+  }
+  .project-row-compact .project-meta {
+    font-size: 14px;
   }
 }
 @media (prefers-reduced-motion: no-preference) {
