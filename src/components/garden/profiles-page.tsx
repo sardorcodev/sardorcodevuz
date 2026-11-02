@@ -6,6 +6,7 @@ import { SocialIcon } from "../social-icon";
 import { Icon } from "../icon";
 import { GardenArt } from "./art";
 import { CopyEmail } from "../copy-email";
+import { directoryPlatforms, platformHost } from "@/content/directory-platforms";
 export async function ManagedProfilesPage({ locale }: { locale: Locale }) {
   const [brand, d, w, entries] = await Promise.all([
     getBrand(),
@@ -18,6 +19,20 @@ export async function ManagedProfilesPage({ locale }: { locale: Locale }) {
     social: w.profileSocial,
     contact: w.profileContact,
   };
+  const managed = entries.map((entry) => entry.published);
+  const managedHosts = new Set(managed.map((profile) => platformHost(profile.url)));
+  const directory = [
+    ...managed,
+    ...directoryPlatforms
+      .filter((p) => !managedHosts.has(platformHost(p.url)))
+      .map((p) => ({
+        title: p.title,
+        url: p.url,
+        category: p.category,
+        handle: "@sardorcodev",
+        summary: p.summary[locale],
+      })),
+  ];
   return (
     <div className="garden-page profiles-page">
       <div className="profiles-intro">
@@ -25,7 +40,7 @@ export async function ManagedProfilesPage({ locale }: { locale: Locale }) {
         <GardenArt name="signpost" />
       </div>
       {Object.entries(labels).map(([category, label]) => {
-        const profiles = entries.filter(({ published: profile }) => {
+        const profiles = directory.filter((profile) => {
           if (profile.url === brand.telegram) return false;
           const group = profile.url === brand.channel ? "code" : profile.category;
           return (group === "video" ? "social" : group) === category;
@@ -36,8 +51,13 @@ export async function ManagedProfilesPage({ locale }: { locale: Locale }) {
               {label}
               <Icon name="leaf" />
             </h2>
-            {profiles.map(({ id, published: p }) => (
-              <ExternalLink href={p.url} label={d.common.newTab} className="profile-row" key={id}>
+            {profiles.map((p) => (
+              <ExternalLink
+                href={p.url}
+                label={d.common.newTab}
+                className="profile-row"
+                key={p.url}
+              >
                 <SocialIcon href={p.url} />
                 <h3>{p.title}</h3>
                 <p>{p.summary}</p>
@@ -48,7 +68,7 @@ export async function ManagedProfilesPage({ locale }: { locale: Locale }) {
             {category === "contact" && (
               <>
                 <div className="profile-row profile-email-row">
-                  <Icon name="mail" />
+                  <SocialIcon href={"mailto:" + brand.email} />
                   <h3>
                     <a href={"mailto:" + brand.email}>Email</a>
                   </h3>
@@ -83,7 +103,6 @@ export async function ManagedProfilesPage({ locale }: { locale: Locale }) {
           </section>
         ) : null;
       })}
-      {!entries.length && <p>{w.profileEmpty}</p>}
     </div>
   );
 }

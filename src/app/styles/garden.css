@@ -1212,6 +1212,10 @@
   width: 28px;
   height: 28px;
 }
+[data-theme="dark"]
+  .social-icon:is([data-logo="github"], [data-logo="email"], [data-logo="threads"]) {
+  filter: brightness(0) invert(0.93);
+}
 .profile-email-row {
   grid-template-columns:
     44px minmax(130px, 0.8fr) minmax(180px, 1.25fr) minmax(170px, 0.9fr)
