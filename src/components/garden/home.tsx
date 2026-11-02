@@ -5,7 +5,7 @@ import { garden } from "@/content/garden";
 import { localePath, type Locale } from "@/lib/locales";
 import { Icon } from "../icon";
 import { ManagedProjectCard } from "../managed-project-card";
-import { GardenArt } from "./art";
+import { WorkspaceScene } from "./workspace-scene";
 export async function GardenHome({ locale }: { locale: Locale }) {
   const [brand, d, w, projects, posts] = await Promise.all([
     getBrand(),
@@ -34,7 +34,7 @@ export async function GardenHome({ locale }: { locale: Locale }) {
             </Link>
           </div>
         </div>
-        <GardenArt name="workspace" className="hero-workspace" eager />
+        <WorkspaceScene enabled={brand.animation} />
       </section>
       <section aria-labelledby="selected-title" className="selected-work">
         <div className="section-heading-row">

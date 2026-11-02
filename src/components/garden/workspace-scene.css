@@ -1,0 +1,82 @@
+.workspace-scene {
+  position: relative;
+  aspect-ratio: 1080 / 929;
+  isolation: isolate;
+  pointer-events: none;
+}
+.scene-sprite,
+.scene-tree {
+  position: absolute;
+  display: block;
+}
+.scene-sprite {
+  background-repeat: no-repeat;
+  background-image: url("/images/garden/reference/workspace-atlas.webp");
+  background-image: image-set(
+    url("/images/garden/reference/workspace-atlas.avif") type("image/avif"),
+    url("/images/garden/reference/workspace-atlas.webp") type("image/webp")
+  );
+}
+.scene-tree {
+  inset: 0;
+  transform-origin: 77% 47%;
+}
+.scene-lantern {
+  transform-origin: 49% 3%;
+}
+.scene-cat-body {
+  transform-origin: 65% 87%;
+}
+.scene-cat-head {
+  transform-origin: 87% 76%;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .workspace-scene[data-awake] .scene-tree {
+    transform: rotate(var(--wind, 0deg));
+    transition: transform 650ms ease-out;
+    animation: workspace-breeze 7s ease-in-out infinite;
+  }
+  .workspace-scene[data-awake] .scene-lantern {
+    transform: rotate(calc(-2 * var(--wind, 0deg)));
+    transition: transform 950ms ease-out;
+    animation: workspace-pendulum 4.2s ease-in-out infinite;
+  }
+  .workspace-scene[data-awake] .scene-cat-body {
+    animation: workspace-breathe 3.8s ease-in-out infinite;
+  }
+  .workspace-scene[data-awake] .scene-cat-head {
+    transform: translateY(var(--lift, 0%)) rotate(var(--look, 0deg));
+    transition: transform 420ms ease-out;
+    animation: workspace-doze 7.6s ease-in-out infinite;
+  }
+  .workspace-scene[data-awake="false"] :is(.scene-tree, .scene-sprite) {
+    animation-play-state: paused;
+  }
+}
+@keyframes workspace-breeze {
+  50% {
+    rotate: 0.75deg;
+  }
+}
+@keyframes workspace-pendulum {
+  25% {
+    rotate: 3deg;
+  }
+  75% {
+    rotate: -3deg;
+  }
+}
+@keyframes workspace-breathe {
+  50% {
+    scale: 1.009 1.048;
+  }
+}
+@keyframes workspace-doze {
+  25%,
+  75% {
+    translate: 0 -1.4%;
+  }
+  69% {
+    rotate: -2.5deg;
+  }
+}
