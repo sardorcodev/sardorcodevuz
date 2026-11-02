@@ -1,0 +1,8 @@
+Use case: logo-brand.
+Asset type: transparent raster website wordmark, displayed around 190x56 CSS pixels.
+Input image: Image 1 is the approved visual reference. Faithfully reproduce ONLY the small handwritten wordmark in its upper-left corner as a standalone transparent asset. Exclude the webpage and every other object.
+Primary request: exact lowercase text "sardorcodev", spelled s-a-r-d-o-r-c-o-d-e-v, in fluid confident handwritten brush script. Match the reference's graceful connected dark evergreen handwriting, slightly slanted right, with organic stroke variation, smooth baseline and generous ascenders; readable and warm, no heavy calligraphy flourishes. The terminal stroke of the final v sweeps upward into a slender curved botanical stem at the upper right, bearing two small pointed leaves, one muted green and one pale golden yellow with dark outlines.
+Color palette: wordmark and stem dark evergreen #173d31; small leaves muted green and pale warm yellow. No additional colors.
+Composition/framing: wide horizontal wordmark, approximately 1000x300 pixels; snug but uncut, modest transparent padding around all strokes and both leaves. Keep the reference's proportions and handwritten personality. The little botanical finish sits immediately at the wordmark's right end, growing naturally from its final stroke.
+Text (verbatim): "sardorcodev"
+Constraints: genuine transparent alpha background everywhere outside the lettering and leaf shapes. Only the requested wordmark and its little leafy stem. No paper texture, no rectangle, no UI, no webpage, no border, no other objects, no extra letters or words, no tagline, no watermark, no shadow, no 3D, no bevel, no glow. Crisp readable edges, flat 2D artwork.

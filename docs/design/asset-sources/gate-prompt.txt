@@ -1,0 +1,21 @@
+Initial generation prompt:
+
+Use case: illustration-story
+Asset type: isolated transparent pixel-art illustration for a website 404 page, displayed roughly 380 by 340 CSS pixels
+Input images: Image 1 is the approved 404 webpage mockup, used only as a visual reference. Recreate ONLY its right-side garden illustration.
+Primary request: Faithfully recreate the reference's little open garden gate and path, wooden hanging "404" sign and warm lantern, with the curious orange-and-white cat and small flowers/leaves, as one complete isolated raster illustration on genuine alpha transparency.
+Subject and composition: a pair of rustic warm brown wooden garden gate doors open toward a short pale earthy path, each side bordered by a short weathered gray stone pier with trailing ivy and loose green foliage. The path recedes through the opening and widens slightly into the foreground. A small standing orange-and-white cat with its tail raised is beside the left gate at the foreground, looking toward the viewer/right. Above the right gate is a tall wooden post with a horizontal wooden beam to its left, a little rectangular plank sign suspended from two dark chains that says "404", and a small yellow-lit hanging lantern at the beam's right end. Add only the original sparse white daisies with ochre centers, a few tiny yellow flowers, leaves and natural grass edging to ground the scene.
+Style/medium: crisp 2D pixel art with carefully placed square pixels, limited-color pixel shading, dark forest-green outlines and shadows, exactly the charming retro sprite style of the source. No smooth vector illustration, no photorealism, no gradients.
+Color palette: forest green around #173d31, muted leafy greens, warm ochre brown wood, weathered gray-green stone, butter-yellow highlights around #f5df88 and a small orange-white cat. The webpage backdrop will be mint #dce8dc, but DO NOT paint any mint rectangle or background into the asset.
+Composition/framing: one square output approximately 1024 by 1024 pixels. The whole garden illustration should have the reference's slightly wider-than-tall proportions, centered and naturally snug with only small transparent margins. Keep the complete sign, post, lantern, cat, flowers and path inside the frame without clipping.
+Text (verbatim): "404" in dark hand-painted pixel numerals on the wooden sign only.
+Constraints: genuine alpha transparency around the isolated scene and through gaps between objects and foliage. No webpage, no interface, no headings, no buttons, no logos, no other text, no watermark, no background, no opaque rectangle, no painted checkerboard.
+
+Final framing edit prompt:
+
+Use case: precise-object-edit
+Asset type: transparent pixel-art 404 garden scene for a website
+Input images: Image 1 is the exact illustration to preserve.
+Primary request: Change ONLY the framing and transparent padding. Produce a SQUARE canvas approximately 1024 by 1024 pixels. Fit the entire existing wide garden scene inside that square with a clear 6 percent fully transparent margin around every side. Retain its original wider-than-tall subject proportions. Do not crop or cut off a single leaf, grass edge, lantern, sign, cat, post or ground detail.
+Invariants: preserve the open garden gate and path, gray stone piers, wooden "404" sign at upper right, lantern, curious orange-white cat at lower left, flowers, foliage, warm wood and forest-green pixel-art palette. Preserve the crisp square-pixel 2D style and arrangement. Text remains "404" only. Make no new objects or scene background.
+Background: genuine alpha transparency, including all added margin and gaps through the foliage. No white or colored rectangle, no checkerboard painted in, no UI or watermark.

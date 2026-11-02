@@ -14,6 +14,7 @@ const securityPolicy = (storage = false) =>
   "; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'";
 
 const nextConfig: NextConfig = {
+  devIndicators: false,
   experimental: {
     globalNotFound: true,
     // A deployed public CSS bundle differed from its committed source.

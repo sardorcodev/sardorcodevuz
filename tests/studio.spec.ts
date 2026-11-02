@@ -8,6 +8,7 @@ for (const locale of ["uz", "en", "ru"] as const) {
     async ({ page }) => {
       const errors: string[] = [];
       page.on("pageerror", (error) => errors.push(error.message));
+      await page.setViewportSize({ width: 1440, height: 1000 });
       await page.goto("/" + locale);
       const trigger = page.getByRole("button", { name: studio[locale].search, exact: true });
       const target = await trigger.boundingBox();
@@ -47,48 +48,9 @@ for (const locale of ["uz", "en", "ru"] as const) {
   );
 }
 
-test("background motion pauses, stops offscreen and honors reduced motion", async ({ page }) => {
-  await page.setViewportSize({ width: 1440, height: 1000 });
-  await page.goto("/en");
-  const canvas = page.locator("canvas[data-motion]");
-  await canvas.scrollIntoViewIfNeeded();
-  await expect(canvas).toHaveAttribute("data-motion", /running|fallback/);
-  // A GPU-free browser keeps the static poster, while the software/GPU verification exercises motion.
-  if ((await canvas.getAttribute("data-motion")) === "fallback") {
-    await expect(page.getByRole("button", { name: studio.en.pauseMotion })).not.toBeVisible();
-    await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
-    return;
-  }
-  await page.getByRole("button", { name: studio.en.pauseMotion }).click();
-  await expect(canvas).toHaveAttribute("data-motion", "paused");
-  await page.getByRole("button", { name: studio.en.playMotion }).click();
-  await expect(canvas).toHaveAttribute("data-motion", "running");
-  await page.locator(".site-footer").scrollIntoViewIfNeeded();
-  await expect(canvas).toHaveAttribute("data-motion", "offscreen");
-  await canvas.scrollIntoViewIfNeeded();
-  await expect(canvas).toHaveAttribute("data-motion", "running");
-  await page.emulateMedia({ reducedMotion: "reduce" });
-  await expect(canvas).toHaveAttribute("data-motion", "reduced");
-  await expect(page.getByRole("button", { name: studio.en.pauseMotion })).not.toBeVisible();
-});
-test("navigation and content remain usable when WebGL is unavailable", async ({ page }) => {
-  await page.addInitScript(() => {
-    const original = HTMLCanvasElement.prototype.getContext;
-    HTMLCanvasElement.prototype.getContext = function (
-      this: HTMLCanvasElement,
-      ...args: Parameters<typeof original>
-    ) {
-      if (args[0] === "webgl" || args[0] === "webgl2") return null;
-      return original.apply(this, args as Parameters<typeof original>);
-    } as typeof original;
-  });
+test("home uses static optimized art instead of a rendering canvas", async ({ page }) => {
   await page.goto("/uz");
-  await page.locator("canvas[data-motion]").scrollIntoViewIfNeeded();
-  await expect(page.locator("canvas[data-motion]")).toHaveAttribute("data-motion", "fallback");
-  await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
-  await page.getByRole("button", { name: studio.uz.search, exact: true }).click();
-  await expect(page.getByRole("dialog")).toBeVisible();
-  await page.keyboard.press("Escape");
-  await page.goto("/uz/lab");
-  await expect(page.locator(".drawing-board canvas")).toBeVisible();
+  await expect(page.locator(".hero-workspace")).toBeVisible();
+  await expect(page.locator("main canvas")).toHaveCount(0);
+  await expect(page.locator(".project-row")).toHaveCount(3);
 });

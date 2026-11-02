@@ -1,0 +1,46 @@
+:root {
+  --bg: #d4e9d8;
+  --paper-texture: url("/images/garden/reference/mint-paper.webp");
+  --surface: #e3eedf;
+  --soft: #c7dfcc;
+  --ink: #002d2b;
+  --muted: #264d50;
+  --line: #4e7669;
+  --subtle-line: #a4b7a6;
+  --accent: #ffe78b;
+  --accent-ink: #002d2b;
+  --paper: #fffdf6;
+  --blue: var(--ink);
+  --blue-hover: #2d6049;
+  --blue-soft: #cfdfc9;
+  --green: #315c3c;
+  --font-body: "Fira Sans", Arial, sans-serif;
+  --font-display: "Lora Variable", Georgia, serif;
+  --font-mono: "Fira Code Variable", Consolas, monospace;
+  --sidebar-width: 224px;
+  --page-gutter: 56px;
+  --space-1: 8px;
+  --space-2: 16px;
+  --space-3: 24px;
+  --space-4: 32px;
+  --space-6: 48px;
+  --space-8: 64px;
+  color-scheme: light;
+}
+[data-theme="dark"] {
+  --paper-texture: none;
+  --bg: #172c25;
+  --surface: #20382c;
+  --soft: #294336;
+  --ink: #e1ead5;
+  --muted: #bacbb5;
+  --line: #78917b;
+  --subtle-line: #45624d;
+  --accent: #ead487;
+  --accent-ink: #173d31;
+  --paper: #fffdf6;
+  --blue-hover: #e9dc9c;
+  --blue-soft: #304e35;
+  --green: #b9d09a;
+  color-scheme: dark;
+}

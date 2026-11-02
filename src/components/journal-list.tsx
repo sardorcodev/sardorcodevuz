@@ -2,11 +2,9 @@
 import { usePublicSettings } from "./public-settings";
 import { useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import type { Locale } from "@/lib/locales";
 import { Icon } from "./icon";
 import { searchText } from "@/lib/navigation";
-
 export type JournalItem = {
   slug: string;
   title: string;
@@ -19,77 +17,69 @@ export type JournalItem = {
   imageAlt?: string;
 };
 export function JournalList({ locale, entries }: { locale: Locale; entries: JournalItem[] }) {
-  const { copy } = usePublicSettings();
-  const d = copy.workshop;
-  const [query, setQuery] = useState("");
-  const [topic, setTopic] = useState("");
+  const { copy } = usePublicSettings(),
+    d = copy.workshop;
+  const [query, setQuery] = useState(""),
+    [topic, setTopic] = useState("");
   const words = searchText(query, locale).trim().split(/\s+/).filter(Boolean);
-  const filtered = entries.filter((entry) => {
-    if (topic && entry.category !== topic) return false;
-    const text = searchText(entry.title + " " + entry.summary, locale);
-    return words.every((word) => text.includes(word));
-  });
+  const categories = new Set(entries.map((entry) => entry.category));
+  const filtered = entries.filter(
+    (entry) =>
+      (!topic || entry.category === topic) &&
+      words.every((word) => searchText(entry.title + " " + entry.summary, locale).includes(word)),
+  );
   return (
     <>
-      <div className="journal-filters editorial-journal-filters">
+      <div className="journal-filters">
         <label className="journal-search">
-          <span>{d.search}</span>
-          <span className="journal-search-field">
-            <Icon name="search" />
-            <input
-              type="search"
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              placeholder={d.searchPlaceholder}
-            />
-          </span>
+          <span className="sr-only">{d.search}</span>
+          <Icon name="search" />
+          <input
+            type="search"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder={d.searchPlaceholder}
+          />
         </label>
-        <label className="journal-topic">
-          <span>{d.allTopics}</span>
-          <select value={topic} onChange={(event) => setTopic(event.target.value)}>
-            <option value="">{d.allTopics}</option>
-            {Object.entries(d.topics).map(([key, label]) => (
-              <option value={key} key={key}>
-                {label}
-              </option>
-            ))}
-          </select>
-        </label>
+        {entries.length > 5 && categories.size > 1 && (
+          <label className="journal-topic">
+            <span className="sr-only">{d.allTopics}</span>
+            <select value={topic} onChange={(e) => setTopic(e.target.value)}>
+              <option value="">{d.allTopics}</option>
+              {Object.entries(d.topics)
+                .filter(([key]) => categories.has(key))
+                .map(([key, label]) => (
+                  <option value={key} key={key}>
+                    {label}
+                  </option>
+                ))}
+            </select>
+          </label>
+        )}
       </div>
-      <div className="journal-entries editorial-journal-grid" aria-live="polite">
+      <div className="journal-entries" aria-live="polite">
         {filtered.length ? (
           filtered.map((entry) => (
             <article className="journal-row" key={entry.slug}>
-              {entry.image && (
-                <Link
-                  href={"/" + locale + "/blog/" + entry.slug}
-                  className="journal-card-image"
-                  aria-label={entry.title}
-                >
-                  <Image
-                    src={entry.image}
-                    alt={entry.imageAlt || ""}
-                    width={1200}
-                    height={800}
-                    sizes="(max-width: 640px) 92vw, 560px"
-                  />
-                </Link>
-              )}
-              <div className="journal-card-body">
-                <div className="journal-category">
-                  {d.topics[entry.category as keyof typeof d.topics]} · {entry.minutes} {d.minutes}
-                </div>
+              <time dateTime={entry.date}>{entry.dateLabel}</time>
+              <div className="journal-row-copy">
                 <h2>
                   <Link href={"/" + locale + "/blog/" + entry.slug}>
-                    {entry.title}
-                    <Icon name="arrow" />
+                    <span className="marker-link">{entry.title}</span>
                   </Link>
                 </h2>
                 <p>{entry.summary}</p>
-                <div className="journal-date">
-                  <time dateTime={entry.date}>{entry.dateLabel}</time>
-                </div>
               </div>
+              <span className="journal-category">
+                {d.topics[entry.category as keyof typeof d.topics]} · {entry.minutes} {d.minutes}
+              </span>
+              <Link
+                href={"/" + locale + "/blog/" + entry.slug}
+                className="icon-button"
+                aria-label={d.read + ": " + entry.title}
+              >
+                <Icon name="arrow" />
+              </Link>
             </article>
           ))
         ) : (

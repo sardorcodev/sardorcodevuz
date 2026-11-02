@@ -1,0 +1,9 @@
+Use case: stylized-concept
+Asset type: one individual transparent raster website project icon, Smart Agro AI sprout.
+Input image: the supplied approved portfolio screenshot is a visual style and subject reference only. Recreate only the small seedling icon at the left of the second project row, beside Smart Agro AI. Do not reproduce any interface or other screenshot content.
+Primary request: a small fresh sprout with exactly two broad green leaves and a short dark green stem planted in a small warm brown mound of soil, with two tiny grass pixels. Match the reference icon's simple garden pixel-art silhouette.
+Style/medium: crisp real 2D pixel art made from square pixels, stepped edges, flat simple dark and light green leaf segments, dark evergreen outlines and a few warm brown soil pixels. Coarse deliberate pixels, approximately a 36 by 36 logical pixel sprite enlarged with nearest-neighbor edges. Intentionally legible at 48 to 64 CSS pixels.
+Composition/framing: single centered isolated seedling and soil mound, square transparent canvas, subject including mound fills about 75 percent of width and height with clean transparent margins. Two leaves angle outward from the short upright stem.
+Color palette: evergreen outlines, muted dark green and olive/light green leaves, warm earthy brown soil.
+Scene/backdrop: actual transparent alpha, no background or scene.
+Constraints: exactly two leaves, one stem, one small soil mound, tiny grass; no pot, flower, fruit, roots, animals, extra objects, words, letters, numbers, labels, watermark, UI, border or frame. No 3D, smooth curves, blur, photographic texture, elaborate lighting, or gradients. Preserve a clear chunky pixel silhouette.

@@ -10,10 +10,9 @@ export const errorMessages = {
     retry: "Try again",
   },
   uz: {
-    missing: "Bu sahifa topilmadi.",
-    missingText:
-      "Izlayotgan sahifangiz mavjud emas. Loyihalar bilan tanishishingiz yoki bosh sahifaga qaytishingiz mumkin.",
-    home: "Bosh sahifaga",
+    missing: "Bu yo‘lakda sahifa yo‘q.",
+    missingText: "Havola o‘zgargan yoki sahifa boshqa joyga ko‘chgan bo‘lishi mumkin.",
+    home: "Bosh sahifaga qaytish",
     projects: "Loyihalarni ko‘rish",
     error: "Sahifani ochishda xato yuz berdi.",
     errorText: "Iltimos, qayta yuklab ko‘ring.",

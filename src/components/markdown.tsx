@@ -7,6 +7,9 @@ import type { ExtraProps } from "react-markdown";
 import { imagePath } from "@/lib/cms/model";
 import type { Locale } from "@/lib/locales";
 import { getPublicStudio } from "@/lib/cms/settings";
+import { ProjectArt } from "./garden/art";
+import { Icon } from "./icon";
+import { ContentsNavigation } from "./article-contents";
 import {
   headingText,
   remarkHeadings,
@@ -41,30 +44,34 @@ async function SectionHeading({
     </Tag>
   );
 }
-export async function ArticleContents({ body, locale }: { body: string; locale: Locale }) {
+export async function ArticleContents({
+  body,
+  locale,
+  isCase = false,
+}: {
+  body: string;
+  locale: Locale;
+  isCase?: boolean;
+}) {
   const d = await getPublicStudio(locale);
   const headings = articleHeadings(body);
   if (headings.length < 2) return null;
-  return (
-    <nav className="article-contents" aria-label={d.contents}>
-      <details open>
-        <summary>{d.contents}</summary>
-        <ol>
-          {headings.map((heading) => (
-            <li key={heading.id} data-level={heading.level}>
-              <Link href={"#" + encodeURIComponent(heading.id)} prefetch={false}>
-                {heading.title}
-              </Link>
-            </li>
-          ))}
-        </ol>
-      </details>
-    </nav>
-  );
+  const label = isCase
+    ? { uz: "Shu sahifada", en: "On this page", ru: "На этой странице" }[locale]
+    : d.contents;
+  return <ContentsNavigation headings={headings} label={label} isCase={isCase} />;
 }
-export function MarkdownContent({ body, locale = "uz" }: { body: string; locale?: Locale }) {
+export function MarkdownContent({
+  body,
+  locale = "uz",
+  variant,
+}: {
+  body: string;
+  locale?: Locale;
+  variant?: "case";
+}) {
   return (
-    <div className="prose">
+    <div className={"prose" + (variant === "case" ? " case-prose" : "")}>
       <Markdown
         remarkPlugins={[remarkGfm, remarkHeadings]}
         skipHtml
@@ -84,15 +91,30 @@ export function MarkdownContent({ body, locale = "uz" }: { body: string; locale?
               {children}
             </SectionHeading>
           ),
-          a: ({ href, children }) => (
-            <a
-              href={href}
-              rel="noopener noreferrer"
-              target={href?.startsWith("https://") ? "_blank" : undefined}
-            >
-              {children}
-            </a>
-          ),
+          a: ({ href, children }) => {
+            const project = href?.match(
+              /^\/(?:uz|en|ru)\/projects\/(promptpilot|smart-agro-ai|propaint)\/?$/,
+            );
+            if (project && href)
+              return (
+                <Link href={href} className="project-inline-link">
+                  <ProjectArt slug={project[1]} compact />
+                  <span>
+                    {children}
+                    <Icon name="external" />
+                  </span>
+                </Link>
+              );
+            return (
+              <a
+                href={href}
+                rel="noopener noreferrer"
+                target={href?.startsWith("https://") ? "_blank" : undefined}
+              >
+                {children}
+              </a>
+            );
+          },
           img: ({ src, alt }) =>
             typeof src === "string" && src.length > 0 && imagePath.safeParse(src).success ? (
               <Image

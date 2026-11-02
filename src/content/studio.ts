@@ -49,10 +49,10 @@ const uz: StudioCopy = {
   sectionJournal: "Shaxsiy daftar",
   sectionPlay: "Ish stolimda",
   deskSkills: ["React · CSS · Canvas", "API · Auth · Baza", "Python · Ma’lumot · Tajriba"],
-  contents: "Yozuv mazmuni",
+  contents: "Shu yozuvda",
   permalink: "Bo‘limga havola",
   backTop: "Yuqoriga qaytish",
-  journalCount: "nashr qilingan yozuv",
+  journalCount: "qayd",
   allProjects: "Loyihalar bilan tanishing",
 };
 const ru: StudioCopy = {

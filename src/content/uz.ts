@@ -2,7 +2,7 @@ import type { Dictionary } from "@/content/types";
 export const uz = {
   common: {
     home: "Bosh sahifa",
-    projects: "Loyihalar.",
+    projects: "Ishlarim",
     about: "Men haqimda",
     contact: "Bog‘lanish",
     press: "Ochiq manbalar",
@@ -15,7 +15,7 @@ export const uz = {
     closeMenu: "Menyuni yopish",
     newTab: "yangi oynada ochiladi",
     viewProject: "Loyiha haqida",
-    viewCode: "Manba kodini ko‘rish",
+    viewCode: "GitHub’da ko‘rish",
     backToProjects: "Barcha loyihalar",
     getInTouch: "Bog‘lanish",
     viewWork: "Ishlarimni ko‘rish",
@@ -23,7 +23,7 @@ export const uz = {
     moreAbout: "Men haqimda batafsil",
     github: "GitHub sahifam",
     channel: "Telegram kanali",
-    copyEmail: "Emailni nusxalash",
+    copyEmail: "Nusxalash",
     copied: "Email nusxalandi",
     copyFailed:
       "Avtomatik nusxalash amalga oshmadi. Yuqoridagi emailni belgilab, nusxalashingiz mumkin.",
@@ -31,15 +31,15 @@ export const uz = {
     footerNote: "Veb uchun yarataman. Har qadamda o‘rganaman.",
     role: "Mening hissam",
     stack: "Texnologiyalar",
-    status: "Hozirgi holat",
+    status: "Bosqich",
     problem: "Muammo",
-    solution: "Yaratgan yechimim",
+    solution: "Yechim",
     contribution: "Bajargan ishlarim",
     decisions: "Texnik qarorlar",
     learned: "O‘rganganlarim",
-    next: "Keyingi qadamlar",
+    next: "Keyingi qadam",
     nextProject: "Keyingi loyiha",
-    source: "Manbani ko‘rish",
+    source: "Manbani o‘qish",
     profile: "Profilni ochish",
     independent: "Mustaqil loyiha",
   },
@@ -53,7 +53,7 @@ export const uz = {
     profilesText: "Internetdagi sardorcodev sahifalari. Bir nom, turli platformalar.",
     connectText: "Ish taklifi, loyiha yoki g‘oyangiz bormi? Keling, gaplashamiz.",
     email: "Email yozish",
-    telegram: "Telegram’da shaxsiy xabar",
+    telegram: "Suhbat boshlash",
     backToTop: "Yuqoriga qaytish",
   },
   meta: {
@@ -77,12 +77,11 @@ export const uz = {
       "Sardorbek Musurmonovning sardorcodev shaxsiy brendiga tegishli GitHub va ijtimoiy tarmoq profillari.",
   },
   home: {
-    researchIntro:
-      "Frontend va backend yarataman. Hozir ML’ni o‘rganyapman va bilimimni amaliy loyihalarda sinayman.",
+    researchIntro: "Frontend va backend yarataman. Hozir mashinaviy o‘rganishni o‘rganyapman.",
     researchLead: "G‘oyadan,",
     researchEnd: "mahsulotga.",
     eyebrow: "Full-stack dasturchi · ML o‘rganyapman",
-    greeting: "Salom, men Sardorbek.",
+    greeting: "Salom, men\nSardorbek.",
     headline: "Veb-ilovalar yarataman.",
     intro:
       "Interfeysdan backendgacha — g‘oyalarni foydali veb-ilovalarga aylantirishni yoqtiraman. Hozir mashinaviy o‘rganish yo‘nalishini ham o‘rganyapman.",
@@ -91,28 +90,28 @@ export const uz = {
     portraitNote: "Sardorbek Musurmonov",
     portraitLabel: "sardorcodev ortidagi inson",
     selectedLabel: "Yaratgan ishlarimdan",
-    selectedTitle: "Tanlangan loyihalar.",
+    selectedTitle: "Tanlangan ishlar",
     selectedIntro:
       "Mustaqil loyihalar va jamoaviy MVP. Bu yerda bajargan ishlarim, ularning maqsadi va keyingi qadamlarimni ko‘rishingiz mumkin.",
     skillsLabel: "Ishga yondashuvim",
-    skillsTitle: "Vebning ikki tomoni.",
+    skillsTitle: "Hozir nimalar bilan bandman?",
     skillsIntro:
       "Tushunarli interfeysni uning ortidagi mantiq va ma’lumotlar bilan bog‘lashni yoqtiraman.",
     skills: [
       {
         title: "Frontend",
         text: "Turli ekranlarga mos interfeyslar, React komponentlari, holat boshqaruvi va interaktiv Canvas vositalari.",
-        tags: ["React", "TypeScript", "CSS", "Canvas"],
+        tags: ["React", "Next.js", "TypeScript"],
       },
       {
         title: "Backend",
         text: "API, autentifikatsiya va ma’lumotlarni saqlash: Next.js ilovalaridan Python servislarigacha.",
-        tags: ["Next.js", "FastAPI", "Supabase", "REST API"],
+        tags: ["API", "FastAPI", "Supabase"],
       },
       {
-        title: "ML o‘rganish",
+        title: "O‘rganish",
         text: "Python va NumPy asoslarini o‘rganib, tushunchalarni kichik amaliy mashqlar bilan mustahkamlayapman.",
-        tags: ["Python", "NumPy", "Notebook"],
+        tags: ["Python va ML asoslari"],
       },
     ],
     aboutLabel: "Qiziqishdan boshlangan yo‘l",
@@ -125,15 +124,13 @@ export const uz = {
       "Python, NumPy va notebooklardan boshlayapman. Dastlabki mashqlarim GitHub’da, o‘rganganlarimga qarab qaydlarni ham qo‘shib boraman.",
     learningLink: "GitHub’da o‘rganish yo‘lim",
     ctaLabel: "Keling, tanishamiz",
-    ctaTitle: "Jamoangizga qiziquvchan dasturchi kerakmi?",
-    ctaText:
-      "Full-stack ish imkoniyatlari va foydali mahsulot yaratib, birga o‘rganadigan jamoalar bilan tanishishga qiziqaman.",
+    ctaTitle: "Biror g‘oya bormi?",
+    ctaText: "Loyiha, hamkorlik yoki oddiy savol — yozing, albatta javob beraman.",
   },
   work: {
     label: "G‘oyadan yechimgacha",
-    title: "Har loyihaning o‘z hikoyasi bor...",
-    intro:
-      "Yaratgan ishlarimga yaqinroq nazar: interfeys, backend, texnik qarorlar va hali oldinda turgan vazifalar.",
+    title: "Ishlarim.",
+    intro: "Mustaqil tajribalar va jamoaviy ishlar.",
     supportingLabel: "Yana bir nechta tajriba",
     supportingTitle: "O‘rganish davom etadi.",
     memoryTitle: "Memory Matrix",
@@ -145,12 +142,11 @@ export const uz = {
   },
   about: {
     label: "Kod ortidagi inson",
-    title: "Yana salom. Men Sardorbek.",
-    intro:
-      "Frontend bilimiga tayangan, backend amaliyotini rivojlantirayotgan va MLga qiziqadigan full-stack dasturchiman.",
+    title: "Yana salom.\nMen Sardorbek.",
+    intro: "Frontend va backend yarataman. Hozir mashinaviy o‘rganishni o‘rganyapman.",
     paragraphs: [
-      "sardorcodev nomi ostida ishlayman. Ilovaning ilk interfeysidan tortib, API va uning ortidagi ma’lumotlargacha yaratishni yoqtiraman.",
-      "ProPaint va PromptPilot — boshidan oxirigacha mustaqil yaratgan loyihalarim. Smart Agro AI’da MLdan tashqari qismlarni, jumladan frontend va backendni bajarganman.",
+      "sardorcodev nomi ostida ishlayman. Ilovaning ilk interfeysidan tortib API va ma’lumotlargacha yaratishni yoqtiraman.",
+      "ProPaint va PromptPilot’ni mustaqil yaratganman. Smart Agro AI’da frontend va backendni bajarganman.",
       "Hozir mashinaviy o‘rganishni o‘rganyapman. Asoslardan boshlayapman va tushunchalarni kichik mashqlar orqali mustahkamlayapman.",
       "Mavjud bilimlarim bilan hissa qo‘sha oladigan, mas’uliyat olib, tajribali jamoada o‘rganishda davom etadigan full-stack ish izlayapman.",
     ],
@@ -159,21 +155,21 @@ export const uz = {
     values: [
       {
         title: "Muammoni tushunish",
-        text: "Avval insonning ehtiyojini tushunish, keyin unga mos yechim yaratish.",
+        text: "Avval ehtiyoj, keyin yechim.",
       },
       {
         title: "Qismlarni bog‘lash",
-        text: "Interfeys, API va ma’lumotlarni bitta foydalanuvchi tajribasining qismlari sifatida ko‘rish.",
+        text: "Interfeys, API va ma’lumotlar bir tajriba.",
       },
       {
         title: "O‘rganishda davom etish",
-        text: "Savol berish, kodni o‘qish va yangi tushunchalarni amaliy mashqlarda sinab ko‘rish.",
+        text: "Savol berish va amalda sinash.",
       },
     ],
     teamLabel: "Jamoaviy tajriba",
     teamTitle: "GREEN OPS · Smart Agro AI",
     teamText:
-      "Milliy AI Hackathonning Termiz bosqichida GREEN OPS jamoasi uchinchi o‘rinni oldi. Smart Agro AI’da frontend va backend mening hissam, ML esa jamoaning alohida ishi bo‘lgan.",
+      "Milliy AI Hackathonning Termiz bosqichida jamoamiz uchinchi o‘rinni oldi.\n\nMening hissam — frontend va backend. ML qismi jamoaning alohida ishi.",
     teamImageAlt:
       "Milliy AI Hackathonda uchinchi o‘rin sertifikatini ushlab turgan GREEN OPS jamoasi",
     teamCaption: "Milliy AI Hackathonning Termiz bosqichidagi GREEN OPS jamoasi.",
@@ -181,37 +177,34 @@ export const uz = {
   },
   contact: {
     label: "Suhbat shu yerdan boshlanadi",
-    title: "Birga foydali narsa yarataylik.",
-    intro:
-      "Full-stack ish taklifi yoki birga ishlashimiz mumkin bo‘lgan loyihangiz bormi? Sizdan xabar olishdan xursand bo‘laman.",
-    emailTitle: "Email orqali yozing",
+    title: "Birga foydali\nnarsa yarataylik.",
+    intro: "Ish taklifi, hamkorlik yoki savol — yozishingiz mumkin.",
+    emailTitle: "Email orqali",
     emailText: "Jamoangiz, lavozim yoki yaratayotgan loyihangiz haqida qisqacha yozing.",
-    telegramTitle: "Telegram’da yozing",
-    telegramText: "Bevosita suhbat boshlash uchun shaxsiy profilim.",
+    telegramTitle: "Telegram’da",
+    telegramText: "Bu mening shaxsiy Telegram akkauntim.",
     githubTitle: "GitHub sahifam",
     githubText: "Loyihalarim, kodlarim va o‘rganish mashqlarim bir joyda.",
     channelTitle: "sardorcodev kanalini kuzating",
     channelText: "sardorcodev Telegram kanalidagi yangiliklar.",
-    lookingTitle: "Qanday imkoniyat izlayapman",
+    lookingTitle: "Qanday imkoniyat izlayapman?",
     lookingItems: [
-      "Frontend va backend bilan ishlaydigan full-stack lavozim.",
-      "Hissa qo‘shib, o‘rganishda davom etadigan jamoa.",
-      "Savol berish va rivojlanishga imkon beradigan amaliy loyihalar.",
+      "Frontend va backend bilan ishlaydigan full-stack jamoa.",
+      "Hissa qo‘shish va o‘rganishda davom etish imkoniyati.",
     ],
-    helpfulTitle: "Birinchi xabarda nimalar yozish mumkin",
+    helpfulTitle: "Birinchi xabarda",
     helpfulText:
-      "Imkoniyatning qisqa ta’rifi, ishlatiladigan texnologiyalar va qanday hamkorlikni ko‘zlayotganingiz yaxshi boshlanish bo‘ladi.",
+      "Loyiha yoki lavozim, ishlatiladigan texnologiyalar va qanday hamkorlikni ko‘zlayotganingizni qisqacha yozing.",
   },
   press: {
-    label: "Ochiq ma’lumotlar",
-    title: "Jamoaviy ishning hikoyasi.",
-    intro:
-      "Milliy AI Hackathonning Termiz bosqichidagi GREEN OPS, Smart Agro AI va mening ishtirokim haqidagi ochiq manba.",
+    label: "Men haqimda / Ochiq manbalar",
+    title: "Jamoaviy ishning\nhikoyasi.",
+    intro: "GREEN OPS va Smart Agro AI haqida.",
     sourceTitle: "Termiz davlat universiteti",
     sourceText:
       "Universitet e’lonida Musurmonov Sardorbek GREEN OPS jamoasi a’zosi sifatida ko‘rsatilgan va jamoaning uchinchi o‘rin natijasi qayd etilgan.",
     sourceKind: "Universitetning rasmiy Telegram e’loni",
-    note: "Natija butun jamoaga tegishli. Smart Agro AI’da frontend va backendni bajardim, ML qismi alohida yaratilgan.",
+    note: "Smart Agro AI’da frontend va backendni bajardim. ML qismi alohida yaratilgan.",
     projectLink: "Smart Agro AI’dagi hissam bilan tanishish",
   },
   official: {
@@ -226,14 +219,13 @@ export const uz = {
   projects: {
     promptpilot: {
       category: "Full-stack · AI vositasi",
-      summary:
-        "Promptlar bilan ishlashni tartibga soluvchi ilova: akkaunt sozlamalari, saqlangan tarix va almashtiriladigan AI provayder.",
-      role: "Interfeysdan backendgacha mustaqil yaratdim",
-      status: "Prototip · Beta sinoviga tayyorgarlik",
+      summary: "Promptlar bilan ishlash uchun tartibli muhit.",
+      role: "To‘liq ishlab chiqish",
+      status: "Prototip",
       problem:
-        "Ko‘rsatmalar, sozlamalar va avvalgi natijalar turli joylarda qolib ketsa, promptlar bilan ishlashni boshqarish qiyinlashadi.",
+        "Prompt, natija va tarixni bir joyda boshqarish kerak edi.\n\nAI bilan ishlashda promptlar tezda ko‘payib boradi va ularni izchil boshqarish qiyinlashadi. Har safar yangi prompt yozish, sozlamalarni o‘zgartirish va natijalarni saqlash uchun alohida joy kerak edi.",
       solution:
-        "Prompt vositalari, akkaunt sozlamalari va tarixni bitta jarayonga birlashtiruvchi Next.js ilovasini yaratdim. Supabase autentifikatsiya va ma’lumotlarni saqlashga xizmat qiladi; AI qismi sinov provayderi yoki OpenAI bilan ishlaydi.",
+        "Prompt oqimi, akkaunt sozlamalari va tarixni yagona interfeysga yig‘dim.\n\nPrompt yozish, tahlil qilish, optimallashtirish va avvalgi natijalarni ko‘rish jarayonini bitta qulay interfeysda birlashtirdim. Bu foydalanuvchiga tezroq va tartibli ishlash imkonini beradi.",
       contributions: [
         "Ilovani boshidan oxirigacha loyihaladim va yaratdim.",
         "Interfeys, prompt va dasturchi uchun ish jarayonlarini bajardim.",
@@ -242,29 +234,26 @@ export const uz = {
       ],
       decisions: [
         {
-          title: "AI provayderini almashtirish imkoniyati",
-          text: "Provayder tanlash qismi ish jarayonini javob yaratuvchi servisdan ajratadi. Sinov rejimi haqiqiy API ulanmaganida ham ishlab chiqishga yordam beradi.",
+          title: "Provider qatlamini almashtirish mumkin.",
+          text: "Turli AI provayderlari bilan ishlash uchun moslashuvchan arxitektura.",
         },
         {
-          title: "Tarixni saqlash — foydalanuvchi tanlovi",
-          text: "Akkaunt sozlamalari tarixni saqlashni boshqaradi, ma’lumotlarga egalik esa Supabase satr darajasidagi xavfsizlik qoidalari orqali belgilanadi.",
+          title: "Tarixni saqlash foydalanuvchi tanloviga bog‘liq.",
+          text: "Ma’lumotlar foydalanuvchi ixtiyoriga ko‘ra saqlanadi yoki saqlanmaydi.",
         },
       ],
       learned:
         "Interfeysni autentifikatsiya, ma’lumotlar va tashqi AI servisi bilan bog‘lashda xato holatlari hamda akkauntlar chegarasini butun ilova bo‘ylab hisobga olish kerakligini o‘rgandim.",
       nextSteps: [
-        "Yopiq beta ro‘yxatini yakunlash va sozlangan muhitda asosiy jarayonlarni tekshirish.",
-        "Akkauntlar ajratilishi, provayderning muqobil rejimi va oldingi versiyaga qaytishni tekshirish.",
-        "Ilovani chiqarishdan oldin foydalanuvchi fikrlarini yig‘ish.",
+        "Beta sinovi, xatolarni aniqlash va oqimni soddalashtirish.\n\nDastlabki foydalanuvchilar bilan sinov o‘tkazib, xatolarni aniqlash va foydalanuvchi tajribasi asosida oqimni yanada soddalashtirish rejalashtirilgan.",
       ],
       caption: "PromptPilot mahalliy ishlab chiqish sozlamalarida ishga tushirilgan.",
     },
     "smart-agro-ai": {
       category: "Full-stack · Jamoaviy MVP",
-      summary:
-        "React interfeysi, Python API va jamoaning ekin tavsiya modelini bog‘lovchi qishloq xo‘jaligi paneli.",
-      role: "Frontend va backend; ML alohida yaratilgan",
-      status: "MVP · Namoyish",
+      summary: "Qishloq xo‘jaligi uchun jamoaviy MVP.",
+      role: "Frontend va backend",
+      status: "MVP",
       problem:
         "Qishloq xo‘jaligi uchun qaror qabul qilish prototipi kiritilgan ma’lumotlar, ob-havo va ekin tavsiyalarini bitta tushunarli jarayonda ko‘rsatishi kerak.",
       solution:
@@ -296,10 +285,9 @@ export const uz = {
     },
     propaint: {
       category: "Frontend · Ijodiy vosita",
-      summary:
-        "Canvas vositalari, ortga va oldinga qaytarish, rang boshqaruvi va PNG eksportiga ega brauzer rasm muharriri.",
-      role: "Boshidan oxirigacha mustaqil yaratdim",
-      status: "Prototip · Barqarorlashtirish",
+      summary: "Brauzerda ishlaydigan rasm muharriri.",
+      role: "To‘liq ishlab chiqish",
+      status: "Prototip",
       problem:
         "Rasm muharririda foydalanuvchi harakatlarni tez almashtirganda vositalar, Canvas holati va tarix bir-biriga mos qolishi kerak.",
       solution:

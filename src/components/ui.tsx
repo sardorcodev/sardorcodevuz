@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { Icon } from "@/components/icon";
+import { garden } from "@/content/garden";
 import type { Dictionary } from "@/content/types";
 import { localePath, type Locale } from "@/lib/locales";
 export function ExternalLink({
@@ -28,15 +29,30 @@ export function PageIntro({
   label,
   title,
   intro,
+  art,
 }: {
   label: string;
   title: string;
   intro: string;
+  art?: ReactNode;
 }) {
+  const titleLines = title.split("\n");
   return (
     <div className="page-intro">
       <Eyebrow>{label}</Eyebrow>
-      <h1>{title}</h1>
+      <h1 className={art ? "illustrated-title" : undefined}>
+        <span>
+          {titleLines.length > 1
+            ? titleLines.map((line, i) => (
+                <span className="heading-line" key={i}>
+                  {i > 0 ? " " : ""}
+                  {line}
+                </span>
+              ))
+            : title}
+        </span>
+        {art}
+      </h1>
       <p className="intro-text">{intro}</p>
     </div>
   );
@@ -59,8 +75,8 @@ export function ContactCallout({ locale, dictionary }: { locale: Locale; diction
         <p>{dictionary.home.ctaText}</p>
       </div>
       <Link href={localePath(locale, "/contact")} className="button button-primary">
-        {dictionary.common.getInTouch}
-        <Icon name="arrow" />
+        {garden[locale].hello}
+        <Icon name="external" />
       </Link>
     </section>
   );

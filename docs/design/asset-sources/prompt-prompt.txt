@@ -1,0 +1,9 @@
+Use case: stylized-concept
+Asset type: individual transparent raster website project icon, PromptPilot document icon.
+Input image: the supplied portfolio screenshot is a visual style and subject reference only. Recreate only the tiny document icon at the left of the first project row, below the hero. Do not reproduce the screenshot or interface.
+Primary request: one charming cream paper document, dark evergreen pixel outline, three short dark green horizontal content lines, a small orange-yellow sparkle at its upper right and one tiny green leaf beside its lower right edge.
+Style/medium: crisp square-grid 2D pixel art, simple stepped edges, flat colors, intentionally legible when displayed at 48 to 64 CSS pixels. Coarse deliberate pixels, approximately a 40 by 40 logical pixel sprite enlarged with nearest-neighbor edges. No 3D.
+Composition: square 512 by 512 transparent canvas; single centered isolated icon with all accents; subject fills about 75 percent of the canvas. Leave clean transparent margins. Paper has a subtly doubled lower-left edge, cream fill, dark evergreen outline, with a restrained darker cream pixel shadow.
+Color palette: pale warm cream paper, very dark evergreen outlines, muted green leaf, golden yellow and burnt orange sparkle. Match the reference's garden pixel-art mood.
+Background: actual transparent alpha, no scene, no colored background.
+Constraints: exactly one document icon; no words, letters, numbers, labels, watermark, UI, frame, decorative border, continuous smooth vector curves, blur, anti-aliased gradients, photographic texture, or 3D lighting. Preserve clean blocky pixel edges and simple silhouette.

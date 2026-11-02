@@ -11,7 +11,7 @@ export default function ErrorPage({
   const value = usePathname().split("/")[1],
     d = errorMessages[isLocale(value) ? value : "en"];
   return (
-    <div className="container missing-page">
+    <div className="garden-page error-page">
       <h1>{d.error}</h1>
       <p className="intro-text">{d.errorText}</p>
       <button type="button" className="button button-primary" onClick={reset}>

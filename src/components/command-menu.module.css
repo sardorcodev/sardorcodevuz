@@ -8,13 +8,11 @@
   color: var(--ink);
   background: var(--surface);
   border: 1px solid var(--line);
-  border-radius: 20px;
-  box-shadow: 0 24px 100px #0004;
+  border-radius: 2px;
   overflow: hidden;
 }
 .dialog::backdrop {
   background: #11182765;
-  backdrop-filter: blur(5px);
 }
 .heading {
   display: flex;
@@ -43,7 +41,7 @@
   padding: 0 14px;
   background: var(--bg);
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: 0;
 }
 .search:focus-within {
   outline: 2px solid var(--blue);
@@ -91,7 +89,7 @@
   padding: 12px;
   min-height: 68px;
   border: 1px solid transparent;
-  border-radius: 10px;
+  border-radius: 0;
 }
 .results a:hover,
 .results a:focus-visible {
@@ -106,7 +104,7 @@
   place-items: center;
   flex-shrink: 0;
   border: 1px solid var(--line);
-  border-radius: 9px;
+  border-radius: 0;
   color: var(--blue);
   background: var(--surface);
 }

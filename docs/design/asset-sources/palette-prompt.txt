@@ -1,0 +1,7 @@
+Use case: precise-object-edit
+Asset type: one individual transparent raster website project icon, ProPaint palette and brush.
+Input image: the supplied image is the edit target and shows the correct pixel-art icon.
+Primary request: make the canvas a perfect square. Keep the exact palette and brush artwork, pixels, colors, outline and transparent alpha unchanged. Center the whole palette-and-brush subject on a square transparent canvas and scale the complete subject uniformly only as necessary so it fills approximately 75 percent of the square canvas, leaving transparent margins on every side. Output a square image with equal width and height, preferably 1024 by 1024.
+Invariants: preserve the cream/tan palette, the four blue/orange/yellow/green paint dabs, one diagonal warm brown handled brush with cream ferrule and orange-brown bristles, dark evergreen outlines, crisp flat 2D pixel-art edges. No new objects or changes to the icon.
+Background: actual fully transparent alpha.
+Constraints: square output with equal width and height. No text, UI, frame, border, watermark, shadow background, extra objects, sparkles, blur, texture, or 3D. Do not crop any part of the palette or brush.

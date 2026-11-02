@@ -6,11 +6,13 @@ export function CopyEmail({
   label,
   success,
   failure,
+  compact = false,
 }: {
   email: string;
   label: string;
   success: string;
   failure: string;
+  compact?: boolean;
 }) {
   const [result, setResult] = useState<"idle" | "success" | "failure">("idle");
   async function copy() {
@@ -23,11 +25,19 @@ export function CopyEmail({
   }
   return (
     <div className="copy-email">
-      <button type="button" className="button button-secondary" onClick={copy}>
+      <button
+        type="button"
+        className={compact ? "icon-button" : "button button-secondary"}
+        onClick={copy}
+        aria-label={compact ? label : undefined}
+        title={compact ? label : undefined}
+      >
         <Icon name={result === "success" ? "check" : "copy"} />
-        {result === "success" ? success : label}
+        <span className={compact ? "sr-only" : undefined}>
+          {result === "success" ? success : label}
+        </span>
       </button>
-      <p className="copy-status" role="status" aria-live="polite">
+      <p className={"copy-status" + (compact ? " sr-only" : "")} role="status" aria-live="polite">
         {result === "success" ? success : result === "failure" ? failure : ""}
       </p>
     </div>

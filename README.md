@@ -69,3 +69,18 @@ The control flow builds the real Next.js app against an isolated PGlite/PostgRES
 - `tests/unit`, `tests/integration`, `tests/*.spec.ts`: database/security, complete control flow and public browser checks.
 
 The Telegram bot runtime has been removed. Follow the [cleanup instructions](docs/CONTENT-MANAGEMENT.md#telegram-integratsiyasini-yakuniy-uzish) to revoke its token, remove channel admin access and obsolete Vercel environment variables. Historical migrations and private data remain for audit continuity.
+
+### Public design
+
+The public site follows the **Sokin bog‘** mint garden design, with five main destinations and shared responsive components. See [public architecture](docs/PUBLIC-ARCHITECTURE.md), [design assets](docs/DESIGN-ASSETS.md) and [design QA](design-qa.md).
+
+For a local visual check with two published-looking Uzbek test articles, use the opt-in, read-only fixture in a separate PowerShell process (stop an existing `next dev` process for this checkout first):
+
+```powershell
+$env:PORTFOLIO_PUBLIC_FIXTURE = "1"
+$env:SUPABASE_URL = "https://psxkpfymzezlcsaasomg.supabase.co"
+$env:SUPABASE_SERVICE_ROLE_KEY = "sb_secret_local-public-fixture"
+node --require ./tests/fixtures/public-content.cjs node_modules/next/dist/bin/next dev --hostname 127.0.0.1 --port 3002
+```
+
+This process serves local fixture responses instead of contacting Supabase. It does not publish any content and the application never imports the adapter. Normal development/builds should omit these test environment variables and use the existing CMS setup.

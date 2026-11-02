@@ -16,7 +16,7 @@ export default function CommandMenu({
   items: NavigationItem[];
   onClose: () => void;
 }) {
-  const { copy } = usePublicSettings();
+  const { copy, brand } = usePublicSettings();
   const d = copy.studio;
   const dialog = useRef<HTMLDialogElement>(null);
   const input = useRef<HTMLInputElement>(null);
@@ -71,7 +71,7 @@ export default function CommandMenu({
     >
       <div className={styles.heading}>
         <div>
-          <p className="eyebrow">sardorcodev / workspace</p>
+          <p className="eyebrow">{brand.name}</p>
           <h2 id={id + "-title"}>{d.search}</h2>
         </div>
         <button type="button" className="icon-button" aria-label={d.close} onClick={onClose}>

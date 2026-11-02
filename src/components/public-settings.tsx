@@ -1,14 +1,15 @@
 "use client";
 import { createContext, useContext } from "react";
 import type { PublicCopy, Brand } from "@/lib/cms/public-model";
-const Context = createContext<{ copy: PublicCopy; brand: Brand } | null>(null);
+type ClientCopy = Pick<PublicCopy, "workshop" | "studio">;
+const Context = createContext<{ copy: ClientCopy; brand: Brand } | null>(null);
 export function PublicSettingsProvider({
   children,
   copy,
   brand,
 }: {
   children: React.ReactNode;
-  copy: PublicCopy;
+  copy: ClientCopy;
   brand: Brand;
 }) {
   return <Context.Provider value={{ copy, brand }}>{children}</Context.Provider>;

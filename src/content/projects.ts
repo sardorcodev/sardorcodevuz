@@ -9,7 +9,7 @@ export const projects: Record<
     repository: "https://github.com/sardorcodev/PromptPilot",
     image: "/images/projects/promptpilot.webp",
     accent: "violet",
-    stack: ["Next.js", "TypeScript", "OpenAI"],
+    stack: ["Next.js", "TypeScript", "Supabase", "OpenAI"],
   },
   "smart-agro-ai": {
     name: "Smart Agro AI",
@@ -23,7 +23,7 @@ export const projects: Record<
     repository: "https://github.com/sardorcodev/paint-web",
     image: "/images/projects/propaint.webp",
     accent: "blue",
-    stack: ["React", "JavaScript", "Canvas", "Redux Toolkit"],
+    stack: ["React", "Canvas", "Redux Toolkit"],
   },
 };
 export function isProjectId(value: string): value is ProjectId {

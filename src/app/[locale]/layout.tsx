@@ -13,9 +13,8 @@ import type { NavigationItem } from "@/lib/navigation";
 import { locales, localePath } from "@/lib/locales";
 import { safeJson, site } from "@/lib/site";
 import "../styles/foundation.css";
-import "../styles/workshop.css";
-import "../styles/editorial.css";
-import "../styles/research.css";
+import "../styles/shell.css";
+import "../styles/garden.css";
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
@@ -25,8 +24,8 @@ export const viewport: Viewport = {
   initialScale: 1,
   colorScheme: "light dark",
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#101114" },
+    { media: "(prefers-color-scheme: light)", color: "#d4e9d8" },
+    { media: "(prefers-color-scheme: dark)", color: "#172c25" },
   ],
 };
 export async function generateMetadata({
@@ -48,7 +47,7 @@ export async function generateMetadata({
   };
 }
 const themeScript =
-  "try{var t=localStorage.getItem('portfolio-theme');document.documentElement.dataset.theme=t==='light'||t==='dark'?t:matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'}catch(e){}";
+  "try{var t=localStorage.getItem('portfolio-theme');document.documentElement.dataset.theme=t==='dark'?'dark':'light'}catch(e){}";
 export default async function LocaleLayout({
   children,
   params,
@@ -148,18 +147,23 @@ export default async function LocaleLayout({
     ],
   };
   return (
-    <html lang={locale} suppressHydrationWarning>
+    <html lang={locale} data-scroll-behavior="smooth" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
-      <body id="page-top">
+      <body id="page-top" className="garden-shell" data-motion={brand.animation ? "on" : "off"}>
         <a className="skip-link" href="#main-content">
           {d.common.skip}
         </a>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJson(jsonLd) }} />
-        <PublicSettingsProvider copy={copy} brand={brand}>
+        <PublicSettingsProvider
+          copy={{ workshop: copy.workshop, studio: copy.studio }}
+          brand={brand}
+        >
           <PageMotion />
-          <Header locale={locale} labels={d.common} searchItems={searchItems} />
+          <div className="sidebar-rail">
+            <Header locale={locale} labels={d.common} searchItems={searchItems} />
+          </div>
           <main id="main-content" tabIndex={-1}>
             {children}
           </main>

@@ -1,0 +1,420 @@
+[
+  {
+    "name": "wordmark",
+    "source": "docs/design/references/home.png",
+    "crop": {
+      "left": 38,
+      "top": 47,
+      "width": 202,
+      "height": 69
+    },
+    "output": "/images/garden/reference/wordmark.webp"
+  },
+  {
+    "name": "workspace",
+    "source": "docs/design/references/home.png",
+    "crop": {
+      "left": 793,
+      "top": 117,
+      "width": 609,
+      "height": 514
+    },
+    "output": "/images/garden/reference/workspace.webp"
+  },
+  {
+    "name": "marker",
+    "source": "docs/design/references/home.png",
+    "crop": {
+      "left": 26,
+      "top": 165,
+      "width": 209,
+      "height": 54
+    },
+    "output": "/images/garden/reference/marker.webp"
+  },
+  {
+    "name": "nav-leaf",
+    "source": "docs/design/references/home.png",
+    "crop": {
+      "left": 41,
+      "top": 180,
+      "width": 24,
+      "height": 25
+    },
+    "output": "/images/garden/reference/nav-leaf.webp"
+  },
+  {
+    "name": "sprig",
+    "source": "docs/design/references/home.png",
+    "crop": {
+      "left": 585,
+      "top": 635,
+      "width": 30,
+      "height": 43
+    },
+    "output": "/images/garden/reference/sprig.webp"
+  },
+  {
+    "name": "sun",
+    "source": "docs/design/references/home.png",
+    "crop": {
+      "left": 1324,
+      "top": 27,
+      "width": 56,
+      "height": 52
+    },
+    "output": "/images/garden/reference/sun.webp"
+  },
+  {
+    "name": "prompt",
+    "source": "docs/design/references/projects.png",
+    "crop": {
+      "left": 319,
+      "top": 299,
+      "width": 155,
+      "height": 127
+    },
+    "output": "/images/garden/reference/prompt.webp"
+  },
+  {
+    "name": "sprout",
+    "source": "docs/design/references/projects.png",
+    "crop": {
+      "left": 319,
+      "top": 475,
+      "width": 154,
+      "height": 109
+    },
+    "output": "/images/garden/reference/sprout.webp"
+  },
+  {
+    "name": "palette",
+    "source": "docs/design/references/projects.png",
+    "crop": {
+      "left": 319,
+      "top": 622,
+      "width": 151,
+      "height": 116
+    },
+    "output": "/images/garden/reference/palette.webp"
+  },
+  {
+    "name": "prompt-compact",
+    "source": "docs/design/references/home.png",
+    "crop": {
+      "left": 309,
+      "top": 699,
+      "width": 72,
+      "height": 63
+    },
+    "output": "/images/garden/reference/prompt-compact.webp"
+  },
+  {
+    "name": "sprout-compact",
+    "source": "docs/design/references/home.png",
+    "crop": {
+      "left": 311,
+      "top": 779,
+      "width": 70,
+      "height": 61
+    },
+    "output": "/images/garden/reference/sprout-compact.webp"
+  },
+  {
+    "name": "palette-compact",
+    "source": "docs/design/references/home.png",
+    "crop": {
+      "left": 308,
+      "top": 854,
+      "width": 78,
+      "height": 64
+    },
+    "output": "/images/garden/reference/palette-compact.webp"
+  },
+  {
+    "name": "projects-title",
+    "source": "docs/design/references/projects.png",
+    "crop": {
+      "left": 744,
+      "top": 147,
+      "width": 101,
+      "height": 76
+    },
+    "output": "/images/garden/reference/projects-title.webp"
+  },
+  {
+    "name": "sketchbook",
+    "source": "docs/design/references/projects.png",
+    "crop": {
+      "left": 799,
+      "top": 767,
+      "width": 611,
+      "height": 127
+    },
+    "output": "/images/garden/reference/sketchbook.webp"
+  },
+  {
+    "name": "case-desk",
+    "source": "docs/design/references/case.png",
+    "crop": {
+      "left": 624,
+      "top": 1317,
+      "width": 333,
+      "height": 208
+    },
+    "output": "/images/garden/reference/case-desk.webp"
+  },
+  {
+    "name": "journal-title",
+    "source": "docs/design/references/journal.png",
+    "crop": {
+      "left": 729,
+      "top": 145,
+      "width": 220,
+      "height": 119
+    },
+    "output": "/images/garden/reference/journal-title.webp"
+  },
+  {
+    "name": "reading",
+    "source": "docs/design/references/journal.png",
+    "crop": {
+      "left": 948,
+      "top": 844,
+      "width": 433,
+      "height": 157
+    },
+    "output": "/images/garden/reference/reading.webp"
+  },
+  {
+    "name": "notebook",
+    "source": "docs/design/references/article.png",
+    "crop": {
+      "left": 358,
+      "top": 1171,
+      "width": 390,
+      "height": 113
+    },
+    "output": "/images/garden/reference/notebook.webp"
+  },
+  {
+    "name": "frontend",
+    "source": "docs/design/references/about.png",
+    "crop": {
+      "left": 213,
+      "top": 585,
+      "width": 79,
+      "height": 65
+    },
+    "output": "/images/garden/reference/frontend.webp"
+  },
+  {
+    "name": "backend",
+    "source": "docs/design/references/about.png",
+    "crop": {
+      "left": 215,
+      "top": 658,
+      "width": 76,
+      "height": 64
+    },
+    "output": "/images/garden/reference/backend.webp"
+  },
+  {
+    "name": "learning",
+    "source": "docs/design/references/about.png",
+    "crop": {
+      "left": 213,
+      "top": 739,
+      "width": 79,
+      "height": 60
+    },
+    "output": "/images/garden/reference/learning.webp"
+  },
+  {
+    "name": "portrait-leaf",
+    "source": "docs/design/references/about.png",
+    "crop": {
+      "left": 909,
+      "top": 89,
+      "width": 37,
+      "height": 37
+    },
+    "output": "/images/garden/reference/portrait-leaf.webp"
+  },
+  {
+    "name": "portrait-sprout",
+    "source": "docs/design/references/about.png",
+    "crop": {
+      "left": 875,
+      "top": 416,
+      "width": 69,
+      "height": 79
+    },
+    "output": "/images/garden/reference/portrait-sprout.webp"
+  },
+  {
+    "name": "plant-books",
+    "source": "docs/design/references/about.png",
+    "crop": {
+      "left": 700,
+      "top": 1407,
+      "width": 248,
+      "height": 148
+    },
+    "output": "/images/garden/reference/plant-books.webp"
+  },
+  {
+    "name": "envelope",
+    "source": "docs/design/references/contact.png",
+    "crop": {
+      "left": 309,
+      "top": 405,
+      "width": 85,
+      "height": 76
+    },
+    "output": "/images/garden/reference/envelope.webp"
+  },
+  {
+    "name": "plane",
+    "source": "docs/design/references/contact.png",
+    "crop": {
+      "left": 308,
+      "top": 602,
+      "width": 87,
+      "height": 75
+    },
+    "output": "/images/garden/reference/plane.webp"
+  },
+  {
+    "name": "note-pencil",
+    "source": "docs/design/references/contact.png",
+    "crop": {
+      "left": 877,
+      "top": 796,
+      "width": 61,
+      "height": 53
+    },
+    "output": "/images/garden/reference/note-pencil.webp"
+  },
+  {
+    "name": "mailbox",
+    "source": "docs/design/references/contact.png",
+    "crop": {
+      "left": 931,
+      "top": 152,
+      "width": 479,
+      "height": 570
+    },
+    "output": "/images/garden/reference/mailbox.webp"
+  },
+  {
+    "name": "lab-notebook",
+    "source": "docs/design/references/lab.png",
+    "crop": {
+      "left": 1100,
+      "top": 929,
+      "width": 282,
+      "height": 94
+    },
+    "output": "/images/garden/reference/lab-notebook.webp"
+  },
+  {
+    "name": "drawing-sample",
+    "source": "docs/design/references/lab.png",
+    "crop": {
+      "left": 458,
+      "top": 480,
+      "width": 790,
+      "height": 270
+    },
+    "output": "/images/garden/reference/drawing-sample.webp"
+  },
+  {
+    "name": "signpost",
+    "source": "docs/design/references/profiles.png",
+    "crop": {
+      "left": 938,
+      "top": 122,
+      "width": 386,
+      "height": 292
+    },
+    "output": "/images/garden/reference/signpost.webp"
+  },
+  {
+    "name": "github",
+    "source": "docs/design/references/profiles.png",
+    "crop": {
+      "left": 307,
+      "top": 490,
+      "width": 44,
+      "height": 43
+    },
+    "output": "/images/garden/reference/github.webp"
+  },
+  {
+    "name": "telegram",
+    "source": "docs/design/references/profiles.png",
+    "crop": {
+      "left": 308,
+      "top": 548,
+      "width": 43,
+      "height": 43
+    },
+    "output": "/images/garden/reference/telegram.webp"
+  },
+  {
+    "name": "instagram",
+    "source": "docs/design/references/profiles.png",
+    "crop": {
+      "left": 307,
+      "top": 680,
+      "width": 43,
+      "height": 44
+    },
+    "output": "/images/garden/reference/instagram.webp"
+  },
+  {
+    "name": "x",
+    "source": "docs/design/references/profiles.png",
+    "crop": {
+      "left": 307,
+      "top": 735,
+      "width": 43,
+      "height": 42
+    },
+    "output": "/images/garden/reference/x.webp"
+  },
+  {
+    "name": "youtube",
+    "source": "docs/design/references/profiles.png",
+    "crop": {
+      "left": 307,
+      "top": 787,
+      "width": 44,
+      "height": 41
+    },
+    "output": "/images/garden/reference/youtube.webp"
+  },
+  {
+    "name": "facebook",
+    "source": "docs/design/references/profiles.png",
+    "crop": {
+      "left": 307,
+      "top": 841,
+      "width": 44,
+      "height": 43
+    },
+    "output": "/images/garden/reference/facebook.webp"
+  },
+  {
+    "name": "gate",
+    "source": "docs/design/references/404.png",
+    "crop": {
+      "left": 790,
+      "top": 207,
+      "width": 679,
+      "height": 528
+    },
+    "output": "/images/garden/reference/gate.webp"
+  }
+]

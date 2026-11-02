@@ -2,13 +2,14 @@ import { getBrand } from "@/lib/cms/settings";
 import Image from "next/image";
 import Link from "next/link";
 import type { Dictionary } from "@/content/types";
+import { garden } from "@/content/garden";
 import { localePath, type Locale } from "@/lib/locales";
-import { Icon, type IconName } from "@/components/icon";
-import { CopyEmail } from "@/components/copy-email";
-import { ContactCallout, ExternalLink, Eyebrow, PageIntro, Tags } from "@/components/ui";
+import { Icon } from "./icon";
+import { CopyEmail } from "./copy-email";
+import { ExternalLink, PageIntro } from "./ui";
+import { GardenArt, type GardenAsset } from "./garden/art";
 type Props = { locale: Locale; dictionary: Dictionary };
 const universitySource = "https://t.me/s/terdu340/38920";
-
 function contactHandle(url: string, fallback: string) {
   try {
     const handle = new URL(url).pathname.split("/").filter(Boolean)[0];
@@ -17,207 +18,242 @@ function contactHandle(url: string, fallback: string) {
     return fallback;
   }
 }
-
-function Skills({ d }: { d: Dictionary }) {
-  const icons: IconName[] = ["code", "server", "spark"];
-  return (
-    <section className="section skills-section">
-      <div className="section-heading">
-        <Eyebrow>{d.home.skillsLabel}</Eyebrow>
-        <h2>{d.home.skillsTitle}</h2>
-        <p>{d.home.skillsIntro}</p>
-      </div>
-      <div className="skills-grid">
-        {d.home.skills.map((skill, i) => (
-          <article key={skill.title} className="skill">
-            <span className="skill-icon">
-              <Icon name={icons[i]} />
-            </span>
-            <h3>{skill.title}</h3>
-            <p>{skill.text}</p>
-            <Tags items={skill.tags} />
-          </article>
-        ))}
-      </div>
-    </section>
-  );
-}
-
 export async function AboutPage({ locale, dictionary: d }: Props) {
   const brand = await getBrand();
+  const icons: GardenAsset[] = ["frontend", "backend", "learning"];
   return (
-    <div className="container editorial-page editorial-about">
-      <PageIntro label={d.about.label} title={d.about.title} intro={d.about.intro} />
-      <div className="bio-grid">
-        <div className="prose bio-copy">
-          {d.about.paragraphs.map((p) => (
-            <p key={p}>{p}</p>
-          ))}
-          <Link href={localePath(locale, "/contact")} className="text-link">
-            {d.common.getInTouch}
-            <Icon name="arrow" />
-          </Link>
+    <div className="garden-page about-page">
+      <div className="about-intro">
+        <div>
+          <PageIntro label={d.about.label} title={d.about.title} intro={d.about.intro} />
+          <div className="bio-copy">
+            {d.about.paragraphs.slice(0, 2).map((p) => (
+              <p key={p}>{p}</p>
+            ))}
+          </div>
         </div>
         <figure className="about-portrait">
+          <GardenArt name="portrait-leaf" className="portrait-leaf" />
+          <GardenArt name="sprig" className="portrait-sprout" />
           <Image
             src={brand.portrait}
             width={640}
             height={960}
             alt={d.home.portraitAlt}
-            sizes="(max-width: 640px) 80vw, 420px"
-            priority
+            sizes="(max-width: 760px) 220px, 300px"
+            preload
           />
-          <figcaption>{d.home.portraitNote}</figcaption>
+          <figcaption>{brand.owner}</figcaption>
         </figure>
       </div>
-      <Skills d={d} />
-      <section className="section approach-section">
-        <div className="section-heading">
-          <Eyebrow>{d.about.approachLabel}</Eyebrow>
-          <h2>{d.about.approachTitle}</h2>
+      <section className="skills-section">
+        <h2>{d.home.skillsTitle}</h2>
+        <div className="skills-list">
+          {d.home.skills.map((skill, i) => (
+            <article className="skill-row" key={skill.title}>
+              <GardenArt name={icons[i]} className="skill-icon" />
+              <h3>{skill.title}</h3>
+              <div>
+                <p>{skill.tags.join(", ")}</p>
+              </div>
+            </article>
+          ))}
         </div>
+      </section>
+      <section className="values-section">
+        <h2>{d.about.approachTitle}</h2>
         <div className="values-grid">
           {d.about.values.map((value, i) => (
             <article key={value.title}>
-              <span className="value-number" aria-hidden="true">
-                0{i + 1}
-              </span>
+              <span className="small-meta">0{i + 1}</span>
               <h3>{value.title}</h3>
               <p>{value.text}</p>
             </article>
           ))}
         </div>
       </section>
-      <section className="section team-section">
+      <section className="team-section">
+        <div className="section-heading-row">
+          <h2>{d.about.teamLabel}</h2>
+          <span className="small-meta">{d.about.teamTitle}</span>
+        </div>
+        <div className="team-story">
+          <figure>
+            <Image
+              src={brand.teamImage}
+              width={1159}
+              height={869}
+              sizes="(max-width: 760px) 92vw, 540px"
+              alt={d.about.teamImageAlt}
+            />
+            <figcaption>{d.about.teamCaption}</figcaption>
+          </figure>
+          <div>
+            <p>{d.about.teamText}</p>
+            <Link className="text-link" href={localePath(locale, "/press")}>
+              {d.about.teamLink}
+              <Icon name="external" />
+            </Link>
+          </div>
+        </div>
+      </section>
+      <section className="about-callout">
         <div>
-          <Eyebrow>{d.about.teamLabel}</Eyebrow>
-          <h2>{d.about.teamTitle}</h2>
-          <p>{d.about.teamText}</p>
-          <Link className="text-link" href={localePath(locale, "/press")}>
-            {d.about.teamLink}
-            <Icon name="arrow" />
+          <h2>{garden[locale].aboutCta}</h2>
+          <p>{garden[locale].aboutCtaText}</p>
+          <Link href={localePath(locale, "/contact")} className="button button-primary">
+            {d.common.getInTouch}
+            <Icon name="external" />
           </Link>
         </div>
+        <GardenArt name="plant-books" />
+      </section>
+    </div>
+  );
+}
+export async function ContactPage({ locale, dictionary: d }: Props) {
+  const brand = await getBrand();
+  return (
+    <div className="garden-page contact-page">
+      <div className="contact-main">
+        <div>
+          <PageIntro label={d.contact.label} title={d.contact.title} intro={d.contact.intro} />
+          <section className="contact-method">
+            <GardenArt name="envelope" className="contact-method-icon" />
+            <div>
+              <h2>{d.contact.emailTitle}</h2>
+              <a className="email-address" href={"mailto:" + brand.email}>
+                {brand.email}
+              </a>
+              <div className="contact-email-actions">
+                <CopyEmail
+                  email={brand.email}
+                  label={d.common.copyEmail}
+                  success={d.common.copied}
+                  failure={d.common.copyFailed}
+                />
+                <a className="button button-primary" href={"mailto:" + brand.email}>
+                  {d.footer.email}
+                  <Icon name="external" />
+                </a>
+              </div>
+            </div>
+          </section>
+          <section className="contact-method contact-telegram">
+            <GardenArt name="plane" className="contact-method-icon" />
+            <div>
+              <h2>{d.contact.telegramTitle}</h2>
+              <p className="contact-handle">{contactHandle(brand.telegram, brand.name)}</p>
+              <p className="telegram-note">{d.contact.telegramText}</p>
+              <ExternalLink
+                href={brand.telegram}
+                className="button button-secondary"
+                label={d.common.newTab}
+              >
+                {d.footer.telegram}
+                <Icon name="external" />
+              </ExternalLink>
+            </div>
+          </section>
+        </div>
+        <GardenArt name="mailbox" className="contact-art" eager />
+      </div>
+      <div className="contact-notes">
+        <section>
+          <GardenArt name="sprig" className="contact-note-icon" />
+          <h2>{d.contact.lookingTitle}</h2>
+          <p>{d.contact.lookingItems.join(" ")}</p>
+        </section>
+        <section>
+          <GardenArt name="note-pencil" className="contact-note-icon" />
+          <h2>{d.contact.helpfulTitle}</h2>
+          <p>{d.contact.helpfulText}</p>
+        </section>
+      </div>
+      <div className="contact-elsewhere">
+        <section>
+          <Icon name="github" />
+          <h2>{garden[locale].codeTitle}</h2>
+          <ExternalLink href={brand.github} label={d.common.newTab} className="text-link">
+            GitHub
+            <Icon name="external" />
+          </ExternalLink>
+        </section>
+        <section>
+          <GardenArt name="plane" />
+          <h2>{garden[locale].updatesTitle}</h2>
+          <ExternalLink href={brand.channel} label={d.common.newTab} className="text-link">
+            {brand.name} {d.common.channel}
+            <Icon name="external" />
+          </ExternalLink>
+        </section>
+      </div>
+    </div>
+  );
+}
+export async function PressPage({ locale, dictionary: d }: Props) {
+  const brand = await getBrand();
+  return (
+    <div className="garden-page press-page">
+      <PageIntro label={d.press.label} title={d.press.title} intro={d.press.intro} />
+      <div className="press-source">
         <figure>
           <Image
             src={brand.teamImage}
             width={1159}
             height={869}
-            sizes="(max-width: 640px) 92vw, 580px"
+            sizes="(max-width: 760px) 92vw, 740px"
             alt={d.about.teamImageAlt}
+            preload
           />
           <figcaption>{d.about.teamCaption}</figcaption>
         </figure>
-      </section>
-      <ContactCallout locale={locale} dictionary={d} />
-    </div>
-  );
-}
-
-export async function ContactPage({ dictionary: d }: Props) {
-  const brand = await getBrand();
-  return (
-    <div className="container editorial-page editorial-contact">
-      <PageIntro label={d.contact.label} title={d.contact.title} intro={d.contact.intro} />
-      <div className="contact-grid">
-        <section className="contact-email">
-          <span className="contact-icon">
-            <Icon name="mail" />
-          </span>
-          <h2>{d.contact.emailTitle}</h2>
-          <p>{d.contact.emailText}</p>
-          <div className="contact-email-actions">
-            <a className="email-address" href={"mailto:" + brand.email}>
-              {brand.email}
+        <section>
+          <h2>
+            <GardenArt name="prompt-compact" />
+            {garden[locale].publicSource}
+          </h2>
+          <h3>{d.press.sourceTitle}</h3>
+          <p>{d.press.sourceKind}</p>
+          <p className="source-url">
+            {garden[locale].sourceLabel}
+            <br />
+            <a href={universitySource} target="_blank" rel="noopener noreferrer">
+              t.me/s/terdu340/38920 <Icon name="external" />
             </a>
-            <CopyEmail
-              email={brand.email}
-              label={d.common.copyEmail}
-              success={d.common.copied}
-              failure={d.common.copyFailed}
-            />
-          </div>
-        </section>
-        <section className="contact-card">
-          <Icon name="telegram" />
-          <h2>{d.contact.telegramTitle}</h2>
-          <p>{d.contact.telegramText}</p>
-          <ExternalLink href={brand.telegram} className="text-link" label={d.common.newTab}>
-            {contactHandle(brand.telegram, brand.name)}
-            <Icon name="external" />
-          </ExternalLink>
-        </section>
-        <section className="contact-card">
-          <Icon name="github" />
-          <h2>{d.contact.githubTitle}</h2>
-          <p>{d.contact.githubText}</p>
-          <ExternalLink href={brand.github} className="text-link" label={d.common.newTab}>
-            {contactHandle(brand.github, brand.name)}
-            <Icon name="external" />
-          </ExternalLink>
-        </section>
-        <section className="contact-card">
-          <Icon name="telegram" />
-          <h2>{d.contact.channelTitle}</h2>
-          <p>{d.contact.channelText}</p>
-          <ExternalLink href={brand.channel} className="text-link" label={d.common.newTab}>
-            {contactHandle(brand.channel, brand.name)}
+          </p>
+          <ExternalLink
+            href={universitySource}
+            label={d.common.newTab}
+            className="button button-primary"
+          >
+            {d.common.source}
             <Icon name="external" />
           </ExternalLink>
         </section>
       </div>
-      <div className="section contact-notes">
+      <p className="press-summary">{d.press.sourceText}</p>
+      <div className="press-roles">
         <section>
-          <h2>{d.contact.lookingTitle}</h2>
-          <ul className="check-list">
-            {d.contact.lookingItems.map((item) => (
-              <li key={item}>
-                <Icon name="check" />
-                <span>{item}</span>
-              </li>
-            ))}
-          </ul>
+          <h2>{garden[locale].result}</h2>
+          <p>{garden[locale].teamResult}</p>
         </section>
         <section>
-          <h2>{d.contact.helpfulTitle}</h2>
-          <p>{d.contact.helpfulText}</p>
+          <h2>{garden[locale].contribution}</h2>
+          <p>{d.press.note}</p>
         </section>
       </div>
-    </div>
-  );
-}
-
-export async function PressPage({ locale, dictionary: d }: Props) {
-  const brand = await getBrand();
-  return (
-    <div className="container editorial-page editorial-press">
-      <PageIntro label={d.press.label} title={d.press.title} intro={d.press.intro} />
-      <figure className="press-image">
-        <Image
-          src={brand.teamImage}
-          width={1159}
-          height={869}
-          sizes="(max-width: 640px) 92vw, 1120px"
-          alt={d.about.teamImageAlt}
-          priority
-        />
-        <figcaption>{d.about.teamCaption}</figcaption>
-      </figure>
-      <section className="source-card">
-        <Eyebrow>{d.press.sourceKind}</Eyebrow>
-        <h2>{d.press.sourceTitle}</h2>
-        <p>{d.press.sourceText}</p>
-        <ExternalLink href={universitySource} label={d.common.newTab} className="text-link">
-          {d.common.source}
-          <Icon name="external" />
-        </ExternalLink>
-      </section>
-      <p className="press-note">{d.press.note}</p>
-      <Link className="text-link" href={localePath(locale, "/projects/smart-agro-ai")}>
-        {d.press.projectLink}
-        <Icon name="arrow" />
-      </Link>
-      <ContactCallout locale={locale} dictionary={d} />
+      <div className="press-bottom">
+        <Link className="text-link" href={localePath(locale, "/projects/smart-agro-ai")}>
+          <GardenArt name="sprout-compact" />
+          {d.press.projectLink}
+          <Icon name="arrow" />
+        </Link>
+        <Link href={localePath(locale, "/about")} className="back-link">
+          {d.common.about}
+          <Icon name="arrow" />
+        </Link>
+      </div>
     </div>
   );
 }

@@ -1,85 +1,97 @@
-import Image from "next/image";
 import Link from "next/link";
-import { getPublicDictionary, getPublicStudio } from "@/lib/cms/settings";
+import { getPublicDictionary } from "@/lib/cms/settings";
 import type { PublicEntry, ProjectData } from "@/lib/cms/model";
 import { localePath } from "@/lib/locales";
 import { Icon } from "./icon";
-import { Tags } from "./ui";
-
+import { ProjectArt } from "./garden/art";
+const teasers: Record<string, Record<string, string>> = {
+  uz: {
+    promptpilot: "Promptlar uchun tartibli ish muhiti.",
+    "smart-agro-ai": "Qishloq xo‘jaligi uchun jamoaviy MVP.",
+    propaint: "Brauzerda ishlaydigan rasm muharriri.",
+  },
+  en: {
+    promptpilot: "A considered workspace for prompts.",
+    "smart-agro-ai": "A team-built MVP for agriculture.",
+    propaint: "A drawing editor in your browser.",
+  },
+  ru: {
+    promptpilot: "Удобное пространство для промптов.",
+    "smart-agro-ai": "Командный MVP для сельского хозяйства.",
+    propaint: "Графический редактор в браузере.",
+  },
+};
 export async function ManagedProjectCard({
   entry,
-  featured = false,
+  compact = false,
   number,
 }: {
   entry: PublicEntry<ProjectData>;
+  compact?: boolean;
   featured?: boolean;
   number?: number;
 }) {
-  const p = entry.published;
-  const [d, studio] = await Promise.all([
-    getPublicDictionary(entry.locale),
-    getPublicStudio(entry.locale),
-  ]);
+  const p = entry.published,
+    d = await getPublicDictionary(entry.locale);
   const href = localePath(entry.locale, "/projects/" + entry.slug);
   return (
     <article
-      className={"project-card google-project-card " + (featured ? "project-featured" : "")}
-      data-accent={entry.slug === "smart-agro-ai" ? "green" : "blue"}
+      className={"project-row project-card" + (compact ? " project-row-compact" : "")}
+      data-project={entry.slug}
     >
-      <Link
-        href={href}
-        className="project-image-link"
-        aria-label={d.common.viewProject + ": " + p.title}
-      >
-        <div className="project-image-shell">
-          <Image
-            src={p.image}
-            alt={p.imageAlt}
-            width={1440}
-            height={1000}
-            sizes={
-              featured
-                ? "(max-width: 640px) 92vw, (max-width: 1000px) 46vw, 580px"
-                : "(max-width: 640px) 92vw, (max-width: 1000px) 46vw, 410px"
-            }
-          />
-        </div>
-        <span className="project-image-arrow">
-          <Icon name="arrow" />
+      <ProjectArt slug={entry.slug} compact={compact} />
+      {number !== undefined && (
+        <span className="project-number" aria-hidden="true">
+          {String(number).padStart(2, "0")}
         </span>
-      </Link>
+      )}
       <div className="project-copy">
-        <div className="project-card-kicker">
-          <span className="project-category">{p.category}</span>
-          {number !== undefined && (
-            <span className="project-number" aria-hidden="true">
-              {String(number).padStart(2, "0")}
-            </span>
-          )}
-        </div>
         <h3>
           <Link href={href}>
-            {p.title}
-            <Icon name="arrow" />
+            <span className="marker-link">{p.title}</span>
           </Link>
         </h3>
-        <p>{p.summary}</p>
-        <dl className="project-contribution">
-          <dt>{studio.role}</dt>
-          <dd>{p.role}</dd>
-        </dl>
-        <Tags items={p.stack} />
-        <div className="project-card-footer">
-          <p className="project-status">
-            <span aria-hidden="true" />
-            {p.status}
-          </p>
-          <Link className="text-link" href={href}>
+        {!compact && <p>{p.summary}</p>}
+        {!compact && (
+          <Link href={href} className="text-link project-details-link">
             {d.common.viewProject}
-            <Icon name="arrow" />
+            <Icon name="external" />
           </Link>
-        </div>
+        )}
       </div>
+      {compact ? (
+        <p className="project-teaser">{teasers[entry.locale]?.[entry.slug] || p.summary}</p>
+      ) : null}
+      <div className="project-meta">
+        <p className="project-status">
+          {compact
+            ? entry.slug === "smart-agro-ai"
+              ? p.role
+              : p.category.split("·")[0] + " · " + p.status.split("·")[0]
+            : (entry.slug === "smart-agro-ai"
+                ? { uz: "Jamoaviy loyiha", en: "Team project", ru: "Командный проект" }[
+                    entry.locale
+                  ]
+                : d.common.independent) +
+              " · " +
+              p.status.split("·")[0]}
+        </p>
+        {!compact && (
+          <>
+            <p>
+              {d.common.role}: {p.role}
+            </p>
+            <p className="project-stack">{p.stack.join(" · ")}</p>
+          </>
+        )}
+      </div>
+      <Link
+        href={href}
+        className="project-row-arrow icon-button"
+        aria-label={d.common.viewProject + ": " + p.title}
+      >
+        <Icon name="arrow" />
+      </Link>
     </article>
   );
 }

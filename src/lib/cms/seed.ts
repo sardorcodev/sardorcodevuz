@@ -2,6 +2,7 @@ import { getDictionary } from "@/content";
 import { projects, projectIds } from "@/content/projects";
 import { locales } from "@/lib/locales";
 import { socialProfiles } from "@/lib/site";
+import { profileSummaries } from "@/content/profile-summaries";
 import type { PublicEntry, ProjectData, ProfileData } from "./model";
 
 const date = "2026-10-04T10:50:30.000Z";
@@ -16,14 +17,11 @@ export function seedEntries(): PublicEntry[] {
         c.problem,
         "## " + d.common.solution,
         c.solution,
-        "## " + d.common.contribution,
-        ...c.contributions.map((s) => "- " + s),
         "## " + d.common.decisions,
-        ...c.decisions.map((s) => "### " + s.title + "\n\n" + s.text),
-        "## " + d.common.learned,
-        c.learned,
+        "| | |\n| --- | --- |\n" +
+          c.decisions.map((s) => "| " + s.title + " | " + s.text + " |").join("\n"),
         "## " + d.common.next,
-        ...c.nextSteps.map((s) => "- " + s),
+        c.nextSteps.join(" "),
       ].join("\n\n");
       return {
         id: "seed-project-" + slug + "-" + locale,
@@ -55,7 +53,7 @@ export function seedEntries(): PublicEntry[] {
       published_at: date,
       updated_at: date,
       published: {
-        title: p.name,
+        title: p.name === "Telegram" && locale === "uz" ? "Telegram kanal" : p.name,
         url: p.href,
         handle: "@sardorcodev",
         order,
@@ -63,9 +61,7 @@ export function seedEntries(): PublicEntry[] {
         summary:
           p.name === "GitHub"
             ? d.official.githubText
-            : p.name === "Telegram"
-              ? d.official.telegramText
-              : d.official.otherText,
+            : profileSummaries[locale][p.name] || d.official.otherText,
       },
     }));
     return [...projectEntries, ...profileEntries];

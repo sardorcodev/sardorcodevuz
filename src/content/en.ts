@@ -89,11 +89,11 @@ export const en = {
     portraitNote: "Sardorbek Musurmonov",
     portraitLabel: "The person behind sardorcodev",
     selectedLabel: "A few things I’ve built",
-    selectedTitle: "Selected work.",
+    selectedTitle: "Selected work",
     selectedIntro:
       "Independent projects and a team MVP. Here’s what I worked on, why it matters, and what I’m still improving.",
     skillsLabel: "How I work",
-    skillsTitle: "Both sides of the web.",
+    skillsTitle: "What I’m working on",
     skillsIntro:
       "I enjoy connecting a clear interface with the logic and data that make it useful.",
     skills: [
@@ -123,13 +123,13 @@ export const en = {
       "I’m starting with Python, NumPy and notebooks. I keep my early exercises on GitHub, and will add notes as I learn.",
     learningLink: "Follow my learning on GitHub",
     ctaLabel: "Let’s connect",
-    ctaTitle: "Have a place for a curious builder?",
+    ctaTitle: "Have something in mind?",
     ctaText:
       "I’m interested in full-stack opportunities and teams that care about useful products and learning together.",
   },
   work: {
     label: "From idea to implementation",
-    title: "Projects with a story.",
+    title: "My work",
     intro:
       "A closer look at what I built: the interface, the backend, the decisions and the work still ahead.",
     supportingLabel: "More experiments",
